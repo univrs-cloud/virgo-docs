@@ -9,7 +9,7 @@ const UI_DIR = path.resolve(ROOT, process.env.VIRGO_UI || '../virgo-ui');
 const API_DIR = path.resolve(ROOT, process.env.VIRGO_API || '../virgo-api');
 const OUT_DIR = path.join(ROOT, 'src/assets/setup');
 const CHROME_PATH = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const PADDING = 24;
+const PADDING = 50;
 const SETTLE_MS = 600;
 const CERTIFICATE_GRACE_MS = 60000;
 const VIEWPORT = { width: 1280, height: 1100, deviceScaleFactor: 2 };
@@ -62,7 +62,7 @@ const captureStep = async (page, step, name) => {
 
 const captureModal = async (page, name) => {
 	const box = await (await page.$('.modal.show .modal-content')).boundingBox();
-	const margin = PADDING * 2;
+	const margin = PADDING;
 	const clip = {
 		x: box.x - margin,
 		y: box.y - margin,
