@@ -11,6 +11,7 @@ export default defineConfig({
 				src: './src/assets/virgo.svg'
 			},
 			favicon: '/favicon.ico',
+			customCss: ['./src/styles/univrs.css'],
 			defaultLocale: 'root',
 			locales: {
 				root: {
