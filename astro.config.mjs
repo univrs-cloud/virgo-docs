@@ -21,6 +21,14 @@ export default defineConfig({
 			},
 			sidebar: [
 				{
+					label: 'Setup',
+					items: [{ autogenerate: { directory: 'setup' } }]
+				},
+				{
+					label: 'Management',
+					items: [{ autogenerate: { directory: 'management' } }]
+				},
+				{
 					label: 'CLI reference',
 					items: [{ autogenerate: { directory: 'cli' } }]
 				}

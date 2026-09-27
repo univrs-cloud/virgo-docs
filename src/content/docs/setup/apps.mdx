@@ -1,0 +1,62 @@
+---
+title: Core apps
+description: Wait for the core apps and the certificate.
+sidebar:
+  order: 7
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+The node installs its core apps onto the pool by itself, one at a time:
+
+- **Terminal** opens a shell on the node from the browser.
+- **Authelia** owns the accounts everything else signs in with.
+- **Traefik** answers on the node's name and routes to its apps.
+
+Each app is downloaded and then installed. The app being worked on shows what it is doing, and the ones after it wait their turn.
+
+![Terminal downloading, the others waiting](../../../assets/setup/apps-terminal.png)
+
+![Terminal running, Authelia downloading](../../../assets/setup/apps-authelia.png)
+
+![Terminal and Authelia running, Traefik installing](../../../assets/setup/apps-traefik.png)
+
+## Certificate
+
+Once all three are running, setup waits for the node's certificate.
+
+<Tabs syncKey="domain">
+<TabItem label="univrs.cloud">
+
+The node gets a wildcard certificate from Let's Encrypt through its fleet registration: the fleet answers Let's Encrypt's DNS check, so nothing on your network has to be reachable from the internet for it.
+
+</TabItem>
+<TabItem label="Your own domain">
+
+Let's Encrypt issues the certificate once it can reach the node on TCP 80 at its name. The name has to resolve on the internet to your public IP address, and TCP 80 has to be forwarded to the node.
+
+</TabItem>
+</Tabs>
+
+### Waiting
+
+While the certificate is being issued, **Back** and **Continue** are locked.
+
+![Waiting for the certificate](../../../assets/setup/apps-certificate.png)
+
+### Issued
+
+When the certificate is issued, the waiting line disappears and **Continue** becomes available.
+
+![Certificate issued, all core apps running](../../../assets/setup/apps.png)
+
+### Not ready after a minute
+
+If the certificate is still missing after a minute, setup explains why and lets you continue anyway:
+
+- **The name does not resolve yet.** DNS may still be propagating, or the record was not created.
+- **The name resolves but no certificate was issued.** Check the port forwarding and the node's logs.
+
+![The certificate is not ready yet](../../../assets/setup/apps-certificate-failed.png)
+
+If an app fails to install, setup cannot continue until it is installed and running.

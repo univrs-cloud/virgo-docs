@@ -115,3 +115,30 @@ header.header::after {
 	border-color: var(--sl-color-white);
 	color: var(--sl-color-black);
 }
+
+.sl-link-button.secondary {
+	background: transparent;
+	border-color: rgba(19, 19, 30, 0.26);
+	color: var(--sl-color-white);
+}
+
+:root:not([data-theme='light']) .sl-link-button.secondary {
+	border-color: rgba(231, 231, 242, 0.26);
+}
+
+.sl-link-button.secondary:hover {
+	border-color: var(--sl-color-accent);
+	color: var(--sl-color-accent);
+	opacity: 1;
+}
+
+@media (min-width: 72rem) {
+	.right-sidebar-container {
+		width: 14rem;
+	}
+
+	:root[data-has-sidebar][data-has-toc] .main-pane {
+		--sl-content-margin-inline: auto;
+		width: calc(100% - 14rem);
+	}
+}
