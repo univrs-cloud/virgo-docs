@@ -11,9 +11,11 @@ Setup runs the first time a virgoOS node starts. It sets the network, creates th
 ## Before you start
 
 - Connect the node to your network with a cable and power it on.
-- Open the node's IP address in a browser. The node uses its own certificate until setup is done, so your browser shows a security warning. Accept it to continue.
+- Make sure the node has at least 2 data drives of the same size, within 1% of each other. The drive the system runs from does not count.
+- Make sure the node has at least 8 GB of RAM. 16 GB or more is ideal.
+- Open `https://<node IP>:3000` in a browser, for example `https://192.168.1.20:3000`. The node uses its own certificate until setup is done, so your browser shows a security warning. Accept it to continue.
 - Have your fleet account ready, or create one at [fleet.univrs.cloud](https://fleet.univrs.cloud). It is mandatory if the node will use the `univrs.cloud` domain, and optional with your own domain.
-- Make sure you have access to your router. You will need to forward a few ports to the node.
+- If your internet connection has a public IP address and you want to reach the node and its apps from outside your network, make sure you have access to your router. You will need to [forward a few ports](/setup/ports/) to the node.
 
 Setup shows its progress, and any errors, as notifications. If a step fails, you stay on that step and can try again.
 

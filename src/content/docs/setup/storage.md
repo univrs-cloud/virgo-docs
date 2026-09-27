@@ -9,7 +9,12 @@ sidebar:
 
 virgoOS keeps your apps and data on a redundant storage pool built from the node's drives. The drive the system runs from is never part of the pool.
 
-Setup offers the layouts your drives support. It needs at least two drives of the same size.
+The pool needs:
+
+- **At least 2 data drives.** The drive the system runs from does not count.
+- **Drives of the same size.** The smallest drive may be at most 1% smaller than the largest.
+
+Setup offers the layouts your drives support.
 
 | Layout | Survives |
 | --- | --- |

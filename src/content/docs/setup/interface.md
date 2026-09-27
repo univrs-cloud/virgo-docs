@@ -11,7 +11,7 @@ The node needs a static address so it can always be found at the same place. The
 
 | Field | What to enter |
 | --- | --- |
-| IP address | The node's own fixed address on your network, for example `192.168.1.20`. This is the address you open setup on. |
+| IP address | The node's own fixed address on your network, for example `192.168.1.20`. This is the address you open setup on, at `https://192.168.1.20:3000`. |
 | Netmask | The prefix length. `24` is the most common. |
 | Default gateway | Your router's address. |
 | Virtual IP | The cluster's shared address, for example `192.168.1.10`. |
