@@ -21,6 +21,16 @@ npm run cli-reference
 
 The script expects a virgo-api checkout with its dependencies installed at `../virgo-api`. Set `VIRGO_API` to use another path.
 
+## Screenshots
+
+`src/assets/setup/` is rendered from the setup screens in [virgo-ui](https://github.com/univrs-cloud/virgo-ui), fed by a fake backend with made-up data. Do not edit it by hand.
+
+```sh
+npm run screenshots
+```
+
+The script serves the build at `../virgo-ui/dist`, so build virgo-ui first. It also reads socket.io and the pool layouts from `../virgo-api`. Set `VIRGO_UI`, `VIRGO_API` or `CHROME_PATH` to use other paths.
+
 ## Deployment
 
 Every push to `main` builds and deploys to GitHub Pages through `.github/workflows/deploy.yml`.
