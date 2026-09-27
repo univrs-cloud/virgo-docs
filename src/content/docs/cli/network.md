@@ -41,10 +41,8 @@ virgo network interface update [options]
 Take over the virtual IP from the node holding it
 
 ```sh
-virgo network virtual-ip take-over|promote [options]
+virgo network virtual-ip take-over [options]
 ```
-
-Alias: `promote`
 
 ## virgo network virtual-ip release
 
