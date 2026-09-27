@@ -12,18 +12,18 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 Signing in only works through that name, not through an IP address.
 
 <Tabs syncKey="domain">
-<TabItem label="univrs.cloud">
-
-![Finishing setup on univrs.cloud](../../../assets/setup/finish.png)
-
-The node opens at `https://spica.virgo.univrs.cloud`. Its DNS record is managed by the fleet, so the name already resolves.
-
-</TabItem>
 <TabItem label="Your own domain">
 
 ![Finishing setup on your own domain](../../../assets/setup/finish-custom.png)
 
 The node opens at `https://spica.virgo.mydomain.com`. Make sure the DNS records from the [network host](/setup/host/) step are in place, so your network resolves the name to the node.
+
+</TabItem>
+<TabItem label="univrs.cloud">
+
+![Finishing setup on univrs.cloud](../../../assets/setup/finish.png)
+
+The node opens at `https://spica.virgo.univrs.cloud`. Its DNS record is managed by the fleet, so the name already resolves.
 
 </TabItem>
 </Tabs>

@@ -35,14 +35,14 @@ Behind CGNAT, without a public IP address, or without any forwarded ports, you c
 ### Certificates without forwarding
 
 <Tabs syncKey="domain">
-<TabItem label="univrs.cloud">
-
-The node still gets a valid certificate. It is issued through your fleet account, so it does not depend on any port being forwarded.
-
-</TabItem>
 <TabItem label="Your own domain">
 
 The node falls back to a self-signed certificate, and browsers warn about it. A valid certificate is issued by Let's Encrypt over TCP 80, so that port has to be forwarded, and the node's name has to resolve on the internet to your public IP address so Let's Encrypt can reach it.
+
+</TabItem>
+<TabItem label="univrs.cloud">
+
+The node still gets a valid certificate. It is issued through your fleet account, so it does not depend on any port being forwarded.
 
 </TabItem>
 </Tabs>

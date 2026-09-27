@@ -26,14 +26,14 @@ Each app is downloaded and then installed. The app being worked on shows what it
 Once all three are running, setup waits for the node's certificate.
 
 <Tabs syncKey="domain">
-<TabItem label="univrs.cloud">
-
-The node gets a wildcard certificate from Let's Encrypt through its fleet registration: the fleet answers Let's Encrypt's DNS check, so nothing on your network has to be reachable from the internet for it.
-
-</TabItem>
 <TabItem label="Your own domain">
 
 Let's Encrypt issues the certificate once it can reach the node on TCP 80 at its name. The name has to resolve on the internet to your public IP address, and TCP 80 has to be forwarded to the node.
+
+</TabItem>
+<TabItem label="univrs.cloud">
+
+The node gets a wildcard certificate from Let's Encrypt through its fleet registration: the fleet answers Let's Encrypt's DNS check, so nothing on your network has to be reachable from the internet for it.
 
 </TabItem>
 </Tabs>
