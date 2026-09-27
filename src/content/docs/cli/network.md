@@ -2,7 +2,7 @@
 title: "virgo network"
 description: "Network settings"
 sidebar:
-  order: 2
+  order: 1
 ---
 
 ## virgo network identifier update

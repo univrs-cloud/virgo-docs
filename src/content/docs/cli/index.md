@@ -18,9 +18,9 @@ Add `--help` to any command to print its usage in the terminal.
 
 | Command | Description |
 | --- | --- |
-| [`virgo indexer`](/cli/indexer/) | Index and search files in ZFS snapshots |
 | [`virgo network`](/cli/network/) | Network settings |
 | [`virgo apps`](/cli/apps/) | Installable applications |
+| [`virgo indexer`](/cli/indexer/) | Index and search files in ZFS snapshots |
 
 ## Global options
 

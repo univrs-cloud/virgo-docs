@@ -2,7 +2,7 @@
 title: "virgo indexer"
 description: "Index and search files in ZFS snapshots"
 sidebar:
-  order: 1
+  order: 3
 ---
 
 ## virgo indexer index

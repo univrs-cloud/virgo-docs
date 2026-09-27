@@ -2,7 +2,7 @@
 title: "virgo apps"
 description: "Installable applications"
 sidebar:
-  order: 3
+  order: 2
 ---
 
 ## virgo apps list
