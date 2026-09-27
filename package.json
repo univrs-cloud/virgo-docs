@@ -3,7 +3,7 @@
 	"type": "module",
 	"version": "0.0.1",
 	"private": true,
-	"description": "User manual for VirgoOS: setup, UI guides and CLI reference.",
+	"description": "User manual for virgoOS: setup, UI guides and CLI reference.",
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",

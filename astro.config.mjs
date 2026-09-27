@@ -6,7 +6,7 @@ export default defineConfig({
 	site: 'https://docs.univrs.cloud',
 	integrations: [
 		starlight({
-			title: 'Virgo',
+			title: 'univrs',
 			logo: {
 				src: './src/assets/virgo.svg'
 			},

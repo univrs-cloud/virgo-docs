@@ -1,6 +1,6 @@
 # virgo-docs
 
-User manual for Virgo OS, built with [Astro Starlight](https://starlight.astro.build) and published at [docs.univrs.cloud](https://docs.univrs.cloud).
+User manual for virgoOS, built with [Astro Starlight](https://starlight.astro.build) and published at [docs.univrs.cloud](https://docs.univrs.cloud).
 
 ## Development
 

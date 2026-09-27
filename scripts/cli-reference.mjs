@@ -153,7 +153,7 @@ const renderGroupPage = (help, group, order) => {
 const renderIndexPage = (help, program, groups) => {
 	const lines = frontmatter('CLI reference', `Reference for the ${program.name()} command line tool.`, 0, 'Overview');
 	lines.push(
-		`Every Virgo node ships with the \`${program.name()}\` command. This reference matches version ${program.version()}.`,
+		`Every virgoOS node ships with the \`${program.name()}\` command. This reference matches version ${program.version()}.`,
 		'',
 		'```sh',
 		clean(help.commandUsage(program)),
