@@ -3,7 +3,7 @@
 	"type": "module",
 	"version": "0.0.1",
 	"private": true,
-	"description": "User manual for Virgo OS: setup, web UI guides and CLI reference.",
+	"description": "User manual for VirgoOS: setup, UI guides and CLI reference.",
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",
@@ -15,5 +15,9 @@
 		"@astrojs/starlight": "^0.42.4",
 		"astro": "^7.3.5",
 		"sharp": "^0.35.4"
+	},
+	"allowScripts": {
+		"esbuild@0.28.2": true,
+		"fsevents@2.3.3": true
 	}
 }
