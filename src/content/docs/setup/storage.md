@@ -12,7 +12,7 @@ virgoOS keeps your apps and data on a redundant storage pool built from the node
 The pool needs:
 
 - **At least 2 data drives.** The drive the system runs from does not count.
-- **Drives of the same size.** The smallest drive may be at most 1% smaller than the largest.
+- **Drives of the same size.** The smallest drive may be at most 10% smaller than the largest. Capacity is calculated from the smallest drive.
 
 Setup offers the layouts your drives support.
 
