@@ -14,7 +14,8 @@ export default defineConfig({
 			customCss: ['./src/styles/univrs.css'],
 			components: {
 				Head: './src/components/Head.astro',
-				SocialIcons: './src/components/SocialIcons.astro'
+				SocialIcons: './src/components/SocialIcons.astro',
+				ThemeSelect: './src/components/ThemeSelect.astro'
 			},
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/univrs-cloud' }

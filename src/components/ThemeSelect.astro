@@ -1,0 +1,108 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+---
+
+<univrs-theme-toggle>
+	<button type="button" role="switch" aria-checked="false" aria-label={Astro.locals.t('themeSelect.dark')}>
+		<span class="knob"></span>
+		<span class="icon sun"><Icon name="sun" size="0.95rem" /></span>
+		<span class="icon moon"><Icon name="moon" size="0.95rem" /></span>
+	</button>
+</univrs-theme-toggle>
+
+<script>
+	const storageKey = 'starlight-theme';
+	const scheme = matchMedia('(prefers-color-scheme: light)');
+
+	const syncToggles = () => {
+		const isDark = document.documentElement.dataset.theme === 'dark';
+		document.querySelectorAll('univrs-theme-toggle button').forEach((button) => {
+			button.setAttribute('aria-checked', String(isDark));
+		});
+	};
+
+	const storedTheme = () => {
+		return (typeof localStorage !== 'undefined' ? localStorage.getItem(storageKey) : null);
+	};
+
+	scheme.addEventListener('change', () => {
+		if (storedTheme()) {
+			return;
+		}
+
+		document.documentElement.dataset.theme = (scheme.matches ? 'light' : 'dark');
+		syncToggles();
+	});
+
+	class UnivrsThemeToggle extends HTMLElement {
+		constructor() {
+			super();
+			syncToggles();
+			this.querySelector('button')?.addEventListener('click', () => {
+				const theme = (document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+				document.documentElement.dataset.theme = theme;
+				if (typeof localStorage !== 'undefined') {
+					localStorage.setItem(storageKey, theme);
+				}
+				syncToggles();
+			});
+		}
+	}
+
+	customElements.define('univrs-theme-toggle', UnivrsThemeToggle);
+</script>
+
+<style>
+	univrs-theme-toggle {
+		display: flex;
+	}
+
+	button {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 0.1rem;
+		padding: 0.18rem;
+		border: 1px solid var(--sl-color-hairline-light);
+		border-radius: 999px;
+		background: var(--sl-color-gray-6);
+		cursor: pointer;
+	}
+
+	.knob {
+		position: absolute;
+		top: 0.18rem;
+		left: 0.18rem;
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 50%;
+		background: var(--sl-color-accent);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+		transition: transform 0.2s ease;
+	}
+
+	.icon {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		color: var(--sl-color-gray-3);
+		transition: color 0.2s ease;
+	}
+
+	:global(:root[data-theme='light']) .sun,
+	:global(:root[data-theme='dark']) .moon {
+		color: #FFFFFF;
+	}
+
+	:global(:root[data-theme='dark']) .knob {
+		transform: translateX(1.6rem);
+	}
+
+	button:focus-visible {
+		outline: 2px solid var(--sl-color-accent);
+		outline-offset: 2px;
+	}
+</style>
