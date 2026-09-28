@@ -3,7 +3,7 @@ title: Users
 description: The people who can sign in to the node and their roles.
 sidebar:
   label: Managing users
-  order: 4
+  order: 5
 ---
 
 A user of the node signs in to the node itself, and uses the same username and password to reach folders and Time Machine backups. Apps keep their own users, separate from these.
@@ -14,7 +14,7 @@ A user of the node signs in to the node itself, and uses the same username and p
 | --- | --- |
 | Owner | The account whose password was set during setup. An administrator who cannot be locked or deleted, and whose profile and password only they can change. |
 | Administrator | Every page in the menu, including managing users. |
-| User | Sign in to the node, reach the folders and Time Machine backups they have access to, and manage their own [profile](/management/users/profile/). |
+| User | Sign in to the node, reach the folders and Time Machine backups they have access to, and manage their own [profile](/management/system/users/profile/). |
 
 Only the owner can give a user the administrator role.
 
@@ -22,21 +22,21 @@ Only the owner can give a user the administrator role.
 
 **Users** lists everyone who can sign in to the node. The owner is marked with a crown, and your own account with **YOU**.
 
-![The users list](../../../../assets/management/users.png)
+![The users list](../../../../../assets/management/users.png)
 
 Open a user's menu to manage them:
 
-![A user's menu](../../../../assets/management/users-menu.png)
+![A user's menu](../../../../../assets/management/users-menu.png)
 
 - **Edit:** change the user's name and email address. The owner can also change their role.
 - **Change password:** set a new password for the user.
 - **Lock:** stop the user from signing in and from reaching folders and time machines, without deleting them. **Unlock** gives them access again.
 - **Delete:** remove the user.
 
-Your own account has no menu here; it links to your [profile](/management/users/profile/) instead.
+Your own account has no menu here; it links to your [profile](/management/system/users/profile/) instead.
 
 ## Adding a user
 
 Select **New user**, then enter a name, email address, username and password. The owner can also tick **Has administrator role?**.
 
-![Adding a user](../../../../assets/management/user-create.png)
+![Adding a user](../../../../../assets/management/user-create.png)

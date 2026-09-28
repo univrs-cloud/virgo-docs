@@ -81,6 +81,30 @@ const storagePage = async (browser, backend, viewport) => {
 	return page;
 };
 
+const FOLDERS_PAGE = '#folders .container-fluid:not(.d-none)';
+const FOLDER_CREATE_READY = '#folder-create .content:not(.d-none)';
+const folderRow = (share) => { return `#folders tr[data-id="${share.name}"]`; };
+
+const foldersNode = (backend) => {
+	return { ...managedNode(backend, { shareList: shares.folders() }), customPaths: shares.customPaths() };
+};
+
+const fillFolder = async (page, folder) => {
+	if (folder.path) {
+		await setValue(page, '#folder-create .path', folder.path);
+	}
+	await setValue(page, '#folder-create .comment', folder.comment);
+	await page.$$eval('#folder-create .valid-users u-checkbox', (checkboxes, users) => {
+		for (const checkbox of checkboxes) {
+			checkbox.checked = users.includes(checkbox.onValue);
+		}
+	}, folder.users);
+	if (folder.capacity) {
+		await setValue(page, '#folder-create .refquota', folder.capacity);
+	}
+	await blur(page);
+};
+
 const TIME_MACHINES_PAGE = '#time-machines .container-fluid:not(.d-none)';
 const DASHBOARD_GROUP_PADDING = { top: 12, right: 16, bottom: 16, left: 16 };
 const timeMachineRow = (share) => { return `#time-machines tr[data-id="${share.name}"]`; };
@@ -120,6 +144,43 @@ const pages = {
 		await openMenu(signedIn, `${VISIBLE_ACCOUNT} .account-toggle`, `${VISIBLE_ACCOUNT} .dropdown-menu.show`);
 		await capture.region(signedIn, [`${VISIBLE_ACCOUNT} .dropdown-menu.show`, `${VISIBLE_ACCOUNT} .account-toggle`], 'account-menu', ACCOUNT_MENU_PADDING);
 		await closePage(signedIn);
+	},
+	folders: async ({ browser, backend, capture, viewport }) => {
+		const folders = shares.folders();
+		const [documents] = folders;
+		const guest = folders.find((folder) => { return !folder.isPrivate; });
+		backend.setState(foldersNode(backend));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await open(page, backend.url, '/folders', FOLDERS_PAGE);
+		await capture.viewport(page, 'folders');
+
+		await hoverTooltip(page, `${folderRow(guest)} [data-action="copy-to-clipboard"]`);
+		await capture.region(page, ['#folders .search', '#folders table', '.tooltip.show'], 'folders-address', PADDING);
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+
+		await openMenu(page, `${folderRow(documents)} .dropdown-toggle`, '#folders .dropdown-menu.show');
+		await capture.region(page, ['#folders .search', '#folders table', '#folders .dropdown-menu.show'], 'folders-menu', PADDING);
+
+		await openModal(page, `${folderRow(documents)} a[href="#folder-update"]`, '#folder-update');
+		await blur(page);
+		await capture.region(page, ['#folder-update .modal-content'], 'folder-edit', PADDING);
+		await closePage(page);
+
+		for (const [folder, name] of [[shares.NEW_FOLDER, 'folder-create'], [shares.EXISTING_PATH_FOLDER, 'folder-create-existing']]) {
+			const creating = await signedInPage(browser, backend, viewport, users.owner());
+			await open(creating, backend.url, '/folders', FOLDERS_PAGE);
+			await openModal(creating, '#folders a[href="#folder-create"]', '#folder-create');
+			await creating.waitForSelector(FOLDER_CREATE_READY, { visible: true });
+			await fillFolder(creating, folder);
+			await capture.region(creating, ['#folder-create .modal-content'], name, PADDING);
+			await closePage(creating);
+		}
+
+		const dashboard = await signedInPage(browser, backend, viewport, users.owner());
+		await open(dashboard, backend.url, '/', '#shares .folders .card');
+		await capture.region(dashboard, ['#shares .folders'], 'folders-dashboard', { ...DASHBOARD_GROUP_PADDING, bottom: 0 });
+		await closePage(dashboard);
 	},
 	'time-machines': async ({ browser, backend, capture, viewport }) => {
 		const timeMachines = shares.timeMachines(settings.WEATHER_CLOCK);

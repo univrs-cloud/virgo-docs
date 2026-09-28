@@ -2,12 +2,12 @@
 title: Storage
 description: The node's storage pool, its health, data integrity, usage and drives.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 **Storage** shows where the node keeps everything: the drive the system runs from, and the storage pool created during [setup](/setup/storage/) that holds your apps, their data and your folders.
 
-![The Storage page](../../../assets/management/storage.png)
+![The Storage page](../../../../assets/management/storage.png)
 
 - **VirgoOS** is the system drive. It only holds the operating system.
 - **messier** is the pool, with its layout next to its name, here **mirror**.
@@ -18,7 +18,7 @@ For each, the list shows the capacity, how much of it is used, how much the pool
 
 Select the pool to see it in detail. Under its name is how many drives can fail in each group without losing data.
 
-![The pool in detail](../../../assets/management/storage-pool.png)
+![The pool in detail](../../../../assets/management/storage-pool.png)
 
 ### Health
 
@@ -32,7 +32,7 @@ A warning sign next to the pool's name means one of its drives reports a problem
 
 The pool keeps a checksum of everything it stores. A **scrub** reads all of it back and checks it against those checksums, repairing anything that does not match from the pool's redundancy. The card shows the last scrub, or the one running now with its progress.
 
-![A scrub in progress](../../../assets/management/storage-scrub.png)
+![A scrub in progress](../../../../assets/management/storage-scrub.png)
 
 The node scrubs the pool by itself on the second Sunday of every month, shortly after midnight. Only a healthy pool is scrubbed: while it is **DEGRADED**, the monthly scrub is skipped until the pool is repaired.
 
@@ -50,7 +50,7 @@ The topology shows how the drives are grouped, here two drives mirroring each ot
 
 ## Email reports
 
-When [notifications](/management/settings/#notifications) are set up, the node emails the recipients:
+When [notifications](/management/system/settings/#notifications) are set up, the node emails the recipients:
 
 - when a scrub finishes, with the pool's full status, even when everything is fine;
 - when a resilver finishes;
@@ -60,11 +60,11 @@ When [notifications](/management/settings/#notifications) are set up, the node e
 
 If a drive fails or is removed, the pool shows **DEGRADED**.
 
-![A degraded pool](../../../assets/management/storage-degraded.png)
+![A degraded pool](../../../../assets/management/storage-degraded.png)
 
 In the topology, the missing drive is shown in red, under its ID instead of its name.
 
-![The missing drive in the topology](../../../assets/management/storage-degraded-topology.png)
+![The missing drive in the topology](../../../../assets/management/storage-degraded-topology.png)
 
 The pool keeps working from the remaining drive, but until the missing one is back or replaced, another failure would lose data.
 
@@ -82,10 +82,10 @@ The ID of the missing drive is the one shown in the topology.
 
 As soon as the new drive is in the pool, ZFS copies the pool's data onto it. This is a **resilver**. It shows in **Data integrity** with its progress and how long it has left, and the pool stays **DEGRADED** until it finishes.
 
-![A resilver in progress](../../../assets/management/storage-resilver.png)
+![A resilver in progress](../../../../assets/management/storage-resilver.png)
 
 In the topology, the old drive and the new one appear side by side, with an arrow from the old one to the new one, and the new one shows a spinning icon while it is being filled.
 
-![The drive being replaced in the topology](../../../assets/management/storage-resilver-topology.png)
+![The drive being replaced in the topology](../../../../assets/management/storage-resilver-topology.png)
 
 Only the data actually stored is copied, so a resilver takes as long as it takes to copy what the pool holds, not the whole drive. When it finishes, the old drive disappears from the topology and the pool is **ONLINE** again.

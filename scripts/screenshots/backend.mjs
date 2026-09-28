@@ -114,6 +114,9 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		if (state.shares) {
 			socket.emit('shares', state.shares);
 		}
+		socket.on('share:paths:custom', () => {
+			socket.emit('share:paths:custom', state.customPaths ?? []);
+		});
 	});
 
 	io.of('/docker').on('connection', (socket) => {
