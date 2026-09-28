@@ -18,149 +18,18 @@ const MIME_TYPES = {
 	'.woff2': 'font/woff2'
 };
 
-const DRIVE_SIZE = 2048408248320;
-const DRIVE_MODEL = 'KINGSTON SKC3000D2048G';
-const HOSTNAME = 'spica';
-const CLUSTER_DOMAIN = 'virgo.univrs.cloud';
-const ADDRESS = '192.168.1.20';
-const VIRTUAL_IP = '192.168.1.10';
-const GATEWAY = '192.168.1.1';
-const CORE_APPS = { wetty: 'Terminal', authelia: 'Authelia', traefik: 'Traefik' };
+const APP_ICONS_PATH = '/assets/img/apps/';
 
-const createDrives = () => {
-	const drives = ['nvme1n1', 'nvme0n1'].map((name, index) => {
-		const serialNumber = `EXAMPLE000000${index + 1}`;
-		const eui = `nvme-eui.0000000000000000000000000000000${index + 1}`;
-		return {
-			name,
-			path: `/dev/${name}`,
-			id: eui,
-			ids: [`nvme-${DRIVE_MODEL.replace(' ', '_')}_${serialNumber}`, eui],
-			model: DRIVE_MODEL,
-			serialNumber,
-			size: DRIVE_SIZE,
-			capacity: { bytes: DRIVE_SIZE },
-			temperature: 25 + index,
-			temperatureWarningThreshold: 84,
-			temperatureCriticalThreshold: 89,
-			health: { status: 'ok', problems: [], message: null }
-		};
-	});
-	return [...drives, {
-		name: 'mmcblk0',
-		path: '/dev/mmcblk0',
-		system: true,
-		model: null,
-		serialNumber: '0x00000000',
-		size: 15523119104,
-		capacity: { bytes: 15523119104 },
-		health: { status: 'unsupported', problems: [], message: null }
-	}];
-};
-
-const createPool = (drives, topology) => {
-	const type = topology.type;
-	const members = drives.filter((drive) => { return !drive.system; });
-	const width = topology.width;
-	const groups = {};
-	for (let index = 0; index < members.length; index += width) {
-		const name = `${type}-${index / width}`;
-		groups[name] = {
-			name,
-			vdevType: type,
-			state: 'ONLINE',
-			vdevs: Object.fromEntries(members.slice(index, index + width).map((drive) => {
-				return [drive.id, { name: drive.id, vdevType: 'disk', state: 'ONLINE' }];
-			}))
-		};
+const serveFile = (root, iconsDir, request, response) => {
+	const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+	let file = (pathname.startsWith(APP_ICONS_PATH) ? path.join(iconsDir, pathname.slice(APP_ICONS_PATH.length)) : path.join(root, pathname));
+	if (pathname.startsWith(APP_ICONS_PATH) && file.startsWith(iconsDir) && fs.existsSync(file)) {
+		response.writeHead(200, { 'Content-Type': MIME_TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream' });
+		fs.createReadStream(file).pipe(response);
+		return;
 	}
 
-	return {
-		name: 'messier',
-		properties: {
-			health: { value: 'ONLINE' },
-			size: { value: topology.usableBytes },
-			free: { value: Math.round(topology.usableBytes * 0.99) }
-		},
-		vdevs: {
-			messier: { name: 'messier', vdevType: 'root', state: 'ONLINE', vdevs: groups }
-		}
-	};
-};
-
-const queuedJob = (name) => {
-	return { id: `job-${name}`, name: 'app:install', data: { config: { name } }, progress: 0 };
-};
-
-const downloadingJob = (name, percent) => {
-	return {
-		...queuedJob(name),
-		progress: {
-			state: 'active',
-			message: `Downloading ${CORE_APPS[name]}...`,
-			progress: {
-				[name]: { text: 'Pulling', layers: { layer: { percentWeighted: percent } } }
-			}
-		}
-	};
-};
-
-const installingJob = (name) => {
-	return {
-		...queuedJob(name),
-		progress: { state: 'active', message: `Installing ${CORE_APPS[name]}...`, progress: {} }
-	};
-};
-
-const runningApps = (names) => {
-	return {
-		configured: names.map((name) => { return { name }; }),
-		containers: names.map((name) => {
-			return {
-				id: `container-${name}`,
-				name,
-				state: 'running',
-				labels: { comDockerComposeProject: name, comDockerComposeService: name }
-			};
-		})
-	};
-};
-
-const createState = (topologies) => {
-	const drives = createDrives();
-	return {
-		setupCompleted: false,
-		system: {
-			osInfo: { hostname: HOSTNAME, fqdn: `${HOSTNAME}.${CLUSTER_DOMAIN}` },
-			networkInterfaces: [{
-				ifname: 'bond0',
-				default: true,
-				addrInfo: [
-					{ family: 'inet', local: ADDRESS, prefixlen: 24, dynamic: false },
-					{ family: 'inet', local: VIRTUAL_IP, prefixlen: 24, dynamic: false }
-				],
-				gateway: GATEWAY,
-				dnsServers: [GATEWAY]
-			}],
-			virtualIp: { address: VIRTUAL_IP, netmask: '24', holding: true }
-		},
-		discovery: [],
-		drives,
-		topologies: topologies(drives),
-		storage: [],
-		importable: [],
-		certificate: null,
-		configuration: { fleet: {} },
-		jobs: [],
-		users: [{ uid: 1000, username: 'voyager' }],
-		configured: [],
-		containers: []
-	};
-};
-
-const serveFile = (root, request, response) => {
-	const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
-	let file = path.join(root, pathname);
+	file = path.join(root, pathname);
 	if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
 		file = path.join(root, 'index.html');
 	}
@@ -169,7 +38,7 @@ const serveFile = (root, request, response) => {
 	fs.createReadStream(file).pipe(response);
 };
 
-const startBackend = async ({ uiDir, apiDir }) => {
+const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 	const require = createRequire(path.join(apiDir, 'package.json'));
 	const { Server } = await import(pathToFileURL(require.resolve('socket.io')).href);
 	const { getTopologies } = await import(pathToFileURL(path.join(apiDir, 'src/utils/topology.js')).href);
@@ -178,8 +47,9 @@ const startBackend = async ({ uiDir, apiDir }) => {
 		throw new Error(`No build found at ${root}.`);
 	}
 
-	const state = createState(getTopologies);
-	const server = http.createServer((request, response) => { serveFile(root, request, response); });
+	const state = {};
+	const iconsDir = path.join(appsDir, 'images');
+	const server = http.createServer((request, response) => { serveFile(root, iconsDir, request, response); });
 	const io = new Server(server, { path: '/api', serveClient: false });
 
 	io.of('/runtime').on('connection', (socket) => {
@@ -195,6 +65,12 @@ const startBackend = async ({ uiDir, apiDir }) => {
 		socket.emit('host:storage', state.storage);
 		socket.emit('host:storage:importable', state.importable);
 		socket.emit('host:certificate', state.certificate);
+		socket.emit('host:updates', state.updates);
+		socket.emit('host:cpu:stats', state.cpuStats);
+		socket.emit('host:memory', state.memory);
+		socket.emit('host:network:stats', state.networkStats);
+		socket.emit('host:time', state.time);
+		socket.emit('host:ups', state.ups);
 		socket.emit('host:setupCompleted', state.setupCompleted);
 		socket.on('host:storage:importable:fetch', () => {
 			socket.emit('host:storage:importable', state.importable);
@@ -225,12 +101,17 @@ const startBackend = async ({ uiDir, apiDir }) => {
 
 	return {
 		url: `http://localhost:${server.address().port}`,
-		state,
-		createPool: (topology) => { return createPool(state.drives, topology); },
-		queuedJob,
-		downloadingJob,
-		installingJob,
-		runningApps,
+		getTopologies,
+		broadcast: (namespace, event, payload) => {
+			io.of(namespace).emit(event, payload);
+		},
+		setState: (next) => {
+			for (const key of Object.keys(state)) {
+				delete state[key];
+			}
+
+			Object.assign(state, next);
+		},
 		close: () => {
 			io.close();
 			server.close();
