@@ -23,12 +23,12 @@ const newPage = async (browser, viewport) => {
 	return page;
 };
 
-const controlClock = async (page) => {
-	await page.evaluateOnNewDocument(() => {
+const controlClock = async (page, startAt = null) => {
+	await page.evaluateOnNewDocument((startAt) => {
 		const now = Date.now;
-		window.__clockOffset = 0;
+		window.__clockOffset = (startAt === null ? 0 : startAt - now());
 		Date.now = () => { return now() + window.__clockOffset; };
-	});
+	}, startAt);
 };
 
 const advanceClock = async (page, milliseconds) => {
@@ -150,6 +150,17 @@ const createCapture = (outDir) => {
 		},
 		viewport: async (page, name) => {
 			await save(page, name);
+		},
+		fullPage: async (page, name) => {
+			const viewport = page.viewport();
+			const height = await page.evaluate(() => { return Math.ceil(document.documentElement.scrollHeight); });
+			if (height > viewport.height) {
+				await page.setViewport({ ...viewport, height });
+				await sleep(SETTLE_MS);
+			}
+
+			await save(page, name);
+			await page.setViewport(viewport);
 		},
 		prune: () => {
 			for (const file of fs.readdirSync(outDir)) {

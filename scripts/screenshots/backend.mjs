@@ -85,6 +85,12 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		});
 	});
 
+	io.of('/weather').on('connection', (socket) => {
+		if (state.weather) {
+			socket.emit('weather', state.weather);
+		}
+	});
+
 	io.of('/job').on('connection', (socket) => {
 		socket.emit('jobs', state.jobs);
 	});

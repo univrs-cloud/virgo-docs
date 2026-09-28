@@ -2,7 +2,7 @@
 title: Updates
 description: Keeping virgoOS up to date, from the Updates page.
 sidebar:
-  order: 4
+  order: 5
 ---
 
 Administrators keep the node up to date from **Updates** on the dashboard.

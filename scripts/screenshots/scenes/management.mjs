@@ -2,6 +2,7 @@ import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open,
 import * as apps from '../data/apps.mjs';
 import { nodeState } from '../data/node.mjs';
 import { networkHistory } from '../data/status.mjs';
+import * as settings from '../data/settings.mjs';
 import * as updates from '../data/updates.mjs';
 import * as users from '../data/users.mjs';
 
@@ -11,7 +12,7 @@ const DASHBOARD_HEIGHT = 960;
 const IN_USE_POOL_PERCENT = 34;
 const VISIBLE_ACCOUNT = 'header .account:not(.d-sm-none)';
 
-const managedNode = (backend) => {
+const managedNode = (backend, overrides = {}) => {
 	return nodeState(backend.getTopologies, {
 		setupCompleted: true,
 		poolUsedPercent: IN_USE_POOL_PERCENT,
@@ -19,7 +20,8 @@ const managedNode = (backend) => {
 		certificateIssued: true,
 		runningApps: apps.CORE_APP_NAMES,
 		userList: users.USERS,
-		withStatus: true
+		withStatus: true,
+		...overrides
 	});
 };
 
@@ -41,6 +43,10 @@ const signedInPage = async (browser, backend, viewport, user) => {
 	await page.setCookie(users.accountCookie(backend.url, user));
 	return page;
 };
+
+const SETTINGS_PAGE = '#settings .container-fluid:not(.d-none)';
+const CARD_PADDING = { top: PADDING, right: PADDING, bottom: PADDING, left: 16 };
+const FLEET_CARD = '#settings .row > .col-12:nth-child(3) .card';
 
 const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
 const CHECKING_PADDING = { top: 48, right: 160, bottom: 48, left: 160 };
@@ -120,6 +126,66 @@ const pages = {
 		await open(regular, backend.url, '/users/profile', '#profile .container-fluid:not(.d-none)');
 		await capture.viewport(regular, 'profile-user');
 		await closePage(regular);
+	},
+	settings: async ({ browser, backend, capture, viewport }) => {
+		const smtp = settings.smtp();
+		const location = settings.location();
+		backend.setState(managedNode(backend));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await open(page, backend.url, '/settings', SETTINGS_PAGE);
+		await capture.fullPage(page, 'settings-empty');
+
+		await openModal(page, '#settings a[href="#smtp"]', '#smtp');
+		await setValue(page, '#smtp .address', smtp.address);
+		await setValue(page, '#smtp .port', smtp.port);
+		await setValue(page, '#smtp .username', smtp.username);
+		await setValue(page, '#smtp .password', smtp.password);
+		await setValue(page, '#smtp .sender', smtp.sender);
+		await page.$eval('#smtp .recipients', (element, recipients) => { element.tags = recipients; }, smtp.recipients);
+		await blur(page);
+		await capture.region(page, ['#smtp .modal-content'], 'settings-notifications', PADDING);
+		await closeModal(page, '#smtp');
+
+		await openModal(page, '#settings a[href="#location"]', '#location');
+		await setValue(page, '#location .latitude', location.latitude);
+		await setValue(page, '#location .longitude', location.longitude);
+		await blur(page);
+		await capture.region(page, ['#location .modal-content'], 'settings-location', PADDING);
+		await closeModal(page, '#location');
+
+		await openModal(page, '#settings a[href="#fleet"]', '#fleet');
+		await blur(page);
+		await capture.region(page, ['#fleet .modal-content'], 'settings-fleet', PADDING);
+		await closeModal(page, '#fleet');
+
+		await page.click('#settings [data-action="reboot"]');
+		await page.waitForSelector('.modal.show', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['.modal.show .modal-content'], 'settings-reboot', PADDING);
+		await closePage(page);
+
+		backend.setState(managedNode(backend, { smtp, location }));
+		const configured = await signedInPage(browser, backend, viewport, users.owner());
+		await open(configured, backend.url, '/settings', SETTINGS_PAGE);
+		await capture.fullPage(configured, 'settings-configured');
+		await closePage(configured);
+
+		backend.setState(managedNode(backend, { domain: 'custom', smtp, location }));
+		const custom = await signedInPage(browser, backend, viewport, users.owner());
+		await open(custom, backend.url, '/settings', SETTINGS_PAGE);
+		await capture.region(custom, [FLEET_CARD], 'settings-fleet-custom', CARD_PADDING);
+		await closePage(custom);
+
+		backend.setState(managedNode(backend, { smtp, location, weather: settings.weather() }));
+		const dashboard = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(dashboard, settings.WEATHER_CLOCK);
+		await open(dashboard, backend.url, '/', '#weather .card');
+		await capture.region(dashboard, ['#weather .card'], 'weather', PADDING);
+		await dashboard.click('#weather .card');
+		await dashboard.waitForSelector('.weather-forecast-popover', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(dashboard, ['#weather .card', '.weather-forecast-popover'], 'weather-forecast', PADDING);
+		await closePage(dashboard);
 	},
 	updates: async ({ browser, backend, capture, viewport }) => {
 		const page = await signedInPage(browser, backend, viewport, users.owner());

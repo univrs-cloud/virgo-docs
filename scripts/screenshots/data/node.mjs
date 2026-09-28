@@ -5,7 +5,7 @@ import * as status from './status.mjs';
 import * as storage from './storage.mjs';
 import * as users from './users.mjs';
 
-const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false } = {}) => {
+const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null } = {}) => {
 	const drives = storage.drives();
 	const topologies = getTopologies(drives);
 	const hasPool = (poolUsedPercent !== null);
@@ -18,7 +18,12 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 		storage: [storage.systemPool(), ...(hasPool ? [storage.dataPool(drives, topologies[0], poolUsedPercent)] : [])],
 		importable: [],
 		certificate: (certificateIssued === null ? null : apps.certificate(network.fqdn(domain), certificateIssued)),
-		configuration: (isRegistered ? fleet.registered() : fleet.unregistered()),
+		configuration: {
+			...(isRegistered ? fleet.registered() : fleet.unregistered()),
+			...(smtp ? { smtp } : {}),
+			...(location ? { location } : {})
+		},
+		weather,
 		jobs,
 		users: userList,
 		updates: [],
