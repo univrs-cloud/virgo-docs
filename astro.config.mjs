@@ -13,6 +13,7 @@ export default defineConfig({
 			favicon: '/favicon.ico',
 			customCss: ['./src/styles/univrs.css'],
 			components: {
+				Head: './src/components/Head.astro',
 				SocialIcons: './src/components/SocialIcons.astro'
 			},
 			social: [
