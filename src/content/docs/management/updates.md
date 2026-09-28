@@ -2,10 +2,10 @@
 title: Updates
 description: Keeping virgoOS up to date, from the Updates page.
 sidebar:
-  order: 5
+  order: 6
 ---
 
-Administrators keep the node up to date from **Updates** on the dashboard.
+**Updates** shows whether new versions of virgoOS are available and installs them. Only administrators see it in the menu.
 
 ## Up to date
 
@@ -31,7 +31,7 @@ Select **Install** to install all of them. **Install** is not available while th
 
 ## While an update runs
 
-The update shows each step as it happens, with the progress of the download and then of the installation. The rest of the dashboard stays closed until the update is finished and you continue.
+The update shows each step as it happens, with the progress of the download and then of the installation. The node's other pages stay closed until the update is finished and you continue.
 
 ![An update in progress](../../../assets/management/update-progress.png)
 
@@ -41,7 +41,7 @@ Everyone else who opens the node in the meantime, including users without the ad
 
 ## When it finishes
 
-When the update succeeds, select **Continue** to go back to the dashboard.
+When the update succeeds, select **Continue** to go back to the **Dashboard**.
 
 ![Update succeeded](../../../assets/management/update-finished.png)
 
@@ -49,6 +49,6 @@ If the update needs a restart to take effect, **Reboot** appears instead of **Co
 
 ## If the update fails
 
-If something goes wrong, for example a package fails to set up, the page says the update could not be completed and shows the steps up to the error. Select **Continue** to go back to the dashboard, then install the updates again later.
+If something goes wrong, for example a package fails to set up, the page says the update could not be completed and shows the steps up to the error. Select **Continue** to go back to the **Dashboard**, then install the updates again later.
 
 ![An update that failed](../../../assets/management/update-failed.png)

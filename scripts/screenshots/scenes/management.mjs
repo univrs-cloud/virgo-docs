@@ -45,8 +45,12 @@ const signedInPage = async (browser, backend, viewport, user) => {
 };
 
 const SETTINGS_PAGE = '#settings .container-fluid:not(.d-none)';
-const CARD_PADDING = { top: PADDING, right: PADDING, bottom: PADDING, left: 16 };
+const CARD_PADDING = { top: PADDING, right: PADDING, bottom: PADDING, left: 8 };
 const FLEET_CARD = '#settings .row > .col-12:nth-child(3) .card';
+
+const NETWORK_PAGE = '#network .container-fluid:not(.d-none)';
+const networkCard = (index) => { return `#network .container-fluid > .row > .col-12:nth-child(${index}) .card`; };
+const TRUSTED_PROXY = '192.168.1.5';
 
 const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
 const CHECKING_PADDING = { top: 48, right: 160, bottom: 48, left: 160 };
@@ -186,6 +190,47 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(dashboard, ['#weather .card', '.weather-forecast-popover'], 'weather-forecast', PADDING);
 		await closePage(dashboard);
+	},
+	network: async ({ browser, backend, capture, viewport }) => {
+		backend.setState(managedNode(backend));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await open(page, backend.url, '/network', NETWORK_PAGE);
+		await capture.fullPage(page, 'network');
+
+		await openModal(page, '#network a[href="#network-identifier"]', '#network-identifier');
+		await blur(page);
+		await capture.region(page, ['#network-identifier .modal-content'], 'network-host', PADDING);
+		await closeModal(page, '#network-identifier');
+
+		await openModal(page, '#network a[href="#network-interface"]', '#network-interface');
+		await blur(page);
+		await capture.region(page, ['#network-interface .modal-content'], 'network-interface', PADDING);
+		await closeModal(page, '#network-interface');
+
+		await openModal(page, '#network a[href="#trusted-proxy-add"]', '#trusted-proxy-add');
+		await setValue(page, '#trusted-proxy-add .address', TRUSTED_PROXY);
+		await blur(page);
+		await capture.region(page, ['#trusted-proxy-add .modal-content'], 'network-proxy-add', PADDING);
+		await closePage(page);
+
+		backend.setState(managedNode(backend, { trustedProxies: [TRUSTED_PROXY] }));
+		const proxies = await signedInPage(browser, backend, viewport, users.owner());
+		await open(proxies, backend.url, '/network', NETWORK_PAGE);
+		await openMenu(proxies, `#network tr[data-id="${TRUSTED_PROXY}"] .dropdown-toggle`, '#network .dropdown-menu.show');
+		await capture.region(proxies, [networkCard(3), '#network .dropdown-menu.show'], 'network-proxies', CARD_PADDING);
+		await closePage(proxies);
+
+		backend.setState(managedNode(backend, { isStandby: true }));
+		const standby = await signedInPage(browser, backend, viewport, users.owner());
+		await open(standby, backend.url, '/network', NETWORK_PAGE);
+		await capture.region(standby, [networkCard(2)], 'network-standby', CARD_PADDING);
+		await openModal(standby, '#network a[href="#network-interface"]', '#network-interface');
+		await blur(standby);
+		await standby.hover('#network-interface .virtual-ip >>> .help-inline');
+		await standby.waitForSelector('.tooltip.show', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(standby, ['#network-interface .modal-content', '.tooltip.show'], 'network-interface-standby', PADDING);
+		await closePage(standby);
 	},
 	updates: async ({ browser, backend, capture, viewport }) => {
 		const page = await signedInPage(browser, backend, viewport, users.owner());

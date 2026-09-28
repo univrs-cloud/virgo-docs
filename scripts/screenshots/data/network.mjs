@@ -8,13 +8,18 @@ const fqdn = (domain) => {
 	return `${HOSTNAME}.${DOMAINS[domain]}`;
 };
 
-const system = (domain) => {
+const PEER = { name: 'porrima', address: '192.168.1.21' };
+
+const system = (domain, isHolding = true) => {
 	return {
 		osInfo: { hostname: HOSTNAME, fqdn: fqdn(domain) },
 		networkInterfaces: [{
 			ifname: 'bond0',
 			default: true,
+			dhcp: false,
 			speed: 1000,
+			mtu: 1500,
+			address: '02:00:5e:10:00:14',
 			addrInfo: [
 				{ family: 'inet', local: ADDRESS, prefixlen: 24, dynamic: false },
 				{ family: 'inet', local: VIRTUAL_IP, prefixlen: 24, dynamic: false }
@@ -22,12 +27,17 @@ const system = (domain) => {
 			gateway: GATEWAY,
 			dnsServers: [GATEWAY]
 		}],
-		virtualIp: { address: VIRTUAL_IP, netmask: '24', holding: true }
+		virtualIp: { address: VIRTUAL_IP, netmask: '24', holding: isHolding }
 	};
+};
+
+const holdingPeer = (domain) => {
+	return [{ ...PEER, holdsVirtualIp: true, virtualIp: VIRTUAL_IP, cluster: DOMAINS[domain] }];
 };
 
 export {
 	DOMAINS,
 	fqdn,
-	system
+	system,
+	holdingPeer
 };

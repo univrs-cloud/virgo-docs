@@ -2,10 +2,10 @@
 title: Settings
 description: Notifications, location, fleet and power, from the Settings page.
 sidebar:
-  order: 4
+  order: 5
 ---
 
-Administrators configure the node from **Settings** on the dashboard. On a fresh install, **Notifications** and **Location** are not configured yet, **Fleet** shows the registration made during setup, and **Power** lets you reboot the node.
+**Settings** holds the node's email notifications, its location, its fleet registration and the reboot button. Only administrators see it in the menu. On a fresh install, **Notifications** and **Location** are not configured yet, **Fleet** shows the registration made during setup, and **Power** lets you reboot the node.
 
 ![Settings on a fresh install](../../../assets/management/settings-empty.png)
 
@@ -23,13 +23,13 @@ The node emails you about problems with its storage pool and drives, and about w
 
 ## Location
 
-The location sets where the weather on the dashboard is for. Select **Edit** on the **Location** card, then enter the latitude and longitude, or select **Get location** to use your browser's location.
+The location sets where the weather on the **Dashboard** is for. Select **Edit** on the **Location** card, then enter the latitude and longitude, or select **Get location** to use your browser's location.
 
 ![The location form](../../../assets/management/settings-location.png)
 
-Once a location is set, the dashboard shows the current weather there, updated every hour.
+Once a location is set, the **Dashboard** shows the current weather there, updated every hour.
 
-![The weather on the dashboard](../../../assets/management/weather.png)
+![The weather on the Dashboard](../../../assets/management/weather.png)
 
 Select it to see today's temperatures every two hours, with the current time highlighted. The shaded part is daylight, and dotted columns mark hours with a chance of rain.
 

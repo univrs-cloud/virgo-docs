@@ -7,7 +7,7 @@ const sleep = (delay) => {
 	return new Promise((resolve) => { setTimeout(resolve, delay); });
 };
 
-const FROZEN_ANIMATIONS = '*, *::before, *::after { animation-delay: -0.35s !important; animation-play-state: paused !important; caret-color: transparent !important; }';
+const FROZEN_ANIMATIONS = '*, *::before, *::after { animation-delay: -0.35s !important; animation-play-state: paused !important; transition: none !important; caret-color: transparent !important; }';
 
 const newPage = async (browser, viewport) => {
 	const context = await browser.createBrowserContext();
