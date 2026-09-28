@@ -85,7 +85,7 @@ header.header::after {
 	height: 24px;
 }
 
-.sidebar-content summary .large {
+.sidebar-content .top-level > li > details > summary .large {
 	font-family: var(--__sl-font-mono);
 	font-size: 0.72rem;
 	font-weight: 500;
@@ -141,4 +141,10 @@ header.header::after {
 		--sl-content-margin-inline: auto;
 		width: calc(100% - 14rem);
 	}
+}
+
+.sidebar-content .top-level ul summary .large {
+	font-size: var(--sl-text-sm);
+	font-weight: 600;
+	text-transform: capitalize;
 }
