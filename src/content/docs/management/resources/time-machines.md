@@ -2,7 +2,7 @@
 title: Time machines
 description: Backup destinations on the node for the Time Machine app on Macs.
 sidebar:
-  order: 4
+  order: 6
 ---
 
 **Time machines** are backup destinations on the node for the Time Machine app on a Mac. Each one has its own space in the storage pool, with a capacity of its own, and one user who can reach it with their node username and password.

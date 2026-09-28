@@ -9,14 +9,16 @@ const withShortcuts = (running, shortcutList) => {
 	return { ...running, configured: [...running.configured, ...shortcutList] };
 };
 
-const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, shortcutList = [] } = {}) => {
+const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, shortcutList = [], peer = null, indexedAt = null, appEntries = null } = {}) => {
 	const drives = storage.drives({ isReplaced: Boolean(replacedDrive) });
 	const topologies = getTopologies(drives);
 	const hasPool = (poolUsedPercent !== null);
 	return {
 		setupCompleted,
 		system: network.system(domain, !isStandby),
-		discovery: (isStandby ? network.holdingPeer(domain) : []),
+		discovery: (isStandby ? network.holdingPeer(domain) : (peer ? network.discoveredPeers(domain, peer === 'adopted') : [])),
+		peers: (peer === 'adopted' ? network.adoptedPeers() : []),
+		indexerStats: (indexedAt === null ? null : status.indexerStats(indexedAt)),
 		drives: (missingDrive ? drives.filter((drive) => { return drive.name !== missingDrive; }) : drives),
 		topologies,
 		storage: [storage.systemPool(), ...(hasPool ? [storage.dataPool(drives, topologies[0], poolUsedPercent, { now, scan: scrub, missingDrive, replacedDrive })] : [])],
@@ -34,7 +36,7 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 		users: userList,
 		shares: shareList,
 		updates: [],
-		...withShortcuts(apps.running(runningApps, network.fqdn(domain)), shortcutList),
+		...withShortcuts((appEntries ? apps.runningApps(appEntries, network.fqdn(domain)) : apps.running(runningApps, network.fqdn(domain))), shortcutList),
 		...(withStatus ? status.status() : { cpuStats: null, memory: null, networkStats: null, time: null, ups: null })
 	};
 };

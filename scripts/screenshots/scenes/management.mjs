@@ -83,6 +83,34 @@ const storagePage = async (browser, backend, viewport) => {
 	return page;
 };
 
+const TIGHT_PADDING = 12;
+const REORDER_GROUP = '#apps-shortcuts .group:nth-child(2)';
+
+const DRAG_IMAGE_OFFSET = { x: 90, y: 34 };
+
+const showDragImage = (card, pointer, offset) => {
+	const box = card.getBoundingClientRect();
+	const image = card.cloneNode(true);
+	image.classList.add('drag-image');
+	Object.assign(image.style, {
+		position: 'fixed',
+		left: `${pointer.x - box.width / 2 + offset.x}px`,
+		top: `${pointer.y - box.height / 2 + offset.y}px`,
+		width: `${box.width}px`,
+		opacity: '1',
+		background: '#FFFFFF',
+		boxShadow: '0 14px 32px rgba(0, 0, 0, 0.22)',
+		pointerEvents: 'none',
+		zIndex: '2000'
+	});
+	document.body.append(image);
+};
+
+const centerOf = (element) => {
+	const box = element.getBoundingClientRect();
+	return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+};
+
 const SHORTCUTS_PAGE = '#shortcuts .container-fluid:not(.d-none)';
 const ICON_POPOVER = '#shortcut-create .shortcut-icon-box .popover';
 const shortcutRow = (shortcut) => { return `#shortcuts tr[data-name="${shortcut.name}"]`; };
@@ -169,6 +197,61 @@ const pages = {
 		await openMenu(signedIn, `${VISIBLE_ACCOUNT} .account-toggle`, `${VISIBLE_ACCOUNT} .dropdown-menu.show`);
 		await capture.region(signedIn, [`${VISIBLE_ACCOUNT} .dropdown-menu.show`, `${VISIBLE_ACCOUNT} .account-toggle`], 'account-menu', ACCOUNT_MENU_PADDING);
 		await closePage(signedIn);
+	},
+	dashboard: async ({ browser, backend, capture, viewport }) => {
+		const dashboardNode = (peer) => {
+			return managedNode(backend, {
+				appEntries: apps.catalogue(backend.appsDir),
+				location: settings.location(),
+				weather: settings.weather(),
+				shortcutList: shortcuts.shortcuts(DOMAINS.univrs),
+				shareList: [...shares.folders(), ...shares.timeMachines(settings.WEATHER_CLOCK)],
+				peer,
+				indexedAt: settings.WEATHER_CLOCK
+			});
+		};
+
+		backend.setState(dashboardNode('adopted'));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(page, settings.WEATHER_CLOCK);
+		await open(page, backend.url, '/', '#peer .card');
+		await page.waitForSelector('#resources-monitor .network-chart', { visible: true });
+		await page.waitForSelector('#resources-monitor .indexer-stats h6', { visible: true });
+		await fillNetworkHistory(page, backend);
+		await waitForImages(page, '#apps-shortcuts img');
+		await capture.fullPage(page, 'dashboard');
+
+		await capture.region(page, ['#resources-monitor'], 'dashboard-status', TIGHT_PADDING);
+
+		await page.click(`${REORDER_GROUP} .order`);
+		await page.waitForSelector(`${REORDER_GROUP}.dragging`, { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [REORDER_GROUP], 'dashboard-reorder', TIGHT_PADDING);
+
+		const from = await page.$eval(`${REORDER_GROUP} .card[data-type="shortcut"]`, centerOf);
+		const to = await page.$eval(`${REORDER_GROUP} .col:first-child .card`, centerOf);
+		await page.mouse.move(from.x, from.y);
+		await page.mouse.down();
+		await page.mouse.move(to.x, to.y, { steps: 20 });
+		await sleep(SETTLE_MS);
+		await page.$eval(`${REORDER_GROUP} .card[data-type="shortcut"]`, showDragImage, to, DRAG_IMAGE_OFFSET);
+		await capture.region(page, [REORDER_GROUP], 'dashboard-reorder-drag', TIGHT_PADDING);
+		await page.$eval('.drag-image', (element) => { element.remove(); });
+		await page.mouse.up();
+		await sleep(SETTLE_MS);
+		await page.click(`${REORDER_GROUP} .order`);
+		await sleep(SETTLE_MS);
+
+		await openMenu(page, '#peer .dropdown-toggle', '#peer .dropdown-menu.show');
+		await capture.region(page, ['#peer .card', '#peer .dropdown-menu.show'], 'dashboard-nodes', TIGHT_PADDING);
+		await closePage(page);
+
+		backend.setState(dashboardNode('available'));
+		const adopting = await signedInPage(browser, backend, viewport, users.owner());
+		await open(adopting, backend.url, '/', '#peer [data-action="adopt"]');
+		await capture.region(adopting, ['#peer .card'], 'dashboard-adopt', TIGHT_PADDING);
+		await closePage(adopting);
 	},
 	shortcuts: async ({ browser, backend, capture, viewport }) => {
 		const list = shortcuts.shortcuts(DOMAINS.univrs);

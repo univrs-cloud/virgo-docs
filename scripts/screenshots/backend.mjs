@@ -81,6 +81,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.emit('host:updates:check', state.checkUpdates ?? false);
 		socket.emit('host:system', state.system);
 		socket.emit('host:discovery', state.discovery);
+		socket.emit('host:peers', state.peers ?? []);
 		socket.emit('host:drives', state.drives);
 		socket.emit('host:storage:topologies', state.topologies);
 		socket.emit('host:storage', state.storage);
@@ -141,6 +142,12 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 
 	io.of('/shortcut');
 
+	io.of('/indexer').on('connection', (socket) => {
+		if (state.indexerStats) {
+			socket.emit('indexer:stats', state.indexerStats);
+		}
+	});
+
 	io.of('/docker').on('connection', (socket) => {
 		socket.emit('app:configured', state.configured);
 		socket.emit('app:containers', state.containers);
@@ -150,6 +157,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 
 	return {
 		url: `http://localhost:${server.address().port}`,
+		appsDir,
 		getTopologies,
 		broadcast: (namespace, event, payload) => {
 			io.of(namespace).emit(event, payload);

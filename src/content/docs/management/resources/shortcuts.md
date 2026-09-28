@@ -2,7 +2,7 @@
 title: Shortcuts
 description: Links on the Dashboard to devices and websites, optionally reached through the node.
 sidebar:
-  order: 2
+  order: 4
 ---
 
 **Shortcuts** are links on the **Dashboard** to things that are not apps on the node, such as a printer, a router or a website. A shortcut can also give a device on your network its own address under the node's domain, reached through the node.
@@ -55,4 +55,4 @@ The **Dashboard** shows shortcuts together with the apps, grouped by category.
 
 ![Shortcuts on the Dashboard](../../../../assets/management/shortcuts-dashboard.png)
 
-To rearrange a category, select the lines next to its name, drag its cards into place, then select the check mark to save the order.
+To change their order, see [Rearranging cards](/management/dashboard/#rearranging-cards).

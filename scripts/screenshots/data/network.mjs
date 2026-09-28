@@ -9,6 +9,7 @@ const fqdn = (domain) => {
 };
 
 const PEER = { name: 'porrima', address: '192.168.1.21' };
+const ADOPTABLE_PEER = { id: 'b6f1c2d4-porrima', ...PEER };
 
 const system = (domain, isHolding = true) => {
 	return {
@@ -35,9 +36,19 @@ const holdingPeer = (domain) => {
 	return [{ ...PEER, holdsVirtualIp: true, virtualIp: VIRTUAL_IP, cluster: DOMAINS[domain] }];
 };
 
+const adoptedPeers = () => {
+	return [ADOPTABLE_PEER];
+};
+
+const discoveredPeers = (domain, isAdopted) => {
+	return [{ ...ADOPTABLE_PEER, holdsVirtualIp: false, ...(isAdopted ? { virtualIp: VIRTUAL_IP, cluster: DOMAINS[domain] } : {}) }];
+};
+
 export {
 	DOMAINS,
 	fqdn,
 	system,
-	holdingPeer
+	holdingPeer,
+	adoptedPeers,
+	discoveredPeers
 };

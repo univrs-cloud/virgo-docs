@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 const CORE_APPS = {
 	wetty: { title: 'Terminal', category: 'Networking', icon: 'terminal.svg', router: 'wetty', host: 'terminal' },
 	authelia: { title: 'Authelia', category: 'System', icon: 'authelia.svg', router: 'authelia', host: 'auth' },
@@ -33,27 +36,46 @@ const installingJob = (name) => {
 	};
 };
 
-const running = (names, fqdn) => {
+const catalogue = (appsDir) => {
+	const { templates } = JSON.parse(fs.readFileSync(path.join(appsDir, 'templates.json'), 'utf8'));
+	return templates.map((template) => {
+		const prefix = template.env?.find((variable) => { return variable.prefix; })?.prefix;
+		return {
+			name: template.name,
+			title: template.title,
+			category: template.categories[0],
+			icon: path.basename(template.logo),
+			router: template.name.replace(/[^a-z0-9]/gi, ''),
+			host: (prefix ? prefix.replace(/\.$/, '') : null)
+		};
+	});
+};
+
+const runningApps = (entries, fqdn) => {
 	return {
-		configured: names.map((name, index) => {
-			const app = CORE_APPS[name];
-			return { id: index + 1, type: 'app', name, title: app.title, category: app.category, icon: app.icon };
+		configured: entries.map((app, index) => {
+			return { id: index + 1, type: 'app', name: app.name, title: app.title, category: app.category, icon: app.icon };
 		}),
-		containers: names.map((name) => {
-			const app = CORE_APPS[name];
+		containers: entries.map((app) => {
 			return {
-				id: `container-${name}`,
-				name,
+				id: `container-${app.name}`,
+				name: app.name,
 				state: 'running',
 				labels: {
-					comDockerComposeProject: name,
-					comDockerComposeService: name,
-					[routerLabel(app.router, 'Rule')]: `Host(\`${app.host}.${fqdn}\`)`,
-					[routerLabel(app.router, 'Entrypoints')]: 'https'
+					comDockerComposeProject: app.name,
+					comDockerComposeService: app.name,
+					...(app.host ? {
+						[routerLabel(app.router, 'Rule')]: `Host(\`${app.host}.${fqdn}\`)`,
+						[routerLabel(app.router, 'Entrypoints')]: 'https'
+					} : {})
 				}
 			};
 		})
 	};
+};
+
+const running = (names, fqdn) => {
+	return runningApps(names.map((name) => { return { name, ...CORE_APPS[name] }; }), fqdn);
 };
 
 const certificate = (fqdn, isIssued) => {
@@ -65,6 +87,8 @@ export {
 	queuedJob,
 	downloadingJob,
 	installingJob,
+	catalogue,
 	running,
+	runningApps,
 	certificate
 };
