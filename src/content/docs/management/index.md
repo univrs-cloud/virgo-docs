@@ -13,3 +13,4 @@ Once setup is finished, the node is managed from its dashboard, at the name you 
 1. [Authentication](/management/authentication/): signing in and out, and what is gated by an account.
 2. [Users](/management/users/): the people who can sign in and their roles.
 3. [Your profile](/management/profile/): your own name, email address and password.
+4. [Updates](/management/updates/): keeping virgoOS up to date.

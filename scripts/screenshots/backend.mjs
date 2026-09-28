@@ -57,7 +57,8 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 	});
 
 	io.of('/host').on('connection', (socket) => {
-		socket.emit('host:update', null);
+		socket.emit('host:update', state.update ?? null);
+		socket.emit('host:updates:check', state.checkUpdates ?? false);
 		socket.emit('host:system', state.system);
 		socket.emit('host:discovery', state.discovery);
 		socket.emit('host:drives', state.drives);

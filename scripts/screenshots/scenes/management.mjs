@@ -2,6 +2,7 @@ import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open,
 import * as apps from '../data/apps.mjs';
 import { nodeState } from '../data/node.mjs';
 import { networkHistory } from '../data/status.mjs';
+import * as updates from '../data/updates.mjs';
 import * as users from '../data/users.mjs';
 
 const PADDING = 32;
@@ -40,6 +41,10 @@ const signedInPage = async (browser, backend, viewport, user) => {
 	await page.setCookie(users.accountCookie(backend.url, user));
 	return page;
 };
+
+const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
+const CHECKING_PADDING = { top: 48, right: 160, bottom: 48, left: 160 };
+const MENU_PADDING = { top: 4, right: 16, bottom: 8, left: 16 };
 
 const pages = {
 	authentication: async ({ browser, backend, capture, viewport }) => {
@@ -114,6 +119,42 @@ const pages = {
 		const regular = await signedInPage(browser, backend, viewport, users.regularUser());
 		await open(regular, backend.url, '/users/profile', '#profile .container-fluid:not(.d-none)');
 		await capture.viewport(regular, 'profile-user');
+		await closePage(regular);
+	},
+	updates: async ({ browser, backend, capture, viewport }) => {
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		backend.setState({ ...managedNode(backend), updates: [] });
+		await open(page, backend.url, '/system-updates', UPDATES_PAGE);
+		await capture.viewport(page, 'updates-none');
+
+		backend.setState({ ...managedNode(backend), updates: [], checkUpdates: true });
+		await open(page, backend.url, '/system-updates', UPDATES_PAGE);
+		await capture.region(page, ['#system-updates .no-content .icon-face-party', '#system-updates .no-content .check-updates'], 'updates-checking', CHECKING_PADDING);
+
+		backend.setState({ ...managedNode(backend), updates: updates.available() });
+		await open(page, backend.url, '/system-updates', UPDATES_PAGE);
+		await capture.viewport(page, 'updates-available');
+
+		await open(page, backend.url, '/', 'header a[href="/system-updates"] u-badge');
+		await capture.region(page, ['header a[href="/settings"]', 'header a[href="/about"]'], 'updates-menu', MENU_PADDING);
+
+		backend.setState({ ...managedNode(backend), updates: updates.available(), update: updates.running() });
+		await open(page, backend.url, '/', '#update .steps');
+		await capture.viewport(page, 'update-progress');
+
+		backend.setState({ ...managedNode(backend), updates: [], update: updates.finished() });
+		await open(page, backend.url, '/', '#update [data-action="complete"]');
+		await capture.viewport(page, 'update-finished');
+
+		backend.setState({ ...managedNode(backend), updates: updates.available(), update: updates.failed() });
+		await open(page, backend.url, '/', '#update [data-action="complete"]');
+		await capture.viewport(page, 'update-failed');
+		await closePage(page);
+
+		backend.setState({ ...managedNode(backend), updates: updates.available(), update: updates.running() });
+		const regular = await signedInPage(browser, backend, viewport, users.regularUser());
+		await open(regular, backend.url, '/', '#maintenance');
+		await capture.viewport(regular, 'update-maintenance');
 		await closePage(regular);
 	}
 };
