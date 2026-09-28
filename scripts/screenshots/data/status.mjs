@@ -1,7 +1,7 @@
 const status = () => {
 	return {
 		cpuStats: { currentLoad: 12, temperature: { main: 41 } },
-		memory: { total: 16 * 1024 ** 3, available: 10.4 * 1024 ** 3 },
+		memory: { total: 15.8 * 1024 ** 3, available: 10.3 * 1024 ** 3 },
 		networkStats: { iface: 'bond0', rx_sec: 1.8 * 1024 ** 2, tx_sec: 0.4 * 1024 ** 2 },
 		time: { uptime: 5 * 86400 + 7 * 3600 },
 		ups: { powerSource: 'grid', capacity: 100, isCharging: false }
