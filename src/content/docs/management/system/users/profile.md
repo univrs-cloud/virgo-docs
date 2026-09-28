@@ -2,7 +2,7 @@
 title: Your profile
 description: Your own account on the node, for every signed-in user.
 sidebar:
-  order: 6
+  order: 7
 ---
 
 Every signed-in user has a profile, whatever their role. Open it from the account menu with your name, then select **Your profile**.

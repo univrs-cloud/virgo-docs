@@ -19,9 +19,29 @@ const MIME_TYPES = {
 };
 
 const APP_ICONS_PATH = '/assets/img/apps/';
+const SHORTCUT_ICONS_PATH = '/assets/img/shortcuts/';
+const SHORTCUT_ICONS_CDN = 'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons';
+
+const serveShortcutIcon = async (file, response) => {
+	const extension = path.extname(file).slice(1).toLowerCase();
+	const upstream = await fetch(`${SHORTCUT_ICONS_CDN}/${extension}/${file}`).catch(() => { return null; });
+	if (!upstream?.ok) {
+		response.writeHead(404);
+		response.end();
+		return;
+	}
+
+	response.writeHead(200, { 'Content-Type': MIME_TYPES[`.${extension}`] || 'application/octet-stream' });
+	response.end(Buffer.from(await upstream.arrayBuffer()));
+};
 
 const serveFile = (root, iconsDir, request, response) => {
 	const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+	if (pathname.startsWith(SHORTCUT_ICONS_PATH)) {
+		serveShortcutIcon(path.basename(pathname), response);
+		return;
+	}
+
 	let file = (pathname.startsWith(APP_ICONS_PATH) ? path.join(iconsDir, pathname.slice(APP_ICONS_PATH.length)) : path.join(root, pathname));
 	if (pathname.startsWith(APP_ICONS_PATH) && file.startsWith(iconsDir) && fs.existsSync(file)) {
 		response.writeHead(200, { 'Content-Type': MIME_TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream' });
@@ -118,6 +138,8 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 			socket.emit('share:paths:custom', state.customPaths ?? []);
 		});
 	});
+
+	io.of('/shortcut');
 
 	io.of('/docker').on('connection', (socket) => {
 		socket.emit('app:configured', state.configured);

@@ -5,7 +5,11 @@ import * as status from './status.mjs';
 import * as storage from './storage.mjs';
 import * as users from './users.mjs';
 
-const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null } = {}) => {
+const withShortcuts = (running, shortcutList) => {
+	return { ...running, configured: [...running.configured, ...shortcutList] };
+};
+
+const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, shortcutList = [] } = {}) => {
 	const drives = storage.drives({ isReplaced: Boolean(replacedDrive) });
 	const topologies = getTopologies(drives);
 	const hasPool = (poolUsedPercent !== null);
@@ -30,7 +34,7 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 		users: userList,
 		shares: shareList,
 		updates: [],
-		...apps.running(runningApps, network.fqdn(domain)),
+		...withShortcuts(apps.running(runningApps, network.fqdn(domain)), shortcutList),
 		...(withStatus ? status.status() : { cpuStats: null, memory: null, networkStats: null, time: null, ups: null })
 	};
 };

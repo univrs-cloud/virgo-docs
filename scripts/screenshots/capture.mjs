@@ -146,7 +146,8 @@ const createCapture = (outDir) => {
 		},
 		region: async (page, selectors, name, padding) => {
 			const box = await unionBox(page, selectors);
-			await save(page, name, { clip: clipAround(box, padding, page.viewport()), captureBeyondViewport: true });
+			const clip = clipAround(box, padding, page.viewport());
+			await save(page, name, { clip, captureBeyondViewport: (clip.y + clip.height > page.viewport().height) });
 		},
 		viewport: async (page, name) => {
 			await save(page, name);

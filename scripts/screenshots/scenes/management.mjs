@@ -1,10 +1,12 @@
 import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open, setValue, blur, openMenu, openModal, closeModal } from '../capture.mjs';
 import * as apps from '../data/apps.mjs';
+import { DOMAINS } from '../data/network.mjs';
 import { nodeState } from '../data/node.mjs';
 import { networkHistory } from '../data/status.mjs';
 import * as serviceData from '../data/services.mjs';
 import * as settings from '../data/settings.mjs';
 import * as shares from '../data/shares.mjs';
+import * as shortcuts from '../data/shortcuts.mjs';
 import * as updates from '../data/updates.mjs';
 import * as users from '../data/users.mjs';
 
@@ -81,6 +83,29 @@ const storagePage = async (browser, backend, viewport) => {
 	return page;
 };
 
+const SHORTCUTS_PAGE = '#shortcuts .container-fluid:not(.d-none)';
+const ICON_POPOVER = '#shortcut-create .shortcut-icon-box .popover';
+const shortcutRow = (shortcut) => { return `#shortcuts tr[data-name="${shortcut.name}"]`; };
+
+const shortcutsNode = (backend) => {
+	return managedNode(backend, { shortcutList: shortcuts.shortcuts(DOMAINS.univrs) });
+};
+
+const waitForImages = async (page, selector) => {
+	await page.waitForFunction((selector) => {
+		const images = [...document.querySelectorAll(selector)];
+		return images.length > 0 && images.every((image) => { return image.complete && image.naturalWidth > 0; });
+	}, {}, selector);
+	await sleep(SETTLE_MS);
+};
+
+const openShortcutCreate = async (browser, backend, viewport) => {
+	const page = await signedInPage(browser, backend, viewport, users.owner());
+	await open(page, backend.url, '/shortcuts', SHORTCUTS_PAGE);
+	await openModal(page, '#shortcuts a[href="#shortcut-create"]', '#shortcut-create');
+	return page;
+};
+
 const FOLDERS_PAGE = '#folders .container-fluid:not(.d-none)';
 const FOLDER_CREATE_READY = '#folder-create .content:not(.d-none)';
 const folderRow = (share) => { return `#folders tr[data-id="${share.name}"]`; };
@@ -144,6 +169,55 @@ const pages = {
 		await openMenu(signedIn, `${VISIBLE_ACCOUNT} .account-toggle`, `${VISIBLE_ACCOUNT} .dropdown-menu.show`);
 		await capture.region(signedIn, [`${VISIBLE_ACCOUNT} .dropdown-menu.show`, `${VISIBLE_ACCOUNT} .account-toggle`], 'account-menu', ACCOUNT_MENU_PADDING);
 		await closePage(signedIn);
+	},
+	shortcuts: async ({ browser, backend, capture, viewport }) => {
+		const list = shortcuts.shortcuts(DOMAINS.univrs);
+		const proxied = list.find((shortcut) => { return shortcut.traefik; });
+		backend.setState(shortcutsNode(backend));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await open(page, backend.url, '/shortcuts', SHORTCUTS_PAGE);
+		await waitForImages(page, '#shortcuts tbody img');
+		await capture.viewport(page, 'shortcuts');
+
+		await openMenu(page, `${shortcutRow(proxied)} .dropdown-toggle`, '#shortcuts .dropdown-menu.show');
+		await capture.region(page, ['#shortcuts .search', '#shortcuts table', '#shortcuts .dropdown-menu.show'], 'shortcuts-menu', PADDING);
+		await closePage(page);
+
+		const link = await openShortcutCreate(browser, backend, viewport);
+		await setValue(link, '#shortcut-create .title', shortcuts.NEW_LINK.title);
+		await setValue(link, '#shortcut-create .category', shortcuts.NEW_LINK.category);
+		await setValue(link, '#shortcut-create .url', shortcuts.NEW_LINK.url);
+		await link.$eval('#shortcut-create .shortcut-icon-img', (image, src) => { image.src = src; }, shortcuts.iconUrl(shortcuts.NEW_LINK.icon));
+		await blur(link);
+		await waitForImages(link, '#shortcut-create .shortcut-icon-img');
+		await capture.region(link, ['#shortcut-create .modal-content'], 'shortcut-create', PADDING);
+		await closePage(link);
+
+		const proxy = await openShortcutCreate(browser, backend, viewport);
+		await setValue(proxy, '#shortcut-create .title', shortcuts.NEW_PROXY.title);
+		await setValue(proxy, '#shortcut-create .category', shortcuts.NEW_PROXY.category);
+		await proxy.click('#shortcut-create .shortcut-icon-box');
+		await proxy.waitForSelector(`${ICON_POPOVER} .icon-search`, { visible: true });
+		await setValue(proxy, `${ICON_POPOVER} .icon-search`, shortcuts.ICON_SEARCH);
+		await waitForImages(proxy, `${ICON_POPOVER} .shortcut-icon-results img`);
+		await capture.region(proxy, ['#shortcut-create .modal-content', ICON_POPOVER], 'shortcut-icon', PADDING);
+		await proxy.click(`${ICON_POPOVER} .shortcut-icon-result-item`);
+		await proxy.waitForSelector(ICON_POPOVER, { hidden: true });
+		await proxy.click('#shortcut-create .use-proxy >>> input');
+		await proxy.waitForSelector('#shortcut-create .proxy-container:not(.d-none)', { visible: true });
+		await setValue(proxy, '#shortcut-create .subdomain', shortcuts.NEW_PROXY.subdomain);
+		await setValue(proxy, '#shortcut-create .backend-url', shortcuts.NEW_PROXY.backendUrl);
+		await proxy.click('#shortcut-create .require-auth >>> input');
+		await blur(proxy);
+		await waitForImages(proxy, '#shortcut-create .shortcut-icon-img');
+		await capture.region(proxy, ['#shortcut-create .modal-content'], 'shortcut-create-proxy', PADDING);
+		await closePage(proxy);
+
+		const dashboard = await signedInPage(browser, backend, viewport, users.owner());
+		await open(dashboard, backend.url, '/', '#apps-shortcuts .card');
+		await waitForImages(dashboard, '#apps-shortcuts img');
+		await capture.region(dashboard, ['#apps-shortcuts'], 'shortcuts-dashboard', { ...DASHBOARD_GROUP_PADDING, bottom: 0 });
+		await closePage(dashboard);
 	},
 	folders: async ({ browser, backend, capture, viewport }) => {
 		const folders = shares.folders();

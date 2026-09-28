@@ -2,7 +2,7 @@
 title: Updates
 description: Keeping virgoOS up to date, from the Updates page.
 sidebar:
-  order: 10
+  order: 11
 ---
 
 **Updates** shows whether new versions of virgoOS are available and installs them.

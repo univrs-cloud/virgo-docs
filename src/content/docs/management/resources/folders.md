@@ -2,7 +2,7 @@
 title: Folders
 description: Shared folders on the node, for the computers on your local network.
 sidebar:
-  order: 2
+  order: 3
 ---
 
 **Folders** are shared folders on the node that the computers on your local network can open, whether they run Windows, macOS or Linux. Users reach them with their node username and password, unless the folder is open to everyone on the network.

@@ -18,6 +18,7 @@ Every other page in the menu is for [administrators](/management/system/users/#r
 
 - [Authentication](/management/authentication/): signing in and out, and what is gated by an account.
 - Resources
+  - [Shortcuts](/management/resources/shortcuts/): links on the Dashboard to devices and websites, optionally reached through the node.
   - [Folders](/management/resources/folders/): shared folders for the computers on your local network.
   - [Time machines](/management/resources/time-machines/): backup destinations for the Time Machine app on Macs.
 - System
