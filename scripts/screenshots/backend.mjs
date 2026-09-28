@@ -62,6 +62,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 	const require = createRequire(path.join(apiDir, 'package.json'));
 	const { Server } = await import(pathToFileURL(require.resolve('socket.io')).href);
 	const { getTopologies } = await import(pathToFileURL(path.join(apiDir, 'src/utils/topology.js')).href);
+	const { version: apiVersion } = JSON.parse(fs.readFileSync(path.join(apiDir, 'package.json'), 'utf8'));
 	const root = path.join(uiDir, 'dist');
 	if (!fs.existsSync(path.join(root, 'index.html'))) {
 		throw new Error(`No build found at ${root}.`);
@@ -158,6 +159,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 	return {
 		url: `http://localhost:${server.address().port}`,
 		appsDir,
+		apiVersion,
 		getTopologies,
 		broadcast: (namespace, event, payload) => {
 			io.of(namespace).emit(event, payload);

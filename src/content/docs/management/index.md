@@ -31,3 +31,4 @@ Every other page in the menu is for [administrators](/management/system/users/#r
   - [Network](/management/system/network/): the node's name, its network interface and trusted proxies.
   - [Settings](/management/system/settings/): notifications, location and the weather, fleet and power.
   - [Updates](/management/system/updates/): keeping virgoOS up to date.
+  - [About](/management/system/about/): the versions of the software on the node and its hardware.

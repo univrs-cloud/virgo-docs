@@ -1,3 +1,4 @@
+import * as about from './about.mjs';
 import * as apps from './apps.mjs';
 import * as fleet from './fleet.mjs';
 import * as network from './network.mjs';
@@ -9,13 +10,22 @@ const withShortcuts = (running, shortcutList) => {
 	return { ...running, configured: [...running.configured, ...shortcutList] };
 };
 
-const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, shortcutList = [], peer = null, indexedAt = null, appEntries = null } = {}) => {
+const withAbout = (system, apiVersion) => {
+	if (apiVersion === null) {
+		return system;
+	}
+
+	const details = about.system(apiVersion);
+	return { ...system, ...details, osInfo: { ...system.osInfo, kernel: about.SOFTWARE.kernel } };
+};
+
+const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, shortcutList = [], peer = null, indexedAt = null, appEntries = null, apiVersion = null } = {}) => {
 	const drives = storage.drives({ isReplaced: Boolean(replacedDrive) });
 	const topologies = getTopologies(drives);
 	const hasPool = (poolUsedPercent !== null);
 	return {
 		setupCompleted,
-		system: network.system(domain, !isStandby),
+		system: withAbout(network.system(domain, !isStandby), apiVersion),
 		discovery: (isStandby ? network.holdingPeer(domain) : (peer ? network.discoveredPeers(domain, peer === 'adopted') : [])),
 		peers: (peer === 'adopted' ? network.adoptedPeers() : []),
 		indexerStats: (indexedAt === null ? null : status.indexerStats(indexedAt)),

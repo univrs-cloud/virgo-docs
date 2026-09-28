@@ -618,6 +618,13 @@ const pages = {
 		await capture.viewport(page, 'services-logs');
 		await closePage(page);
 	},
+	about: async ({ browser, backend, capture, viewport }) => {
+		backend.setState(managedNode(backend, { apiVersion: backend.apiVersion }));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await open(page, backend.url, '/about', '#about .container-fluid:not(.d-none)');
+		await capture.viewport(page, 'about');
+		await closePage(page);
+	},
 	updates: async ({ browser, backend, capture, viewport }) => {
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		backend.setState({ ...managedNode(backend), updates: [] });
