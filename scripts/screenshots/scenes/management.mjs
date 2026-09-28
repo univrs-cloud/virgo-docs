@@ -2,6 +2,7 @@ import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open,
 import * as apps from '../data/apps.mjs';
 import { nodeState } from '../data/node.mjs';
 import { networkHistory } from '../data/status.mjs';
+import * as serviceData from '../data/services.mjs';
 import * as settings from '../data/settings.mjs';
 import * as updates from '../data/updates.mjs';
 import * as users from '../data/users.mjs';
@@ -51,6 +52,17 @@ const FLEET_CARD = '#settings .row > .col-12:nth-child(3) .card';
 const NETWORK_PAGE = '#network .container-fluid:not(.d-none)';
 const networkCard = (index) => { return `#network .container-fluid > .row > .col-12:nth-child(${index}) .card`; };
 const TRUSTED_PROXY = '192.168.1.5';
+
+const SERVICES_PAGE = '#system-services .container-fluid:not(.d-none)';
+const SERVICES_FILTER = '#system-services .dropdown:has(.filter-menu)';
+
+const searchServices = async (page, value) => {
+	await page.$eval('#system-services .search', (element, value) => {
+		element.value = value;
+		element.dispatchEvent(new Event('input', { bubbles: true }));
+	}, value);
+	await sleep(SETTLE_MS);
+};
 
 const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
 const CHECKING_PADDING = { top: 48, right: 160, bottom: 48, left: 160 };
@@ -231,6 +243,52 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(standby, ['#network-interface .modal-content', '.tooltip.show'], 'network-interface-standby', PADDING);
 		await closePage(standby);
+	},
+	services: async ({ browser, backend, capture, viewport }) => {
+		backend.setState({ ...managedNode(backend), services: serviceData.services(), serviceLogs: { [serviceData.LOG_UNIT]: serviceData.LOGS } });
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await open(page, backend.url, '/system-services', SERVICES_PAGE);
+		await capture.viewport(page, 'services');
+
+		await page.click('#system-services .filter-type [data-filter-type="service"]');
+		await sleep(SETTLE_MS);
+		await openMenu(page, `${SERVICES_FILTER} u-button`, '#system-services .filter-menu.show');
+		await page.click('#system-services-filter-sub-running');
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['#system-services .search', '#system-services .filter-type', '#system-services .filter-pills', '#system-services .filter-menu.show'], 'services-filter', PADDING);
+		await page.keyboard.press('Escape');
+		await blur(page);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'services-filtered');
+		await page.click('#system-services [data-action="clear-filters"]');
+		await page.click('#system-services .filter-type [data-filter-type=""]');
+		await sleep(SETTLE_MS);
+
+		const failedRow = '#system-services tbody tr[data-unit="systemd-networkd-wait-online.service"]';
+		const maskedRow = '#system-services tbody tr[data-unit="systemd-networkd.service"]';
+		await searchServices(page, 'systemd-networkd');
+		await page.waitForSelector(failedRow, { visible: true });
+		await page.waitForSelector(maskedRow, { visible: true });
+		await blur(page);
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['#system-services .search', '#system-services .filter-type', '#system-services thead', failedRow, maskedRow], 'services-problems', PADDING);
+		await searchServices(page, '');
+
+		const unitRow = `#system-services tbody tr[data-unit="${serviceData.LOG_UNIT}"]`;
+		await openMenu(page, `${unitRow} .dropdown-toggle`, '#system-services tbody .dropdown-menu.show');
+		await capture.region(page, [unitRow, '#system-services tbody .dropdown-menu.show'], 'services-menu', PADDING);
+		await page.keyboard.press('Escape');
+		await sleep(SETTLE_MS);
+
+		await open(page, backend.url, `/system-services/${serviceData.LOG_UNIT}`, '#system-services .details .item');
+		await capture.viewport(page, 'services-details');
+		await page.click('#system-services .details a.logs');
+		await page.waitForSelector('#system-services .details .logs-container:not(.d-none) li', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'services-logs');
+		await closePage(page);
 	},
 	updates: async ({ browser, backend, capture, viewport }) => {
 		const page = await signedInPage(browser, backend, viewport, users.owner());

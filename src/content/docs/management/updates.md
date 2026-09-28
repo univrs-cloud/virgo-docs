@@ -2,10 +2,10 @@
 title: Updates
 description: Keeping virgoOS up to date, from the Updates page.
 sidebar:
-  order: 6
+  order: 7
 ---
 
-**Updates** shows whether new versions of virgoOS are available and installs them. Only administrators see it in the menu.
+**Updates** shows whether new versions of virgoOS are available and installs them.
 
 ## Up to date
 

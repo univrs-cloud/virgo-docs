@@ -2,10 +2,10 @@
 title: Network
 description: The node's name, its network interface and trusted proxies, from the Network page.
 sidebar:
-  order: 4
+  order: 5
 ---
 
-**Network** shows the name the node answers to, how it is connected to your network and which proxies it trusts. Only administrators see it in the menu.
+**Network** shows the name the node answers to, how it is connected to your network and which proxies it trusts.
 
 ![The Network page](../../../assets/management/network.png)
 

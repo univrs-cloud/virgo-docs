@@ -73,6 +73,16 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.emit('host:time', state.time);
 		socket.emit('host:ups', state.ups);
 		socket.emit('host:setupCompleted', state.setupCompleted);
+		socket.emit('host:system:services', state.services ?? null);
+		socket.on('host:system:services:fetch', () => {
+			socket.emit('host:system:services', state.services ?? null);
+		});
+		socket.on('host:service:logs:connect', (unit) => {
+			socket.emit('host:service:logs:connected');
+			for (const line of (state.serviceLogs?.[unit] || [])) {
+				socket.emit('host:service:logs:output', line);
+			}
+		});
 		socket.on('host:storage:importable:fetch', () => {
 			socket.emit('host:storage:importable', state.importable);
 		});

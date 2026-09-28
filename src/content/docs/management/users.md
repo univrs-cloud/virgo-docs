@@ -19,7 +19,7 @@ Only the owner can give a user the administrator role.
 
 ## Managing users
 
-**Users** lists everyone who can sign in to the node. Only administrators see it in the menu. The owner is marked with a crown, and your own account with **YOU**.
+**Users** lists everyone who can sign in to the node. The owner is marked with a crown, and your own account with **YOU**.
 
 ![The users list](../../../assets/management/users.png)
 
