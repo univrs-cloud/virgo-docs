@@ -17,10 +17,11 @@ Every other page in the menu is for [administrators](/management/users/#roles) o
 ## Topics
 
 1. [Authentication](/management/authentication/): signing in and out, and what is gated by an account.
-2. [Storage](/management/storage/): the storage pool, its health, data integrity, usage and drives.
-3. [Users](/management/users/): the people who can sign in and their roles.
+2. [Time machines](/management/time-machines/): backup destinations for the Time Machine app on Macs.
+3. [Storage](/management/storage/): the storage pool, its health, data integrity, usage and drives.
+4. [Users](/management/users/): the people who can sign in and their roles.
    - [Your profile](/management/users/profile/): your own name, email address and password.
-4. [Services](/management/services/): the system services on the node, their logs, and starting or stopping them.
-5. [Network](/management/network/): the node's name, its network interface and trusted proxies.
-6. [Settings](/management/settings/): notifications, location and the weather, fleet and power.
-7. [Updates](/management/updates/): keeping virgoOS up to date.
+5. [Services](/management/services/): the system services on the node, their logs, and starting or stopping them.
+6. [Network](/management/network/): the node's name, its network interface and trusted proxies.
+7. [Settings](/management/settings/): notifications, location and the weather, fleet and power.
+8. [Updates](/management/updates/): keeping virgoOS up to date.

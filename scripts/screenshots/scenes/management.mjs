@@ -4,6 +4,7 @@ import { nodeState } from '../data/node.mjs';
 import { networkHistory } from '../data/status.mjs';
 import * as serviceData from '../data/services.mjs';
 import * as settings from '../data/settings.mjs';
+import * as shares from '../data/shares.mjs';
 import * as updates from '../data/updates.mjs';
 import * as users from '../data/users.mjs';
 
@@ -80,6 +81,16 @@ const storagePage = async (browser, backend, viewport) => {
 	return page;
 };
 
+const TIME_MACHINES_PAGE = '#time-machines .container-fluid:not(.d-none)';
+const DASHBOARD_GROUP_PADDING = { top: 12, right: 16, bottom: 16, left: 16 };
+const timeMachineRow = (share) => { return `#time-machines tr[data-id="${share.name}"]`; };
+
+const hoverTooltip = async (page, selector) => {
+	await page.hover(selector);
+	await page.waitForSelector('.tooltip.show', { visible: true });
+	await sleep(SETTLE_MS);
+};
+
 const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
 const CHECKING_PADDING = { top: 48, right: 160, bottom: 48, left: 160 };
 const MENU_PADDING = { top: 4, right: 16, bottom: 8, left: 16 };
@@ -109,6 +120,46 @@ const pages = {
 		await openMenu(signedIn, `${VISIBLE_ACCOUNT} .account-toggle`, `${VISIBLE_ACCOUNT} .dropdown-menu.show`);
 		await capture.region(signedIn, [`${VISIBLE_ACCOUNT} .dropdown-menu.show`, `${VISIBLE_ACCOUNT} .account-toggle`], 'account-menu', ACCOUNT_MENU_PADDING);
 		await closePage(signedIn);
+	},
+	'time-machines': async ({ browser, backend, capture, viewport }) => {
+		const timeMachines = shares.timeMachines(settings.WEATHER_CLOCK);
+		const [first, second] = timeMachines;
+		backend.setState(managedNode(backend, { shareList: timeMachines }));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(page, settings.WEATHER_CLOCK);
+		await open(page, backend.url, '/time-machines', TIME_MACHINES_PAGE);
+		await capture.viewport(page, 'time-machines');
+
+		await hoverTooltip(page, `${timeMachineRow(first)} [data-action="copy-to-clipboard"]`);
+		await capture.region(page, ['#time-machines .search', '#time-machines table', '.tooltip.show'], 'time-machines-address', PADDING);
+
+		await hoverTooltip(page, `${timeMachineRow(first)} td:nth-child(4) small`);
+		await capture.region(page, ['#time-machines .search', '#time-machines table', '.tooltip.show'], 'time-machines-backups', PADDING);
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+
+		await openMenu(page, `${timeMachineRow(second)} .dropdown-toggle`, '#time-machines .dropdown-menu.show');
+		await capture.region(page, ['#time-machines .search', '#time-machines table', '#time-machines .dropdown-menu.show'], 'time-machines-menu', PADDING);
+
+		await openModal(page, `${timeMachineRow(second)} a[href="#time-machine-update"]`, '#time-machine-update');
+		await blur(page);
+		await capture.region(page, ['#time-machine-update .modal-content'], 'time-machine-edit', PADDING);
+		await closePage(page);
+
+		const creating = await signedInPage(browser, backend, viewport, users.owner());
+		await open(creating, backend.url, '/time-machines', TIME_MACHINES_PAGE);
+		await openModal(creating, '#time-machines a[href="#time-machine-create"]', '#time-machine-create');
+		await setValue(creating, '#time-machine-create .comment', shares.NEW_TIME_MACHINE.comment);
+		await setValue(creating, '#time-machine-create .valid-users', shares.NEW_TIME_MACHINE.user);
+		await setValue(creating, '#time-machine-create .refquota', shares.NEW_TIME_MACHINE.capacity);
+		await blur(creating);
+		await capture.region(creating, ['#time-machine-create .modal-content'], 'time-machine-create', PADDING);
+		await closePage(creating);
+
+		const dashboard = await signedInPage(browser, backend, viewport, users.owner());
+		await open(dashboard, backend.url, '/', '#shares .time-machines .card');
+		await capture.region(dashboard, ['#shares .time-machines'], 'time-machines-dashboard', DASHBOARD_GROUP_PADDING);
+		await closePage(dashboard);
 	},
 	users: async ({ browser, backend, capture, viewport }) => {
 		backend.setState(managedNode(backend));

@@ -34,7 +34,7 @@ npm run screenshots -- setup/storage management/users  # single pages
 The script serves the build at `../virgo-ui/dist`, so build virgo-ui first. It also reads socket.io and the pool layouts from `../virgo-api`, and app icons from `../virgo-apps/images`. Set `VIRGO_UI`, `VIRGO_API`, `VIRGO_APPS` or `CHROME_PATH` to use other paths.
 
 - `scripts/screenshots/scenes/` has one file per section, with one entry per docs page. Each page sets up its own state, so it can be rendered on its own.
-- `scripts/screenshots/data/` holds the fake data, one file per topic: network, storage, fleet, apps, users and node status.
+- `scripts/screenshots/data/` holds the fake data, one file per topic.
 - Screenshots no longer produced by a section are deleted only when the whole section is rendered.
 
 ## Deployment

@@ -3,7 +3,7 @@ title: Users
 description: The people who can sign in to the node and their roles.
 sidebar:
   label: Managing users
-  order: 3
+  order: 4
 ---
 
 A user of the node signs in to the node itself, and uses the same username and password to reach folders and Time Machine backups. Apps keep their own users, separate from these.
@@ -30,7 +30,7 @@ Open a user's menu to manage them:
 
 - **Edit:** change the user's name and email address. The owner can also change their role.
 - **Change password:** set a new password for the user.
-- **Lock:** stop the user from signing in, without deleting them. **Unlock** lets them sign in again.
+- **Lock:** stop the user from signing in and from reaching folders and time machines, without deleting them. **Unlock** gives them access again.
 - **Delete:** remove the user.
 
 Your own account has no menu here; it links to your [profile](/management/users/profile/) instead.

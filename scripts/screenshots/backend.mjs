@@ -110,6 +110,12 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.emit('users', state.users);
 	});
 
+	io.of('/share').on('connection', (socket) => {
+		if (state.shares) {
+			socket.emit('shares', state.shares);
+		}
+	});
+
 	io.of('/docker').on('connection', (socket) => {
 		socket.emit('app:configured', state.configured);
 		socket.emit('app:containers', state.containers);
