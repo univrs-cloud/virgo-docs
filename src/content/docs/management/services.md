@@ -2,7 +2,7 @@
 title: Services
 description: The system services running on the node, their logs, and starting, stopping, enabling or disabling them.
 sidebar:
-  order: 4
+  order: 5
 ---
 
 **Services** lists the system services that make up the node, such as Docker, file sharing and the node's own API, together with their timers, sockets and other parts.

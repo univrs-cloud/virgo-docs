@@ -64,6 +64,22 @@ const searchServices = async (page, value) => {
 	await sleep(SETTLE_MS);
 };
 
+const STORAGE_PAGE = '#storage .container-fluid:not(.d-none)';
+const STORAGE_POOL = '#storage .details .item';
+const poolCard = (index) => { return `#storage .details .overflow-y-scroll > .card:nth-child(${index})`; };
+const SNAPSHOT_COUNT = 142;
+const POOL_CARD_PADDING = { top: 8, right: PADDING, bottom: 8, left: 8 };
+
+const storageNode = (backend, overrides = {}) => {
+	return managedNode(backend, { now: settings.WEATHER_CLOCK, scrub: 'finished', snapshotCount: SNAPSHOT_COUNT, ...overrides });
+};
+
+const storagePage = async (browser, backend, viewport) => {
+	const page = await signedInPage(browser, backend, viewport, users.owner());
+	await controlClock(page, settings.WEATHER_CLOCK);
+	return page;
+};
+
 const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
 const CHECKING_PADDING = { top: 48, right: 160, bottom: 48, left: 160 };
 const MENU_PADDING = { top: 4, right: 16, bottom: 8, left: 16 };
@@ -243,6 +259,49 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(standby, ['#network-interface .modal-content', '.tooltip.show'], 'network-interface-standby', PADDING);
 		await closePage(standby);
+	},
+	storage: async ({ browser, backend, capture, viewport }) => {
+		backend.setState(storageNode(backend));
+		const page = await storagePage(browser, backend, viewport);
+		await open(page, backend.url, '/storage', STORAGE_PAGE);
+		await capture.viewport(page, 'storage');
+
+		await open(page, backend.url, '/storage/messier', STORAGE_POOL);
+		await page.click('#storage .details .details-toggle');
+		await page.waitForSelector('#storage .details .vdev-rows.show', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.fullPage(page, 'storage-pool');
+		await closePage(page);
+
+		backend.setState(storageNode(backend, { scrub: 'running' }));
+		const scrubbing = await storagePage(browser, backend, viewport);
+		await open(scrubbing, backend.url, '/storage/messier', STORAGE_POOL);
+		await capture.region(scrubbing, [poolCard(1)], 'storage-scrub', POOL_CARD_PADDING);
+		await closePage(scrubbing);
+
+		backend.setState(storageNode(backend, { missingDrive: 'nvme0n1' }));
+		const degraded = await storagePage(browser, backend, viewport);
+		await open(degraded, backend.url, '/storage', STORAGE_PAGE);
+		await capture.region(degraded, ['#storage .search', '#storage table'], 'storage-degraded', CARD_PADDING);
+		await open(degraded, backend.url, '/storage/messier', STORAGE_POOL);
+		await degraded.click('#storage .details .details-toggle');
+		await degraded.waitForSelector('#storage .details .vdev-rows.show', { visible: true });
+		await degraded.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(degraded, [poolCard(3)], 'storage-degraded-topology', POOL_CARD_PADDING);
+		await closePage(degraded);
+
+		backend.setState(storageNode(backend, { replacedDrive: 'nvme0n1', scrub: 'resilver' }));
+		const resilvering = await storagePage(browser, backend, viewport);
+		await open(resilvering, backend.url, '/storage/messier', STORAGE_POOL);
+		await capture.region(resilvering, [poolCard(1)], 'storage-resilver', POOL_CARD_PADDING);
+		await resilvering.click('#storage .details .details-toggle');
+		await resilvering.waitForSelector('#storage .details .vdev-rows.show', { visible: true });
+		await resilvering.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(resilvering, [poolCard(3)], 'storage-resilver-topology', POOL_CARD_PADDING);
+		await closePage(resilvering);
 	},
 	services: async ({ browser, backend, capture, viewport }) => {
 		backend.setState({ ...managedNode(backend), services: serviceData.services(), serviceLogs: { [serviceData.LOG_UNIT]: serviceData.LOGS } });

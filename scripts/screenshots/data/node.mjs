@@ -5,17 +5,18 @@ import * as status from './status.mjs';
 import * as storage from './storage.mjs';
 import * as users from './users.mjs';
 
-const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false } = {}) => {
-	const drives = storage.drives();
+const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0 } = {}) => {
+	const drives = storage.drives({ isReplaced: Boolean(replacedDrive) });
 	const topologies = getTopologies(drives);
 	const hasPool = (poolUsedPercent !== null);
 	return {
 		setupCompleted,
 		system: network.system(domain, !isStandby),
 		discovery: (isStandby ? network.holdingPeer(domain) : []),
-		drives,
+		drives: (missingDrive ? drives.filter((drive) => { return drive.name !== missingDrive; }) : drives),
 		topologies,
-		storage: [storage.systemPool(), ...(hasPool ? [storage.dataPool(drives, topologies[0], poolUsedPercent)] : [])],
+		storage: [storage.systemPool(), ...(hasPool ? [storage.dataPool(drives, topologies[0], poolUsedPercent, { now, scan: scrub, missingDrive, replacedDrive })] : [])],
+		snapshots: storage.snapshots(snapshotCount),
 		importable: [],
 		certificate: (certificateIssued === null ? null : apps.certificate(network.fqdn(domain), certificateIssued)),
 		configuration: {
