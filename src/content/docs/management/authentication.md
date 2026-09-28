@@ -19,9 +19,9 @@ Select **Remember me** to stay signed in on this browser for 7 days.
 
 On your local network (addresses starting with `192.168`) and when connected through the node's VPN, nothing is gated by a node account.
 
-The dashboard opens without signing in, so anyone there can quickly find the shortcuts to the apps they want to open. To change anything on the node, select **Sign in**.
+The **Dashboard** opens without signing in, so anyone there can quickly find the shortcuts to the apps they want to open. To change anything on the node, select **Sign in**.
 
-![The dashboard without signing in](../../../assets/management/local.png)
+![The Dashboard without signing in](../../../assets/management/local.png)
 
 Apps open without the node's sign-in too, but each app still asks you to sign in with its own account.
 

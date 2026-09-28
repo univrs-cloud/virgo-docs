@@ -13,7 +13,7 @@ It shows your name, username and email address.
 
 ![Your profile](../../../assets/management/profile.png)
 
-A user without the administrator role sees only the dashboard and their profile.
+A user without the administrator role sees only the **Dashboard** and their profile.
 
 ![The profile of a user without the administrator role](../../../assets/management/profile-user.png)
 
@@ -31,4 +31,4 @@ Open the menu on your profile card, then select **Change password** and enter th
 
 ![Changing your password](../../../assets/management/profile-password.png)
 
-Your new password is used everywhere on the node from then on.
+From then on, use the new password to sign in to the node and to reach folders and Time Machine backups. Passwords you use in apps are not changed.

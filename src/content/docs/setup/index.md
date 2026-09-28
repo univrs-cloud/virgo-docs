@@ -6,7 +6,7 @@ sidebar:
   order: 0
 ---
 
-Setup runs the first time a virgoOS node starts. It sets the network, creates the storage pool, registers the node with your fleet, installs the core apps and replaces the factory password. When it finishes, the node is managed from its dashboard.
+Setup runs the first time a virgoOS node starts. It sets the network, creates the storage pool, registers the node with your fleet, installs the core apps and replaces the factory password. When it finishes, you manage the node by signing in at its name.
 
 ## Before you start
 

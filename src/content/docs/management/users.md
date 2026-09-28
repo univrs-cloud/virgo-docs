@@ -5,21 +5,21 @@ sidebar:
   order: 2
 ---
 
-A user signs in with the same username and password everywhere on the node.
+A user of the node signs in to the node itself, and uses the same username and password to reach folders and Time Machine backups. Apps keep their own users, separate from these.
 
 ## Roles
 
 | Role | What they can do |
 | --- | --- |
 | Owner | The account whose password was set during setup. An administrator who cannot be locked or deleted, and whose profile and password only they can change. |
-| Administrator | Everything on the dashboard, including managing users. |
-| User | Sign in, use the apps and manage their own [profile](/management/profile/). |
+| Administrator | Every page in the menu, including managing users. |
+| User | Sign in to the node, reach the folders and Time Machine backups they have access to, and manage their own [profile](/management/profile/). |
 
 Only the owner can give a user the administrator role.
 
 ## Managing users
 
-Administrators manage users from **Users** on the dashboard. The owner is marked with a crown, and your own account with **YOU**.
+**Users** lists everyone who can sign in to the node. Only administrators see it in the menu. The owner is marked with a crown, and your own account with **YOU**.
 
 ![The users list](../../../assets/management/users.png)
 
