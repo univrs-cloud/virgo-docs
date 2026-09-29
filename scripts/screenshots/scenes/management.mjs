@@ -1,6 +1,6 @@
 import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open, setValue, blur, openMenu, openModal, closeModal } from '../capture.mjs';
 import * as apps from '../data/apps.mjs';
-import { DOMAINS } from '../data/network.mjs';
+import { DOMAINS, fqdn } from '../data/network.mjs';
 import { nodeState } from '../data/node.mjs';
 import { networkHistory } from '../data/status.mjs';
 import * as serviceData from '../data/services.mjs';
@@ -111,6 +111,36 @@ const centerOf = (element) => {
 	return { x: box.x + box.width / 2, y: box.y + box.height / 2 };
 };
 
+const APPS_PAGE = '#apps .container-fluid:not(.d-none)';
+const APP_CENTER_READY = '#app-center .tab-content:not(.d-none)';
+const appRow = (name) => { return `#apps tr[data-name="${name}"]`; };
+const appService = (id) => { return `#apps .details .service[data-id="${id}"]`; };
+
+const appsNode = (backend, { names = apps.CORE_APP_NAMES, updatable = null, jobs = [] } = {}) => {
+	const appState = apps.installed({ appsDir: backend.appsDir, parseYaml: backend.parseYaml, fqdn: fqdn('univrs'), domainName: DOMAINS.univrs, names, updatable });
+	return {
+		...managedNode(backend, { jobs }),
+		...appState,
+		snapshots: Object.assign({}, ...names.map((name) => { return apps.appSnapshots(settings.WEATHER_CLOCK, name); })),
+		containerLogs: apps.containerLogs(settings.WEATHER_CLOCK),
+		containerTerminal: apps.containerTerminal()
+	};
+};
+
+const appsPage = async (browser, backend, viewport) => {
+	const page = await signedInPage(browser, backend, viewport, users.owner());
+	await controlClock(page, settings.WEATHER_CLOCK);
+	await open(page, backend.url, '/apps', APPS_PAGE);
+	await waitForImages(page, '#apps tbody img');
+	return page;
+};
+
+const openAppCenter = async (page) => {
+	await openModal(page, '#apps a[href="#app-center"]', '#app-center');
+	await page.waitForSelector(APP_CENTER_READY, { visible: true });
+	await waitForImages(page, '#app-center #app-center-explore img');
+};
+
 const SHORTCUTS_PAGE = '#shortcuts .container-fluid:not(.d-none)';
 const ICON_POPOVER = '#shortcut-create .shortcut-icon-box .popover';
 const shortcutRow = (shortcut) => { return `#shortcuts tr[data-name="${shortcut.name}"]`; };
@@ -197,6 +227,77 @@ const pages = {
 		await openMenu(signedIn, `${VISIBLE_ACCOUNT} .account-toggle`, `${VISIBLE_ACCOUNT} .dropdown-menu.show`);
 		await capture.region(signedIn, [`${VISIBLE_ACCOUNT} .dropdown-menu.show`, `${VISIBLE_ACCOUNT} .account-toggle`], 'account-menu', ACCOUNT_MENU_PADDING);
 		await closePage(signedIn);
+	},
+	apps: async ({ browser, backend, capture, viewport }) => {
+		const example = `#app-center .item[data-name="${apps.EXAMPLE_APP}"]`;
+		const exampleContainer = `${apps.EXAMPLE_APP}-${apps.EXAMPLE_APP}`;
+		backend.setState(appsNode(backend));
+		const page = await appsPage(browser, backend, viewport);
+		await capture.viewport(page, 'apps');
+
+		await openAppCenter(page);
+		await capture.region(page, ['#app-center .modal-content'], 'app-center', PADDING);
+
+		await page.click(`${example} .install`);
+		await page.waitForSelector('#app-install.show', { visible: true });
+		await sleep(SETTLE_MS);
+		await blur(page);
+		await capture.region(page, ['#app-install .modal-content'], 'app-install', PADDING);
+		await closePage(page);
+
+		backend.setState(appsNode(backend, { jobs: [apps.installingJobFor()] }));
+		const installing = await appsPage(browser, backend, viewport);
+		await openAppCenter(installing);
+		await capture.region(installing, [example], 'app-center-installing', TIGHT_PADDING);
+		await closePage(installing);
+
+		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP], updatable: apps.EXAMPLE_APP }));
+		const installed = await appsPage(browser, backend, viewport);
+		await openMenu(installed, `${appRow(apps.EXAMPLE_APP)} .dropdown-toggle`, '#apps .dropdown-menu.show');
+		await capture.region(installed, ['#apps .search', '#apps table', '#apps .dropdown-menu.show'], 'apps-menu', PADDING);
+		await installed.keyboard.press('Escape');
+		await sleep(SETTLE_MS);
+
+		await open(installed, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
+		await waitForImages(installed, '#apps .details img');
+		await installed.mouse.move(0, 0);
+		await capture.viewport(installed, 'app-details');
+
+		await installed.click(`${appService(exampleContainer)} a.logs`);
+		await installed.waitForSelector('#apps .details .logs-container:not(.d-none) li', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.viewport(installed, 'app-logs');
+		await installed.click('#apps .details .close-logs');
+		await sleep(SETTLE_MS);
+
+		await installed.click(`${appService(exampleContainer)} a.terminal`);
+		await installed.waitForSelector('#apps .details .terminal-container:not(.d-none) .xterm', { visible: true });
+		await sleep(SETTLE_MS * 2);
+		await capture.viewport(installed, 'app-terminal');
+		await installed.click('#apps .details .close-terminal');
+		await sleep(SETTLE_MS);
+
+		await installed.$eval('#apps .details .snapshots', (element) => { element.scrollIntoView({ block: 'start' }); });
+		await installed.click('#apps .details .snapshots tbody:nth-last-child(2) .group-toggle');
+		await sleep(SETTLE_MS);
+		await installed.$eval('#apps .details .snapshots', (element) => { element.scrollIntoView({ block: 'start' }); });
+		await sleep(SETTLE_MS);
+		await capture.region(installed, ['#apps .details .snapshots'], 'app-snapshots', TIGHT_PADDING);
+		await closePage(installed);
+
+		const title = 'Nextcloud';
+		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP], updatable: apps.EXAMPLE_APP, jobs: [apps.updatingJob(title)] }));
+		const updating = await appsPage(browser, backend, viewport);
+		await updating.waitForSelector(`${appRow(apps.EXAMPLE_APP)} .icon-gear`, { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.viewport(updating, 'app-updating');
+
+		backend.broadcast('/docker', 'app:updates', []);
+		backend.broadcast('/job', 'job', apps.updatedJob(title));
+		await updating.waitForSelector(`${appRow(apps.EXAMPLE_APP)} .dropdown-toggle`, { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.viewport(updating, 'app-updated');
+		await closePage(updating);
 	},
 	dashboard: async ({ browser, backend, capture, viewport }) => {
 		const dashboardNode = (peer) => {

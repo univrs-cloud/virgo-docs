@@ -62,6 +62,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 	const require = createRequire(path.join(apiDir, 'package.json'));
 	const { Server } = await import(pathToFileURL(require.resolve('socket.io')).href);
 	const { getTopologies } = await import(pathToFileURL(path.join(apiDir, 'src/utils/topology.js')).href);
+	const yaml = require('js-yaml');
 	const { version: apiVersion } = JSON.parse(fs.readFileSync(path.join(apiDir, 'package.json'), 'utf8'));
 	const root = path.join(uiDir, 'dist');
 	if (!fs.existsSync(path.join(root, 'index.html'))) {
@@ -147,11 +148,35 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		if (state.indexerStats) {
 			socket.emit('indexer:stats', state.indexerStats);
 		}
+		if (state.indexerDatasets) {
+			socket.emit('indexer:datasets', state.indexerDatasets);
+		}
 	});
 
 	io.of('/docker').on('connection', (socket) => {
 		socket.emit('app:configured', state.configured);
 		socket.emit('app:containers', state.containers);
+		if (state.templates) {
+			socket.emit('app:templates', state.templates);
+		}
+		if (state.appsResourceMetrics) {
+			socket.emit('app:resourceMetrics', state.appsResourceMetrics);
+		}
+		if (state.imageUpdates) {
+			socket.emit('app:updates', state.imageUpdates);
+		}
+		socket.on('docker:container:logs:connect', (containerId) => {
+			socket.emit('docker:container:logs:connected');
+			for (const line of (state.containerLogs?.[containerId] || [])) {
+				socket.emit('docker:container:logs:output', line);
+			}
+		});
+		socket.on('docker:container:terminal:connect', (containerId) => {
+			socket.emit('docker:container:terminal:connected');
+			if (state.containerTerminal?.[containerId]) {
+				socket.emit('docker:container:terminal:output', state.containerTerminal[containerId]);
+			}
+		});
 	});
 
 	await new Promise((resolve) => { server.listen(0, '127.0.0.1', resolve); });
@@ -160,6 +185,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		url: `http://localhost:${server.address().port}`,
 		appsDir,
 		apiVersion,
+		parseYaml: (file) => { return yaml.load(fs.readFileSync(file, 'utf8')); },
 		getTopologies,
 		broadcast: (namespace, event, payload) => {
 			io.of(namespace).emit(event, payload);
