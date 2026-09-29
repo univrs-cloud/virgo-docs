@@ -23,7 +23,7 @@ Forwarding is what makes the node reachable from the internet. Without it, node 
 :::caution[You need a public IP address]
 Forwarding only works if your internet connection has its own public IP address. Some providers share one public address between many customers, which is called carrier-grade NAT (CGNAT). Behind CGNAT, forwarding on your router has no effect, and nothing on the node can be reached from the internet.
 
-To check, compare the WAN address shown on your router with the address a site such as [whatismyip.com](https://www.whatismyip.com/) reports. If they differ, or the router's address starts with `100.64` to `100.127`, you are behind CGNAT. Ask your provider for a public IP address.
+To check, compare the WAN address shown on your router with the address a site such as [ipinfo.io](https://ipinfo.io/) reports. If they differ, or the router's address starts with `100.64` to `100.127`, you are behind CGNAT. Ask your provider for a public IP address.
 :::
 
 :::tip[Manage remotely without forwarding]
