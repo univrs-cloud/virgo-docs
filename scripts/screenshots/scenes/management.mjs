@@ -121,7 +121,7 @@ const appsNode = (backend, { names = apps.CORE_APP_NAMES, updatable = null, jobs
 	return {
 		...managedNode(backend, { jobs, domain }),
 		...appState,
-		snapshots: Object.assign({}, ...names.map((name) => { return apps.appSnapshots(settings.WEATHER_CLOCK, name); })),
+		snapshots: Object.assign({}, ...names.map((name) => { return apps.appSnapshots(name); })),
 		containerLogs: apps.containerLogs(settings.WEATHER_CLOCK),
 		containerTerminal: apps.containerTerminal()
 	};
@@ -287,13 +287,17 @@ const pages = {
 		await installed.click('#apps .details .close-terminal');
 		await sleep(SETTLE_MS);
 
-		await installed.$eval('#apps .details .snapshots', (element) => { element.scrollIntoView({ block: 'start' }); });
-		await installed.click('#apps .details .snapshots tbody:nth-last-child(2) .group-toggle');
-		await sleep(SETTLE_MS);
-		await installed.$eval('#apps .details .snapshots', (element) => { element.scrollIntoView({ block: 'start' }); });
-		await sleep(SETTLE_MS);
-		await capture.region(installed, ['#apps .details .snapshots'], 'app-snapshots', TIGHT_PADDING);
 		await closePage(installed);
+
+		const snapshots = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(snapshots, apps.SNAPSHOT_CLOCK);
+		await open(snapshots, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
+		await waitForImages(snapshots, '#apps .details img');
+		await snapshots.mouse.move(0, 0);
+		await snapshots.$eval('#apps .details .snapshots', (element) => { element.scrollIntoView({ block: 'start' }); });
+		await sleep(SETTLE_MS);
+		await capture.region(snapshots, ['#apps .details .snapshots'], 'app-snapshots', TIGHT_PADDING);
+		await closePage(snapshots);
 
 		const title = 'Nextcloud';
 		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP], updatable: apps.EXAMPLE_APP, jobs: [apps.updatingJob(title)] }));

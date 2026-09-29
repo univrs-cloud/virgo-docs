@@ -81,8 +81,6 @@ const running = (names, fqdn) => {
 const GIB = 1024 ** 3;
 const MIB = 1024 ** 2;
 const TOTAL_MEMORY = 15.8 * GIB;
-const HOUR_MS = 60 * 60 * 1000;
-const DAY_MS = 24 * HOUR_MS;
 
 const EXAMPLE_APP = 'nextcloud';
 const INDEXED_APPS = [EXAMPLE_APP];
@@ -94,10 +92,87 @@ const APP_USAGE = {
 	nextcloud: { cpu: 3.6, memory: 1180, rx: 3.1, tx: 8.4, data: 96, snapshots: 12.4 }
 };
 
-const SNAPSHOT_SCHEDULE = [
-	{ type: 'hourly', count: 36, stepMs: HOUR_MS, used: 42 * MIB },
-	{ type: 'daily', count: 30, stepMs: DAY_MS, used: 180 * MIB },
-	{ type: 'monthly', count: 9, stepMs: 30 * DAY_MS, used: 640 * MIB }
+const SNAPSHOT_CLOCK = Date.UTC(2026, 8, 29, 17, 40);
+
+const SNAPSHOT_HISTORY = [
+	['2025-11-19_17:30:01_monthly', 724123648],
+	['2025-12-01_00:00:03_monthly', 702652416],
+	['2026-01-01_00:00:03_monthly', 3184820224],
+	['2026-01-23_09:15:11_yearly', 295600128],
+	['2026-02-01_00:00:01_monthly', 200392704],
+	['2026-03-01_00:00:13_monthly', 674824192],
+	['2026-04-01_00:00:23_monthly', 719937536],
+	['2026-05-01_00:00:18_monthly', 757899264],
+	['2026-06-01_00:00:17_monthly', 771915776],
+	['2026-07-01_00:00:08_monthly', 762806272],
+	['2026-08-01_00:00:17_monthly', 2031575040],
+	['2026-08-31_00:00:14_daily', 354205696],
+	['2026-09-01_00:00:14_monthly', 0],
+	['2026-09-01_00:00:14_daily', 0],
+	['2026-09-02_00:00:09_daily', 21946368],
+	['2026-09-03_00:00:01_daily', 21889024],
+	['2026-09-04_00:00:10_daily', 22822912],
+	['2026-09-05_00:00:03_daily', 23830528],
+	['2026-09-06_00:00:08_daily', 23060480],
+	['2026-09-07_00:00:13_daily', 35086336],
+	['2026-09-08_00:00:13_daily', 14753792],
+	['2026-09-09_00:00:16_daily', 23035904],
+	['2026-09-10_00:00:02_daily', 14647296],
+	['2026-09-11_00:00:02_daily', 14680064],
+	['2026-09-12_00:00:01_daily', 24633344],
+	['2026-09-13_00:00:02_daily', 14639104],
+	['2026-09-14_00:00:03_daily', 14680064],
+	['2026-09-15_00:00:02_daily', 22421504],
+	['2026-09-16_00:00:03_daily', 38371328],
+	['2026-09-17_00:00:02_daily', 36274176],
+	['2026-09-18_00:00:03_daily', 15138816],
+	['2026-09-19_00:00:03_daily', 14942208],
+	['2026-09-20_00:00:03_daily', 14934016],
+	['2026-09-21_00:00:02_daily', 14614528],
+	['2026-09-22_00:00:02_daily', 14761984],
+	['2026-09-23_00:00:07_daily', 23019520],
+	['2026-09-24_00:00:06_daily', 103628800],
+	['2026-09-25_00:00:06_daily', 15343616],
+	['2026-09-26_00:00:02_daily', 14835712],
+	['2026-09-27_00:00:02_daily', 14909440],
+	['2026-09-28_00:00:02_daily', 14778368],
+	['2026-09-28_06:00:02_hourly', 909312],
+	['2026-09-28_07:00:01_hourly', 860160],
+	['2026-09-28_08:00:01_hourly', 835584],
+	['2026-09-28_09:00:03_hourly', 950272],
+	['2026-09-28_10:00:02_hourly', 917504],
+	['2026-09-28_11:00:01_hourly', 925696],
+	['2026-09-28_12:00:02_hourly', 958464],
+	['2026-09-28_13:00:02_hourly', 843776],
+	['2026-09-28_14:00:02_hourly', 843776],
+	['2026-09-28_15:00:02_hourly', 851968],
+	['2026-09-28_16:00:02_hourly', 851968],
+	['2026-09-28_17:00:03_hourly', 753664],
+	['2026-09-28_18:00:02_hourly', 753664],
+	['2026-09-28_19:00:02_hourly', 909312],
+	['2026-09-28_20:00:02_hourly', 786432],
+	['2026-09-28_21:00:01_hourly', 761856],
+	['2026-09-28_22:00:02_hourly', 778240],
+	['2026-09-28_23:00:06_hourly', 761856],
+	['2026-09-29_00:00:02_daily', 0],
+	['2026-09-29_00:00:02_hourly', 0],
+	['2026-09-29_01:00:02_hourly', 778240],
+	['2026-09-29_02:00:02_hourly', 778240],
+	['2026-09-29_03:00:02_hourly', 770048],
+	['2026-09-29_04:00:01_hourly', 794624],
+	['2026-09-29_05:00:02_hourly', 786432],
+	['2026-09-29_06:00:01_hourly', 802816],
+	['2026-09-29_07:00:01_hourly', 770048],
+	['2026-09-29_08:00:02_hourly', 794624],
+	['2026-09-29_09:00:02_hourly', 802816],
+	['2026-09-29_10:00:02_hourly', 892928],
+	['2026-09-29_11:00:02_hourly', 868352],
+	['2026-09-29_12:00:02_hourly', 794624],
+	['2026-09-29_13:00:01_hourly', 794624],
+	['2026-09-29_14:00:01_hourly', 802816],
+	['2026-09-29_15:00:02_hourly', 802816],
+	['2026-09-29_16:00:02_hourly', 802816],
+	['2026-09-29_17:00:02_hourly', 811008]
 ];
 
 const APP_LOG = [
@@ -228,19 +303,12 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 	};
 };
 
-const snapshotStamp = (time) => {
-	return new Date(time).toISOString().slice(0, 19).replace('T', '_');
-};
-
-const appSnapshots = (now, name = EXAMPLE_APP) => {
+const appSnapshots = (name = EXAMPLE_APP) => {
 	const dataset = `messier/apps/${name}`;
-	const latest = now - (now % HOUR_MS);
-	return Object.fromEntries(SNAPSHOT_SCHEDULE.flatMap(({ type, count, stepMs, used }) => {
-		return Array.from({ length: count }, (_, index) => {
-			const snapshotName = `autosnap_${snapshotStamp(latest - index * stepMs)}_${type}`;
-			const fullName = `${dataset}@${snapshotName}`;
-			return [fullName, { name: fullName, dataset, snapshotName, pool: 'messier', properties: { used: { value: used + index * 3 * MIB } } }];
-		});
+	return Object.fromEntries(SNAPSHOT_HISTORY.map(([stamp, used]) => {
+		const snapshotName = `autosnap_${stamp}`;
+		const fullName = `${dataset}@${snapshotName}`;
+		return [fullName, { name: fullName, dataset, snapshotName, pool: 'messier', properties: { used: { value: used } } }];
 	}));
 };
 
@@ -295,6 +363,7 @@ export {
 	EXAMPLE_APP,
 	installed,
 	appSnapshots,
+	SNAPSHOT_CLOCK,
 	installingJobFor,
 	updatingJob,
 	updatedJob,
