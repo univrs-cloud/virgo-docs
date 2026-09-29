@@ -114,7 +114,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 
 	io.of('/configuration').on('connection', (socket) => {
 		socket.emit('configuration', state.configuration);
-		socket.on('configuration:fleet:domain:availability', (data, acknowledge) => {
+		socket.on('configuration:fleet:domain:availability', (_data, acknowledge) => {
 			acknowledge?.({ status: 'succeeded', available: true });
 		});
 	});

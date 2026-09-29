@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import autoImport from 'astro-auto-import';
+import brokenLinksChecker from 'astro-broken-links-checker';
 
 export default defineConfig({
 	site: 'https://docs.univrs.cloud',
@@ -14,6 +16,7 @@ export default defineConfig({
 			customCss: ['./src/styles/univrs.css'],
 			components: {
 				Head: './src/components/Head.astro',
+				Pagination: './src/components/Pagination.astro',
 				SocialIcons: './src/components/SocialIcons.astro',
 				ThemeSelect: './src/components/ThemeSelect.astro'
 			},
@@ -41,6 +44,15 @@ export default defineConfig({
 					items: [{ autogenerate: { directory: 'cli' } }]
 				}
 			]
+		}),
+		autoImport({
+			imports: [
+				{ '@astrojs/starlight/components': ['Tabs', 'TabItem'] }
+			]
+		}),
+		brokenLinksChecker({
+			checkExternalLinks: true,
+			throwError: true
 		})
 	]
 });

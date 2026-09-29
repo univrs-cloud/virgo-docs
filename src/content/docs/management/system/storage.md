@@ -70,13 +70,13 @@ The pool keeps working from the remaining drive, but until the missing one is ba
 
 ## Replacing a drive
 
-Replacing a drive from the **Storage** page is coming soon. Until then, it is standard ZFS. Fit a new drive at least as large as the one it replaces, then replace the old drive's ID with the new drive's in the pool:
+Replacing a drive from the **Storage** page is coming soon. Until then, it is standard ZFS. Fit a new drive at least as large as the one it replaces, then replace the old drive's ID with the new drive's in the pool. For the missing drive shown above:
 
 ```sh
-zpool replace messier <old drive ID> <new drive ID>
+zpool replace messier nvme-eui.00000000000000000000000000000002 nvme-eui.00000000000000000000000000000003
 ```
 
-The ID of the missing drive is the one shown in the topology.
+The first ID is the missing drive's, as shown in the topology, and the second is the new drive's.
 
 ## Resilvering
 

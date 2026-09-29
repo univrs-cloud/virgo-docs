@@ -1,0 +1,104 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+
+const { dir, pagination, sidebar } = Astro.locals.starlightRoute;
+const { prev, next } = pagination;
+const isRtl = dir === 'rtl';
+
+type Entry = (typeof sidebar)[number];
+
+const findGroup = (entries: Entry[], href: string, group: string | null = null): string | null => {
+	for (const entry of entries) {
+		if (entry.type === 'link' && entry.href === href) {
+			return group;
+		}
+
+		if (entry.type === 'group') {
+			const found = findGroup(entry.entries, href, entry.label);
+			if (found) {
+				return found;
+			}
+		}
+	}
+
+	return null;
+};
+
+const sectionOf = (href: string) => {
+	const group = findGroup(sidebar, href);
+	return (group ? `${group.charAt(0).toUpperCase()}${group.slice(1)}` : null);
+};
+
+const links = [
+	{ link: prev, rel: 'prev', label: Astro.locals.t('page.previousLink'), icon: (isRtl ? 'right-arrow' : 'left-arrow') },
+	{ link: next, rel: 'next', label: Astro.locals.t('page.nextLink'), icon: (isRtl ? 'left-arrow' : 'right-arrow') }
+] as const;
+---
+
+<div class="pagination-links print:hidden" dir={dir}>
+	{
+		links.map(({ link, rel, label, icon }) => link && (
+			<a href={link.href} rel={rel}>
+				<span class="direction">
+					<Icon name={icon} size="1rem" />
+					{label}
+				</span>
+				<span class="title">{link.label}</span>
+				{sectionOf(link.href) && <span class="section">{sectionOf(link.href)}</span>}
+			</a>
+		))
+	}
+</div>
+
+<style>
+	.pagination-links {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+		gap: 1rem;
+	}
+
+	a {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		padding: 1rem 1.25rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.5rem;
+		text-decoration: none;
+		overflow-wrap: anywhere;
+		transition: border-color 0.16s ease;
+	}
+
+	a:hover {
+		border-color: var(--sl-color-accent);
+	}
+
+	[rel='next'] {
+		align-items: flex-end;
+		text-align: end;
+	}
+
+	.direction {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+
+	[rel='next'] .direction {
+		flex-direction: row-reverse;
+	}
+
+	.title {
+		font-size: var(--sl-text-lg);
+		font-weight: 600;
+		line-height: var(--sl-line-height-headings);
+		color: var(--sl-color-accent);
+	}
+
+	.section {
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+</style>

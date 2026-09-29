@@ -8,6 +8,7 @@
 		"dev": "astro dev --open",
 		"build": "astro build",
 		"preview": "astro preview",
+		"check": "astro check",
 		"astro": "astro",
 		"cli-reference": "node scripts/cli-reference.mjs",
 		"screenshots": "node scripts/screenshots/index.mjs"
@@ -16,6 +17,8 @@
 		"@astrojs/starlight": "^0.42.4",
 		"@plausible-analytics/tracker": "^0.4.6",
 		"astro": "^7.3.5",
+		"astro-auto-import": "^0.6.0",
+		"astro-broken-links-checker": "^1.1.0",
 		"sharp": "^0.35.5"
 	},
 	"allowScripts": {
@@ -23,6 +26,8 @@
 		"fsevents@2.3.3": true
 	},
 	"devDependencies": {
-		"puppeteer-core": "^25.12.0"
+		"@astrojs/check": "^0.9.10",
+		"puppeteer-core": "^25.12.0",
+		"typescript": "^6.0.3"
 	}
 }
