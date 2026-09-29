@@ -17,9 +17,16 @@ Select **App center**. **Explore** lists the apps you can install, and **Install
 
 ![The App center](../../../../assets/management/app-center.png)
 
-Select **Install** on an app. The form describes the app, shows any note that comes with it, such as a port to forward on your router, and asks for the settings it needs. **Domain** is filled in with the node's domain, and the app is reached at its own name under it, for example `nextcloud.virgo.univrs.cloud`. With a domain of your own, you also choose between a Let's Encrypt and a self-signed HTTPS certificate.
+Select **Install** on an app. The form describes the app, shows any note that comes with it, such as a port to forward on your router, and asks for the settings it needs. **Domain** is filled in with the node's domain, and the app is reached at its own name under it, for example `nextcloud.virgo.univrs.cloud`.
 
 ![Installing Nextcloud](../../../../assets/management/app-install.png)
+
+With a domain of your own, you also choose the app's HTTPS certificate, starting from the one the node uses:
+
+- **Let's Encrypt:** when the domain's DNS points to your network and port 80 is [forwarded](/setup/ports/) to the node. Browsers trust it everywhere.
+- **Self-signed:** when port 80 is not forwarded, for example when the node is only used on your local network or is behind CGNAT. Browsers warn about it until you accept it.
+
+![Installing Nextcloud with a domain of your own](../../../../assets/management/app-install-custom.png)
 
 While the app installs, its card shows **Installing...**. The node makes room for the app's data in the storage pool, downloads the app and starts it, and the app then appears in the list.
 

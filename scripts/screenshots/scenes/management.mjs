@@ -116,10 +116,10 @@ const APP_CENTER_READY = '#app-center .tab-content:not(.d-none)';
 const appRow = (name) => { return `#apps tr[data-name="${name}"]`; };
 const appService = (id) => { return `#apps .details .service[data-id="${id}"]`; };
 
-const appsNode = (backend, { names = apps.CORE_APP_NAMES, updatable = null, jobs = [] } = {}) => {
-	const appState = apps.installed({ appsDir: backend.appsDir, parseYaml: backend.parseYaml, fqdn: fqdn('univrs'), domainName: DOMAINS.univrs, names, updatable });
+const appsNode = (backend, { names = apps.CORE_APP_NAMES, updatable = null, jobs = [], domain = 'univrs' } = {}) => {
+	const appState = apps.installed({ appsDir: backend.appsDir, parseYaml: backend.parseYaml, fqdn: fqdn(domain), domainName: DOMAINS[domain], names, updatable });
 	return {
-		...managedNode(backend, { jobs }),
+		...managedNode(backend, { jobs, domain }),
 		...appState,
 		snapshots: Object.assign({}, ...names.map((name) => { return apps.appSnapshots(settings.WEATHER_CLOCK, name); })),
 		containerLogs: apps.containerLogs(settings.WEATHER_CLOCK),
@@ -244,6 +244,16 @@ const pages = {
 		await blur(page);
 		await capture.region(page, ['#app-install .modal-content'], 'app-install', PADDING);
 		await closePage(page);
+
+		backend.setState(appsNode(backend, { domain: 'custom' }));
+		const custom = await appsPage(browser, backend, viewport);
+		await openAppCenter(custom);
+		await custom.click(`${example} .install`);
+		await custom.waitForSelector('#app-install.show', { visible: true });
+		await sleep(SETTLE_MS);
+		await blur(custom);
+		await capture.region(custom, ['#app-install .modal-content'], 'app-install-custom', PADDING);
+		await closePage(custom);
 
 		backend.setState(appsNode(backend, { jobs: [apps.installingJobFor()] }));
 		const installing = await appsPage(browser, backend, viewport);
