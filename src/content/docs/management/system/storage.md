@@ -12,7 +12,7 @@ sidebar:
 - **VirgoOS** is the system drive. It only holds the operating system.
 - **messier** is the pool, with its layout next to its name, here **mirror**.
 
-For each, the list shows the capacity, how much of it is used, how much the pool's snapshots take up, the result of the last data integrity check, and the health.
+For each, the list shows the capacity, how much of it is used, the result of the last data integrity check, and the health. For the pool, the used bar is split into your data and its snapshots; hover over the percentage to see both.
 
 ## The pool
 
@@ -40,7 +40,7 @@ The node scrubs the pool by itself on the second Sunday of every month, shortly 
 
 ### Usage
 
-**Capacity**, **Used** and **Free** are the pool's space. **Compression** shows how much smaller the data is on disk than it really is, and how much space that saves.
+**Capacity**, **Used** and **Free** are the pool's space. **Space saved** shows how much space compression saves, and how much smaller the data is on disk than it really is.
 
 The bar splits the used space into your **Data** and the **Snapshots**. Snapshots are the pool's automatic history of apps, their data and folders. The node keeps one for each of the last 36 hours, 30 days, 60 months and 5 years, and removes older ones by itself. They take space only for what has changed since they were made.
 
