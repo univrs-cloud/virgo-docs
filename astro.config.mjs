@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import autoImport from 'astro-auto-import';
 import brokenLinksChecker from 'astro-broken-links-checker';
+import starlightImageZoom from 'starlight-image-zoom';
 
 export default defineConfig({
 	site: 'https://docs.univrs.cloud',
@@ -13,6 +14,7 @@ export default defineConfig({
 				src: './src/assets/virgo.svg'
 			},
 			favicon: '/favicon.ico',
+			plugins: [starlightImageZoom()],
 			customCss: ['./src/styles/univrs.css'],
 			components: {
 				Head: './src/components/Head.astro',
