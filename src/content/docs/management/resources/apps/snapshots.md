@@ -41,9 +41,9 @@ Type part of a file's name, or of a folder it is in, into **Search files in snap
 
 ![Searching Nextcloud's snapshots for "budget"](../../../../../assets/management/app-snapshots-search.png)
 
-The results are shown as a tree of the folders they are in. A file that no longer exists is marked **Deleted**. Under each file are the restore points that hold a version of it, with what happened to it there, such as **first seen**, **added**, **modified** or **last seen**, and its size. Select a restore point to show it on the timeline.
+The results are shown as a tree of the folders they are in. A file that no longer exists is marked **Deleted**. Under each file are the restore points that hold a version of it, with what happened to it there, such as **added**, **modified** or **last seen**, and its size. Select a restore point to show it on the timeline.
 
-Narrow the search down with **Type** for files or folders only, **Modified** for when the file was last changed, and **Size**. When there are more results, **Load more** shows the next ones, and **Clear** removes the results.
+Narrow the search down with **Type** for files or folders only, **State** for files that still exist, were changed, renamed, never changed or deleted, **Modified** for when the file was last changed, and **Size**. When there are more results, **Load more** shows the next ones, and **Clear** removes the results.
 
 ## Recovering files
 

@@ -38,6 +38,7 @@ virgo indexer search [options] <term>
 | `--dataset <names>` | No | Limit to dataset root(s), comma-separated (each matches that dataset and children) |
 | `--path <pattern>` | No | Filter by path (prefix or glob with * ?) |
 | `--type <type>` | No | Filter by type: file, dir, link |
+| `--state <state>` | No | Filter by state: live, modified, renamed, unchanged, deleted |
 | `--min-size <bytes>` | No | Minimum file size in bytes |
 | `--max-size <bytes>` | No | Maximum file size in bytes |
 | `--since <date>` | No | Files modified after this date (ISO 8601) |

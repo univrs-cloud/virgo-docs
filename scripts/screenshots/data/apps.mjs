@@ -315,8 +315,8 @@ const appSnapshots = (name = EXAMPLE_APP) => {
 const SNAPSHOT_SEARCH_TERM = 'budget';
 
 const SNAPSHOT_SEARCH_RESULTS = [
-	{ path: '/data/olivia/files/Documents/Budget 2025.xlsx', type: 'file', deleted: true, lastSeenSnap: 'autosnap_2026-09-24_00:00:06_daily', versions: [['2025-12-01_00:00:03_monthly', null, 48213], ['2026-01-01_00:00:03_monthly', 'modified', 51877]] },
-	{ path: '/data/olivia/files/Documents/Budget 2026.xlsx', type: 'file', deleted: false, versions: [['2026-01-01_00:00:03_monthly', null, 18342], ['2026-08-01_00:00:17_monthly', 'modified', 44109], ['2026-09-16_00:00:03_daily', 'modified', 46230], ['2026-09-28_17:00:03_hourly', 'modified', 47918]] },
+	{ path: '/data/olivia/files/Documents/Budget 2025.xlsx', type: 'file', deleted: true, lastSeenSnap: 'autosnap_2026-09-24_00:00:06_daily', versions: [['2025-12-01_00:00:03_monthly', 'added', 48213], ['2026-01-01_00:00:03_monthly', 'modified', 51877]] },
+	{ path: '/data/olivia/files/Documents/Budget 2026.xlsx', type: 'file', deleted: false, versions: [['2026-01-01_00:00:03_monthly', 'added', 18342], ['2026-08-01_00:00:17_monthly', 'modified', 44109], ['2026-09-16_00:00:03_daily', 'modified', 46230], ['2026-09-28_17:00:03_hourly', 'modified', 47918]] },
 	{ path: '/data/olivia/files/Documents/Budget drafts', type: 'dir', deleted: false, versions: [['2026-03-01_00:00:13_monthly', 'added']] },
 	{ path: '/data/olivia/files/Documents/Budget drafts/Budget 2027 draft.xlsx', type: 'file', deleted: false, versions: [['2026-09-16_00:00:03_daily', 'added', 12480], ['2026-09-28_17:00:03_hourly', 'modified', 15236]] },
 	{ path: '/data/james/files/Shared/Finance/Q3 budget review.pdf', type: 'file', deleted: false, versions: [['2026-09-07_00:00:13_daily', 'added', 1843200]] }
