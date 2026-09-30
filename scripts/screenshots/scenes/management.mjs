@@ -50,7 +50,7 @@ const signedInPage = async (browser, backend, viewport, user) => {
 
 const SETTINGS_PAGE = '#settings .container-fluid:not(.d-none)';
 const CARD_PADDING = { top: PADDING, right: PADDING, bottom: PADDING, left: 8 };
-const FLEET_CARD = '#settings .row > .col-12:nth-child(3) .card';
+const FLEET_CARD = '#settings .row > .col-12:nth-child(1) .card';
 
 const NETWORK_PAGE = '#network .container-fluid:not(.d-none)';
 const networkCard = (index) => { return `#network .container-fluid > .row > .col-12:nth-child(${index}) .card`; };
@@ -70,6 +70,7 @@ const searchServices = async (page, value) => {
 const STORAGE_PAGE = '#storage .container-fluid:not(.d-none)';
 const STORAGE_POOL = '#storage .details .item';
 const poolCard = (index) => { return `#storage .details .overflow-y-scroll > .card:nth-child(${index})`; };
+const VDEV_DETAILS = '#storage .details [id^="vdev-details-"].show';
 const SNAPSHOT_COUNT = 142;
 const POOL_CARD_PADDING = { top: 8, right: PADDING, bottom: 8, left: 8 };
 
@@ -84,6 +85,7 @@ const storagePage = async (browser, backend, viewport) => {
 };
 
 const TIGHT_PADDING = 12;
+const FLUSH_TOP_PADDING = { top: 0, right: TIGHT_PADDING, bottom: TIGHT_PADDING, left: TIGHT_PADDING };
 const REORDER_GROUP = '#apps-shortcuts .group:nth-child(2)';
 
 const DRAG_IMAGE_OFFSET = { x: 90, y: 34 };
@@ -115,6 +117,9 @@ const APPS_PAGE = '#apps .container-fluid:not(.d-none)';
 const APP_CENTER_READY = '#app-center .tab-content:not(.d-none)';
 const appRow = (name) => { return `#apps tr[data-name="${name}"]`; };
 const appService = (id) => { return `#apps .details .service[data-id="${id}"]`; };
+const APP_FILTER_MENU = '#apps .app-filters .dropdown-menu.show';
+const SNAPSHOTS_TAB = '#apps .details [data-app-tab="snapshots"]';
+const SNAPSHOT_SEARCH = '#apps .details .snapshot-search';
 
 const appsNode = (backend, { names = apps.CORE_APP_NAMES, updatable = null, jobs = [], domain = 'univrs' } = {}) => {
 	const appState = apps.installed({ appsDir: backend.appsDir, parseYaml: backend.parseYaml, fqdn: fqdn(domain), domainName: DOMAINS[domain], names, updatable });
@@ -235,6 +240,11 @@ const pages = {
 		const page = await appsPage(browser, backend, viewport);
 		await capture.viewport(page, 'apps');
 
+		await openMenu(page, '#apps .app-filters .dropdown:nth-child(2) [data-bs-toggle="dropdown"]', APP_FILTER_MENU);
+		await capture.region(page, ['#apps .search', '#apps .app-filters', '#apps table', APP_FILTER_MENU], 'apps-filter', PADDING);
+		await page.keyboard.press('Escape');
+		await sleep(SETTLE_MS);
+
 		await openAppCenter(page);
 		await capture.region(page, ['#app-center .modal-content'], 'app-center', PADDING);
 
@@ -289,16 +299,6 @@ const pages = {
 
 		await closePage(installed);
 
-		const snapshots = await signedInPage(browser, backend, viewport, users.owner());
-		await controlClock(snapshots, apps.SNAPSHOT_CLOCK);
-		await open(snapshots, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
-		await waitForImages(snapshots, '#apps .details img');
-		await snapshots.mouse.move(0, 0);
-		await snapshots.$eval('#apps .details .snapshots', (element) => { element.scrollIntoView({ block: 'start' }); });
-		await sleep(SETTLE_MS);
-		await capture.region(snapshots, ['#apps .details .snapshots'], 'app-snapshots', TIGHT_PADDING);
-		await closePage(snapshots);
-
 		const title = 'Nextcloud';
 		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP], updatable: apps.EXAMPLE_APP, jobs: [apps.updatingJob(title)] }));
 		const updating = await appsPage(browser, backend, viewport);
@@ -312,6 +312,25 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.viewport(updating, 'app-updated');
 		await closePage(updating);
+	},
+	snapshots: async ({ browser, backend, capture, viewport }) => {
+		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] }), snapshotSearch: apps.snapshotSearch() });
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(page, apps.SNAPSHOT_CLOCK);
+		await open(page, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
+		await waitForImages(page, '#apps .details img');
+		await page.click(SNAPSHOTS_TAB);
+		await page.waitForSelector('#apps .details .snapshots', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'app-snapshots');
+
+		await setValue(page, SNAPSHOT_SEARCH, apps.SNAPSHOT_SEARCH_TERM);
+		await page.$eval(SNAPSHOT_SEARCH, (element) => { element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true })); });
+		await page.waitForSelector('#apps .details .snapshot-search-clear', { visible: true });
+		await blur(page);
+		await capture.region(page, ['#apps .details .snapshots .card-body:has(.snapshot-search)', '#apps .details .snapshots .card-body:has(.snapshot-search-clear)'], 'app-snapshots-search', FLUSH_TOP_PADDING);
+		await closePage(page);
 	},
 	dashboard: async ({ browser, backend, capture, viewport }) => {
 		const dashboardNode = (peer) => {
@@ -337,6 +356,12 @@ const pages = {
 		await capture.fullPage(page, 'dashboard');
 
 		await capture.region(page, ['#resources-monitor'], 'dashboard-status', TIGHT_PADDING);
+
+		await page.click('#resources-monitor .indexer-stats .details-toggle');
+		await page.waitForSelector('#indexer-details.show', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['#resources-monitor .indexer-stats'], 'dashboard-indexer', FLUSH_TOP_PADDING);
 
 		await page.click(`${REORDER_GROUP} .order`);
 		await page.waitForSelector(`${REORDER_GROUP}.dragging`, { visible: true });
@@ -652,7 +677,7 @@ const pages = {
 
 		await open(page, backend.url, '/storage/messier', STORAGE_POOL);
 		await page.click('#storage .details .details-toggle');
-		await page.waitForSelector('#storage .details .vdev-rows.show', { visible: true });
+		await page.waitForSelector(VDEV_DETAILS, { visible: true });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.fullPage(page, 'storage-pool');
@@ -670,7 +695,7 @@ const pages = {
 		await capture.region(degraded, ['#storage .search', '#storage table'], 'storage-degraded', CARD_PADDING);
 		await open(degraded, backend.url, '/storage/messier', STORAGE_POOL);
 		await degraded.click('#storage .details .details-toggle');
-		await degraded.waitForSelector('#storage .details .vdev-rows.show', { visible: true });
+		await degraded.waitForSelector(VDEV_DETAILS, { visible: true });
 		await degraded.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.region(degraded, [poolCard(3)], 'storage-degraded-topology', POOL_CARD_PADDING);
@@ -681,7 +706,7 @@ const pages = {
 		await open(resilvering, backend.url, '/storage/messier', STORAGE_POOL);
 		await capture.region(resilvering, [poolCard(1)], 'storage-resilver', POOL_CARD_PADDING);
 		await resilvering.click('#storage .details .details-toggle');
-		await resilvering.waitForSelector('#storage .details .vdev-rows.show', { visible: true });
+		await resilvering.waitForSelector(VDEV_DETAILS, { visible: true });
 		await resilvering.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.region(resilvering, [poolCard(3)], 'storage-resilver-topology', POOL_CARD_PADDING);

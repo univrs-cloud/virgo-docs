@@ -1,13 +1,25 @@
 ---
 title: Settings
-description: Notifications, location, fleet and power, from the Settings page.
+description: Fleet, notifications, location and power, from the Settings page.
 sidebar:
   order: 12
 ---
 
-**Settings** holds the node's email notifications, its location, its fleet registration and the reboot button. On a fresh install, **Notifications** and **Location** are not configured yet, **Fleet** shows the registration made during setup, and **Power** lets you reboot the node.
+**Settings** holds the node's fleet registration, its email notifications, its location and the reboot button. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, and **Power** lets you reboot the node.
 
 ![Settings on a fresh install](../../../../assets/management/settings-empty.png)
+
+## Fleet
+
+The **Fleet** card shows the fleet account the node is registered with and whether it is connected. Select **Edit** to register it with a fleet account again, or **Register** if it is not registered yet.
+
+![The fleet form](../../../../assets/management/settings-fleet.png)
+
+**Status** turns the connection to the fleet on or off. On `univrs.cloud` it cannot be turned off, because the fleet provides the node's DNS record and certificate. On your own domain it can.
+
+![The fleet card on your own domain](../../../../assets/management/settings-fleet-custom.png)
+
+If the card says **Registration expired, please re-register.**, select **Edit** and register again.
 
 ## Notifications
 
@@ -34,18 +46,6 @@ Once a location is set, the **Dashboard** shows the current weather there, updat
 Select it to see today's temperatures every two hours, with the current time highlighted. The shaded part is daylight, and dotted columns mark hours with a chance of rain.
 
 ![The weather forecast](../../../../assets/management/weather-forecast.png)
-
-## Fleet
-
-The **Fleet** card shows the fleet account the node is registered with and whether it is connected. Select **Edit** to register it with a fleet account again, or **Register** if it is not registered yet.
-
-![The fleet form](../../../../assets/management/settings-fleet.png)
-
-**Status** turns the connection to the fleet on or off. On `univrs.cloud` it cannot be turned off, because the fleet provides the node's DNS record and certificate. On your own domain it can.
-
-![The fleet card on your own domain](../../../../assets/management/settings-fleet-custom.png)
-
-If the card says **Registration expired, please re-register.**, select **Edit** and register again.
 
 ## Power
 

@@ -22,7 +22,7 @@ The **Status** column shows the node's resources as they change:
 - **Data:** the [storage pool](/management/system/storage/)'s health and how full it is, with the temperature of each drive. A drive's badge turns yellow or red when it gets too warm, and orange when its own health check reports a problem; hover over it to see what it reports. While a data integrity check runs, its progress shows here too.
 - **UPS:** whether the node runs on the grid or on battery, and how charged the battery is.
 - **Uptime:** how long the node has been running since it last started.
-- **Indexer:** the catalogue of the files in the pool's snapshots, which the [`virgo indexer`](/cli/indexer/) commands search to find earlier and deleted versions of a file.
+- **Indexer:** the catalogue of the files in the pool's snapshots, searched from an app's [snapshots](/management/resources/apps/snapshots/#searching-files) and by the [`virgo indexer`](/cli/indexer/) commands to find earlier and deleted versions of a file.
 
 ### Indexer
 
@@ -33,7 +33,11 @@ The indexer runs every hour, at ten past. Its badge says how it is doing:
 - **Recovered:** the last run had to start over, but finished.
 - **Degraded:** a snapshot could not be catalogued.
 
-Below it are the last run, the catalogue's size, how many datasets and snapshots it covers, how many unique and deleted files it knows, and how many changes it has recorded, split into added, modified, renamed and removed.
+Select **Details** to see the last run, the catalogue's size, how many datasets and snapshots it covers, how many unique and deleted files it knows, and how many changes it has recorded, split into added, modified, renamed and removed. Select it again to hide them.
+
+![The indexer's details](../../../assets/management/dashboard-indexer.png)
+
+To add an app's snapshots to the catalogue, turn on **Indexer** in its [snapshots](/management/resources/apps/snapshots/#searching-files).
 
 ## Nodes
 

@@ -20,6 +20,7 @@ Every other page in the menu is for [administrators](/management/system/users/#r
 - [Dashboard](/management/dashboard/): the node's status, its nodes, apps, shortcuts, folders and time machines at a glance.
 - Resources
   - [Apps](/management/resources/apps/): installing apps from the App center and managing them.
+    - [Snapshots](/management/resources/apps/snapshots/): an app's restore points, and finding earlier and deleted files in them.
   - [Shortcuts](/management/resources/shortcuts/): links on the Dashboard to devices and websites, optionally reached through the node.
   - [Folders](/management/resources/folders/): shared folders for the computers on your local network.
   - [Time machines](/management/resources/time-machines/): backup destinations for the Time Machine app on Macs.
@@ -29,6 +30,6 @@ Every other page in the menu is for [administrators](/management/system/users/#r
     - [Your profile](/management/system/users/profile/): your own name, email address and password.
   - [Services](/management/system/services/): the system services on the node, their logs, and starting or stopping them.
   - [Network](/management/system/network/): the node's name, its network interface and trusted proxies.
-  - [Settings](/management/system/settings/): notifications, location and the weather, fleet and power.
+  - [Settings](/management/system/settings/): fleet, notifications, location and the weather, and power.
   - [Updates](/management/system/updates/): keeping virgoOS up to date.
   - [About](/management/system/about/): the versions of the software on the node and its hardware.

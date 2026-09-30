@@ -312,6 +312,26 @@ const appSnapshots = (name = EXAMPLE_APP) => {
 	}));
 };
 
+const SNAPSHOT_SEARCH_TERM = 'budget';
+
+const SNAPSHOT_SEARCH_RESULTS = [
+	{ path: '/data/olivia/files/Documents/Budget 2025.xlsx', type: 'file', deleted: true, lastSeenSnap: 'autosnap_2026-09-24_00:00:06_daily', versions: [['2025-12-01_00:00:03_monthly', null, 48213], ['2026-01-01_00:00:03_monthly', 'modified', 51877]] },
+	{ path: '/data/olivia/files/Documents/Budget 2026.xlsx', type: 'file', deleted: false, versions: [['2026-01-01_00:00:03_monthly', null, 18342], ['2026-08-01_00:00:17_monthly', 'modified', 44109], ['2026-09-16_00:00:03_daily', 'modified', 46230], ['2026-09-28_17:00:03_hourly', 'modified', 47918]] },
+	{ path: '/data/olivia/files/Documents/Budget drafts', type: 'dir', deleted: false, versions: [['2026-03-01_00:00:13_monthly', 'added']] },
+	{ path: '/data/james/files/Shared/Q3 budget review.pdf', type: 'file', deleted: false, versions: [['2026-09-07_00:00:13_daily', 'added', 1843200]] }
+];
+
+const snapshotSearch = (name = EXAMPLE_APP) => {
+	const dataset = `messier/apps/${name}`;
+	return SNAPSHOT_SEARCH_RESULTS.map((result) => {
+		return {
+			...result,
+			dataset,
+			versions: result.versions.map(([stamp, change, size]) => { return { snapshot: `autosnap_${stamp}`, change, size }; })
+		};
+	});
+};
+
 const installingJobFor = (name = EXAMPLE_APP) => {
 	return { id: `job-install-${name}`, name: 'app:install', opts: {}, data: { config: { name } }, progress: { state: 'active', message: 'Downloading...', progress: {} } };
 };
@@ -364,6 +384,8 @@ export {
 	installed,
 	appSnapshots,
 	SNAPSHOT_CLOCK,
+	SNAPSHOT_SEARCH_TERM,
+	snapshotSearch,
 	installingJobFor,
 	updatingJob,
 	updatedJob,

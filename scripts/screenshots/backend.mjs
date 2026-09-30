@@ -151,6 +151,9 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		if (state.indexerDatasets) {
 			socket.emit('indexer:datasets', state.indexerDatasets);
 		}
+		socket.on('indexer:search', (_query, acknowledge) => {
+			acknowledge?.({ status: 'succeeded', results: state.snapshotSearch ?? [], hasMore: false });
+		});
 	});
 
 	io.of('/docker').on('connection', (socket) => {
