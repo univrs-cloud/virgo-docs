@@ -1,0 +1,191 @@
+<dialog class="zoom" data-label={Astro.locals.t('imageZoom.zoom')}>
+	<button class="zoom-close" type="button" aria-label={Astro.locals.t('imageZoom.close')}>
+		<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.71 2.29a1 1 0 0 0-1.42 0l-5.79 5.8V6.5a1 1 0 0 0-2 0v4a1 1 0 0 0 .08.38 1 1 0 0 0 .54.54 1 1 0 0 0 .38.08h4a1 1 0 0 0 0-2h-1.59l5.8-5.79a1 1 0 0 0 0-1.42ZM10.88 12.58a1 1 0 0 0-.38-.08h-4a1 1 0 0 0 0 2h1.59l-5.8 5.79a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.79-5.8v1.59a1 1 0 0 0 2 0v-4a1 1 0 0 0-.08-.38 1 1 0 0 0-.54-.54Z" /></svg>
+	</button>
+	<figure>
+		<img alt="">
+		<figcaption></figcaption>
+	</figure>
+</dialog>
+
+<script>
+	const DURATION = 300;
+	const EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
+	const dialog = document.querySelector<HTMLDialogElement>('.zoom');
+	const enlarged = dialog?.querySelector('img');
+	const caption = dialog?.querySelector('figcaption');
+	let source: HTMLImageElement | null = null;
+	let closing = false;
+
+	const largestSource = (image: HTMLImageElement) => {
+		const candidates = image.srcset.split(',').map((candidate) => candidate.trim().split(/\s+/)).filter(([url]) => url);
+		const widest = candidates.sort((a, b) => parseInt(b[1] ?? '0', 10) - parseInt(a[1] ?? '0', 10))[0];
+
+		return widest?.[0] ?? image.currentSrc ?? image.src;
+	};
+
+	const travel = (from: HTMLImageElement, to: HTMLImageElement) => {
+		const start = from.getBoundingClientRect();
+		const end = to.getBoundingClientRect();
+
+		return `translate(${start.left - end.left}px, ${start.top - end.top}px) scale(${start.width / end.width})`;
+	};
+
+	const close = async () => {
+		if (!dialog || !enlarged || !source || closing) {
+			return;
+		}
+
+		closing = true;
+		dialog.classList.remove('is-open');
+		await enlarged.animate([{ transform: 'none' }, { transform: travel(source, enlarged) }], { duration: DURATION, easing: EASING }).finished;
+		dialog.close();
+		source.style.visibility = '';
+		source.focus({ preventScroll: true });
+		source = null;
+		closing = false;
+	};
+
+	const open = async (image: HTMLImageElement) => {
+		if (!dialog || !enlarged || !caption || source) {
+			return;
+		}
+
+		source = image;
+		enlarged.src = largestSource(image);
+		enlarged.alt = image.alt;
+		caption.textContent = image.alt;
+		await enlarged.decode().catch(() => {});
+		dialog.showModal();
+		enlarged.animate([{ transform: travel(image, enlarged) }, { transform: 'none' }], { duration: DURATION, easing: EASING });
+		image.style.visibility = 'hidden';
+		requestAnimationFrame(() => dialog.classList.add('is-open'));
+		window.addEventListener('wheel', close, { once: true });
+	};
+
+	document.querySelectorAll<HTMLImageElement>('.sl-markdown-content img').forEach((image) => {
+		if (image.closest('a')) {
+			return;
+		}
+
+		image.classList.add('zoomable');
+		image.tabIndex = 0;
+		image.setAttribute('role', 'button');
+		image.setAttribute('aria-label', `${dialog?.dataset.label}: ${image.alt}`);
+		image.addEventListener('click', () => open(image));
+		image.addEventListener('keydown', (event) => {
+			if (['enter', ' '].includes(event.key.toLowerCase())) {
+				event.preventDefault();
+				open(image);
+			}
+		});
+	});
+
+	dialog?.addEventListener('click', close);
+	dialog?.addEventListener('cancel', (event) => {
+		event.preventDefault();
+		close();
+	});
+	window.addEventListener('resize', close);
+</script>
+
+<style is:global>
+	.zoomable {
+		cursor: zoom-in;
+	}
+
+	.zoom {
+		width: 100vw;
+		max-width: 100vw;
+		height: 100dvh;
+		max-height: 100dvh;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: zoom-out;
+		overflow: hidden;
+	}
+
+	.zoom::backdrop {
+		background: var(--sl-color-bg);
+		opacity: 0;
+		transition: opacity 0.3s;
+	}
+
+	.zoom.is-open::backdrop {
+		opacity: 1;
+	}
+
+	.zoom figure {
+		--zoom-pad: clamp(0.75rem, 3vw, 2.5rem);
+		display: grid;
+		place-content: center;
+		justify-items: center;
+		gap: 0.9rem;
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		padding: var(--zoom-pad);
+	}
+
+	.zoom img {
+		display: block;
+		max-width: calc(100vw - 2 * var(--zoom-pad));
+		max-height: calc(100dvh - 2 * var(--zoom-pad) - 3.5rem);
+		width: auto;
+		height: auto;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 0.5rem;
+		box-shadow: var(--sl-shadow-md);
+		transform-origin: top left;
+	}
+
+	.zoom figcaption {
+		max-width: 70ch;
+		font-family: var(--__sl-font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.06em;
+		line-height: 1.5;
+		color: var(--sl-color-gray-3);
+		text-align: center;
+		opacity: 0;
+		transition: opacity 0.3s;
+	}
+
+	.zoom.is-open figcaption {
+		opacity: 1;
+	}
+
+	.zoom-close {
+		position: fixed;
+		top: 1rem;
+		right: 1rem;
+		display: grid;
+		place-items: center;
+		width: 2.5rem;
+		height: 2.5rem;
+		padding: 0;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.5rem;
+		background: var(--sl-color-bg-nav);
+		color: var(--sl-color-gray-2);
+		cursor: zoom-out;
+		opacity: 0;
+		transition: opacity 0.3s, color 0.18s ease, border-color 0.18s ease;
+	}
+
+	.zoom.is-open .zoom-close {
+		opacity: 1;
+	}
+
+	.zoom-close:hover {
+		color: var(--sl-color-accent);
+		border-color: var(--sl-color-accent);
+	}
+
+	.zoom-close svg {
+		width: 1.1rem;
+		height: 1.1rem;
+	}
+</style>
