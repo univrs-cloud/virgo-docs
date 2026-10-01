@@ -1,8 +1,13 @@
 ---
 import Head from '@astrojs/starlight/components/Head.astro';
+import { hasMarkdown } from '../llms';
+
+const { id } = Astro.locals.starlightRoute;
 ---
 
 <Head><slot /></Head>
+
+{hasMarkdown(id) && <link rel="alternate" type="text/markdown" href={new URL(`/${id}.md`, Astro.site).href} />}
 
 {Astro.locals.starlightRoute.id === '404' && <meta name="plausible-404" content="true" />}
 

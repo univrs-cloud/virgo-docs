@@ -37,6 +37,16 @@ The script serves the build at `../virgo-ui/dist`, so build virgo-ui first. It a
 - `scripts/screenshots/data/` holds the fake data, one file per topic.
 - Screenshots no longer produced by a section are deleted only when the whole section is rendered.
 
+## Language models
+
+The build generates these from the pages, through `src/pages/` and `src/llms.ts`. Nothing in them is written by hand: the name and description come from the home page, the sections from the sidebar and the closing links from the social links in `astro.config.mjs`, so a new page or section shows up by itself:
+
+- `llms.txt`, an index of every page by section.
+- `llms-full.txt`, the whole manual in one file.
+- A Markdown version of every page, at the page's address with `.md` in place of the trailing slash.
+
+`public/robots.txt` allows every crawler and states that the content may be used for search, as AI input and for AI training.
+
 ## Deployment
 
 Every push to `main` builds and deploys to GitHub Pages through `.github/workflows/deploy.yml`.
