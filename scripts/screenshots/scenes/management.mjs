@@ -121,6 +121,7 @@ const APP_FILTER_MENU = '#apps .app-filters .dropdown-menu.show';
 const SNAPSHOTS_TAB = '#apps .details [data-app-tab="snapshots"]';
 const SNAPSHOT_SEARCH = '#apps .details .snapshot-search';
 const SNAPSHOT_RESULTS = '#apps .details .snapshots .card-body:has(.snapshot-search-clear)';
+const SNAPSHOT_DOWNLOADS = `${SNAPSHOT_RESULTS} .dropdown-menu.show`;
 
 const appsNode = (backend, { names = apps.CORE_APP_NAMES, updatable = null, jobs = [], domain = 'univrs' } = {}) => {
 	const appState = apps.installed({ appsDir: backend.appsDir, parseYaml: backend.parseYaml, fqdn: fqdn(domain), domainName: DOMAINS[domain], names, updatable });
@@ -330,6 +331,12 @@ const pages = {
 		await page.setViewport({ ...viewport, height: Math.max(viewport.height, resultsBottom + PADDING) });
 		await sleep(SETTLE_MS);
 		await capture.region(page, ['#apps .details .snapshots .card-body:has(.snapshot-search)', SNAPSHOT_RESULTS], 'app-snapshots-search', FLUSH_TOP_PADDING);
+
+		const folderDownloads = await page.$$(`${SNAPSHOT_RESULTS} .tree-rows [data-bs-toggle="dropdown"]`);
+		await folderDownloads.at(-1).click();
+		await page.waitForSelector(SNAPSHOT_DOWNLOADS, { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(page, [SNAPSHOT_RESULTS], 'app-snapshots-download', FLUSH_TOP_PADDING);
 		await closePage(page);
 	},
 	dashboard: async ({ browser, backend, capture, viewport }) => {

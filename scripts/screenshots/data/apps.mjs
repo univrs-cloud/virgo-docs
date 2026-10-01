@@ -324,11 +324,16 @@ const SNAPSHOT_SEARCH_RESULTS = [
 
 const snapshotSearch = (name = EXAMPLE_APP) => {
 	const dataset = `messier/apps/${name}`;
+	const mountpoint = `/${dataset}`;
 	return SNAPSHOT_SEARCH_RESULTS.map((result) => {
 		return {
 			...result,
 			dataset,
-			versions: result.versions.map(([stamp, change, size]) => { return { snapshot: `autosnap_${stamp}`, change, size }; })
+			mountpoint,
+			versions: result.versions.map(([stamp, change, size]) => {
+				const snapshot = `autosnap_${stamp}`;
+				return { snapshot, change, size, snapshotPath: `${mountpoint}/.zfs/snapshot/${snapshot}${result.path}` };
+			})
 		};
 	});
 };

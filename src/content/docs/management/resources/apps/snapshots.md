@@ -1,6 +1,6 @@
 ---
 title: Snapshots
-description: An app's restore points, and finding earlier and deleted files in them.
+description: An app's restore points, and finding and downloading earlier and deleted files from them.
 sidebar:
   order: 4
 ---
@@ -31,7 +31,7 @@ Below, the page counts the restore points, and how many each schedule keeps and 
 
 ### Recovering, rolling back and deleting
 
-**Recover files**, **Roll back** and **Delete** are coming soon. Until then, see [Recovering files](#recovering-files).
+**Recover files**, **Roll back** and **Delete** are coming soon. Until then, [search the snapshots](#searching-files) for the file you need and [download it](#downloading-files-and-folders).
 
 ## Searching files
 
@@ -45,9 +45,23 @@ The results are shown as a tree of the folders they are in. A file that no longe
 
 Narrow the search down with **Type** for files or folders only, **State** for files that still exist, were changed, renamed or moved, never changed or deleted, **Modified** for when the file was last changed, and **Size**. When there are more results, **Load more** shows the next ones, and **Clear** removes the results.
 
+### Downloading files and folders
+
+Each version of a file has a download button next to it, which saves the file to your computer as it was at that restore point. A deleted file is downloaded from one of the versions listed under it.
+
+A folder is downloaded as a `.zip` archive. A folder that matches the search has a download button next to each of its versions, like a file. The folders that make up the tree have one next to their name, which opens **Download as of** with the restore points to choose from.
+
+![Downloading the Documents folder as it was at a restore point](../../../../../assets/management/app-snapshots-download.png)
+
+The archive holds the whole folder as it was at that restore point, not only the files in the results, so a folder near the top of the tree can be a large download.
+
+Downloads are not available when you manage the node [through your fleet](/management/authentication/#through-your-fleet). Open the node at its own address instead.
+
 ## Recovering files
 
-Recovering files from **Snapshots** is coming soon. Until then, find the file with the [`virgo indexer`](/cli/indexer/) commands on the node:
+To recover a file, [download it](#downloading-files-and-folders) from the search results and put it back where it belongs. Recovering it in place from **Snapshots** is coming soon.
+
+To copy the file back on the node itself instead, find it with the [`virgo indexer`](/cli/indexer/) commands on the node:
 
 ```sh
 virgo indexer search report.pdf
