@@ -11,7 +11,7 @@ export default defineConfig({
 		starlight({
 			title: 'univrs',
 			logo: {
-				src: './src/assets/virgo.svg'
+				src: './src/assets/univrs.svg'
 			},
 			favicon: '/favicon.ico',
 			plugins: [starlightImageZoom()],
