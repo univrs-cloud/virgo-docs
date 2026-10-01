@@ -52,15 +52,6 @@ const setValue = async (page, selector, value) => {
 	await sleep(SETTLE_MS);
 };
 
-const blur = async (page) => {
-	await page.evaluate(() => {
-		const active = (document.activeElement?.shadowRoot?.activeElement || document.activeElement);
-		active?.blur();
-		document.activeElement?.blur();
-	});
-	await sleep(SETTLE_MS);
-};
-
 const followLink = async (page, pathname, selector) => {
 	await page.evaluate((pathname) => {
 		const link = document.createElement('a');
@@ -182,7 +173,6 @@ export {
 	advanceClock,
 	open,
 	setValue,
-	blur,
 	followLink,
 	openMenu,
 	openModal,

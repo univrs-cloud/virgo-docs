@@ -1,4 +1,4 @@
-import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open, setValue, blur, openMenu, openModal, closeModal } from '../capture.mjs';
+import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open, setValue, openMenu, openModal, closeModal } from '../capture.mjs';
 import * as apps from '../data/apps.mjs';
 import { DOMAINS, fqdn } from '../data/network.mjs';
 import { nodeState } from '../data/node.mjs';
@@ -191,7 +191,6 @@ const fillFolder = async (page, folder) => {
 	if (folder.capacity) {
 		await setValue(page, '#folder-create .refquota', folder.capacity);
 	}
-	await blur(page);
 };
 
 const TIME_MACHINES_PAGE = '#time-machines .container-fluid:not(.d-none)';
@@ -215,7 +214,6 @@ const pages = {
 		await open(page, backend.url, '/login', 'main .username');
 		await setValue(page, 'main .username', users.owner().username);
 		await setValue(page, 'main .password', users.OWNER_PASSWORD);
-		await blur(page);
 		await capture.viewport(page, 'login');
 
 		await closePage(page);
@@ -252,7 +250,6 @@ const pages = {
 		await page.click(`${example} .install`);
 		await page.waitForSelector('#app-install.show', { visible: true });
 		await sleep(SETTLE_MS);
-		await blur(page);
 		await capture.region(page, ['#app-install .modal-content'], 'app-install', PADDING);
 		await closePage(page);
 
@@ -262,7 +259,6 @@ const pages = {
 		await custom.click(`${example} .install`);
 		await custom.waitForSelector('#app-install.show', { visible: true });
 		await sleep(SETTLE_MS);
-		await blur(custom);
 		await capture.region(custom, ['#app-install .modal-content'], 'app-install-custom', PADDING);
 		await closePage(custom);
 
@@ -329,7 +325,7 @@ const pages = {
 		await setValue(page, SNAPSHOT_SEARCH, apps.SNAPSHOT_SEARCH_TERM);
 		await page.$eval(SNAPSHOT_SEARCH, (element) => { element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true })); });
 		await page.waitForSelector(SNAPSHOT_RESULTS, { visible: true });
-		await blur(page);
+		await sleep(SETTLE_MS);
 		const resultsBottom = await page.$eval(SNAPSHOT_RESULTS, (element) => { return Math.ceil(element.getBoundingClientRect().bottom); });
 		await page.setViewport({ ...viewport, height: Math.max(viewport.height, resultsBottom + PADDING) });
 		await sleep(SETTLE_MS);
@@ -415,7 +411,6 @@ const pages = {
 		await setValue(link, '#shortcut-create .category', shortcuts.NEW_LINK.category);
 		await setValue(link, '#shortcut-create .url', shortcuts.NEW_LINK.url);
 		await link.$eval('#shortcut-create .shortcut-icon-img', (image, src) => { image.src = src; }, shortcuts.iconUrl(shortcuts.NEW_LINK.icon));
-		await blur(link);
 		await waitForImages(link, '#shortcut-create .shortcut-icon-img');
 		await capture.region(link, ['#shortcut-create .modal-content'], 'shortcut-create', PADDING);
 		await closePage(link);
@@ -435,7 +430,7 @@ const pages = {
 		await setValue(proxy, '#shortcut-create .subdomain', shortcuts.NEW_PROXY.subdomain);
 		await setValue(proxy, '#shortcut-create .backend-url', shortcuts.NEW_PROXY.backendUrl);
 		await proxy.click('#shortcut-create .require-auth >>> input');
-		await blur(proxy);
+		await sleep(SETTLE_MS);
 		await waitForImages(proxy, '#shortcut-create .shortcut-icon-img');
 		await capture.region(proxy, ['#shortcut-create .modal-content'], 'shortcut-create-proxy', PADDING);
 		await closePage(proxy);
@@ -464,7 +459,6 @@ const pages = {
 		await capture.region(page, ['#folders .search', '#folders table', '#folders .dropdown-menu.show'], 'folders-menu', PADDING);
 
 		await openModal(page, `${folderRow(documents)} a[href="#folder-update"]`, '#folder-update');
-		await blur(page);
 		await capture.region(page, ['#folder-update .modal-content'], 'folder-edit', PADDING);
 		await closePage(page);
 
@@ -504,7 +498,6 @@ const pages = {
 		await capture.region(page, ['#time-machines .search', '#time-machines table', '#time-machines .dropdown-menu.show'], 'time-machines-menu', PADDING);
 
 		await openModal(page, `${timeMachineRow(second)} a[href="#time-machine-update"]`, '#time-machine-update');
-		await blur(page);
 		await capture.region(page, ['#time-machine-update .modal-content'], 'time-machine-edit', PADDING);
 		await closePage(page);
 
@@ -514,7 +507,6 @@ const pages = {
 		await setValue(creating, '#time-machine-create .comment', shares.NEW_TIME_MACHINE.comment);
 		await setValue(creating, '#time-machine-create .valid-users', shares.NEW_TIME_MACHINE.user);
 		await setValue(creating, '#time-machine-create .refquota', shares.NEW_TIME_MACHINE.capacity);
-		await blur(creating);
 		await capture.region(creating, ['#time-machine-create .modal-content'], 'time-machine-create', PADDING);
 		await closePage(creating);
 
@@ -540,7 +532,6 @@ const pages = {
 		await setValue(page, '#user-create .username', users.NEW_USER.username);
 		await setValue(page, '#user-create .password', users.NEW_USER.password);
 		await setValue(page, '#user-create .password-check', users.NEW_USER.password);
-		await blur(page);
 		await capture.region(page, ['#user-create .modal-content'], 'user-create', PADDING);
 		await closePage(page);
 	},
@@ -554,7 +545,6 @@ const pages = {
 		await capture.region(page, ['#profile .card', '#profile .dropdown-menu.show'], 'profile-menu', PADDING);
 
 		await openModal(page, '#profile a[href="#profile-edit"]', '#profile-edit');
-		await blur(page);
 		await capture.region(page, ['#profile-edit .modal-content'], 'profile-edit', PADDING);
 		await closeModal(page, '#profile-edit');
 
@@ -562,7 +552,6 @@ const pages = {
 		await openModal(page, '#profile a[href="#profile-password"]', '#profile-password');
 		await setValue(page, '#profile-password .password', users.NEW_PASSWORD);
 		await setValue(page, '#profile-password .password-check', users.NEW_PASSWORD);
-		await blur(page);
 		await capture.region(page, ['#profile-password .modal-content'], 'profile-password', PADDING);
 		await closeModal(page, '#profile-password');
 		await closePage(page);
@@ -587,19 +576,17 @@ const pages = {
 		await setValue(page, '#smtp .password', smtp.password);
 		await setValue(page, '#smtp .sender', smtp.sender);
 		await page.$eval('#smtp .recipients', (element, recipients) => { element.tags = recipients; }, smtp.recipients);
-		await blur(page);
+		await sleep(SETTLE_MS);
 		await capture.region(page, ['#smtp .modal-content'], 'settings-notifications', PADDING);
 		await closeModal(page, '#smtp');
 
 		await openModal(page, '#settings a[href="#location"]', '#location');
 		await setValue(page, '#location .latitude', location.latitude);
 		await setValue(page, '#location .longitude', location.longitude);
-		await blur(page);
 		await capture.region(page, ['#location .modal-content'], 'settings-location', PADDING);
 		await closeModal(page, '#location');
 
 		await openModal(page, '#settings a[href="#fleet"]', '#fleet');
-		await blur(page);
 		await capture.region(page, ['#fleet .modal-content'], 'settings-fleet', PADDING);
 		await closeModal(page, '#fleet');
 
@@ -639,18 +626,15 @@ const pages = {
 		await capture.fullPage(page, 'network');
 
 		await openModal(page, '#network a[href="#network-identifier"]', '#network-identifier');
-		await blur(page);
 		await capture.region(page, ['#network-identifier .modal-content'], 'network-host', PADDING);
 		await closeModal(page, '#network-identifier');
 
 		await openModal(page, '#network a[href="#network-interface"]', '#network-interface');
-		await blur(page);
 		await capture.region(page, ['#network-interface .modal-content'], 'network-interface', PADDING);
 		await closeModal(page, '#network-interface');
 
 		await openModal(page, '#network a[href="#trusted-proxy-add"]', '#trusted-proxy-add');
 		await setValue(page, '#trusted-proxy-add .address', TRUSTED_PROXY);
-		await blur(page);
 		await capture.region(page, ['#trusted-proxy-add .modal-content'], 'network-proxy-add', PADDING);
 		await closePage(page);
 
@@ -666,7 +650,6 @@ const pages = {
 		await open(standby, backend.url, '/network', NETWORK_PAGE);
 		await capture.region(standby, [networkCard(2)], 'network-standby', CARD_PADDING);
 		await openModal(standby, '#network a[href="#network-interface"]', '#network-interface');
-		await blur(standby);
 		await standby.hover('#network-interface .virtual-ip >>> .help-inline');
 		await standby.waitForSelector('.tooltip.show', { visible: true });
 		await sleep(SETTLE_MS);
@@ -729,7 +712,6 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(page, ['#system-services .search', '#system-services .filter-type', '#system-services .filter-pills', '#system-services .filter-menu.show'], 'services-filter', PADDING);
 		await page.keyboard.press('Escape');
-		await blur(page);
 		await sleep(SETTLE_MS);
 		await capture.viewport(page, 'services-filtered');
 		await page.click('#system-services [data-action="clear-filters"]');
@@ -741,7 +723,6 @@ const pages = {
 		await searchServices(page, 'systemd-networkd');
 		await page.waitForSelector(failedRow, { visible: true });
 		await page.waitForSelector(maskedRow, { visible: true });
-		await blur(page);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.region(page, ['#system-services .search', '#system-services .filter-type', '#system-services thead', failedRow, maskedRow], 'services-problems', PADDING);
