@@ -23,7 +23,8 @@ const regularUser = () => {
 const accountCookie = (url, user) => {
 	const groups = user.groups.filter((group) => { return typeof group === 'string'; });
 	const account = { name: user.fullname, user: user.username, email: user.email, groups };
-	return { name: 'account', value: Buffer.from(JSON.stringify(account)).toString('base64'), url };
+	const label = new URL(url).hostname.toLowerCase().split('.')[0];
+	return { name: `account_${label}`, value: Buffer.from(JSON.stringify(account)).toString('base64'), url };
 };
 
 export {
