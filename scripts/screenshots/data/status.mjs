@@ -8,24 +8,6 @@ const status = () => {
 	};
 };
 
-const INDEXER_RUN_AGO_MS = 20 * 60 * 1000;
-
-const indexerStats = (now) => {
-	return {
-		lastRunAt: new Date(now - INDEXER_RUN_AGO_MS).toISOString(),
-		dbBytes: 412 * 1024 ** 2,
-		datasets: 18,
-		snapshots: 142,
-		indexed: 142,
-		files: 186420,
-		versions: 241907,
-		deleted: 3184,
-		changes: 58306,
-		changeTypes: { added: 31240, modified: 22915, renamed: 967, removed: 3184 },
-		lastRun: {}
-	};
-};
-
 const MIB = 1024 ** 2;
 const HISTORY_SECONDS = 61;
 
@@ -43,6 +25,5 @@ const networkHistory = () => {
 
 export {
 	status,
-	indexerStats,
 	networkHistory
 };

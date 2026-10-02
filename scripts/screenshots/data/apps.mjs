@@ -83,7 +83,6 @@ const MIB = 1024 ** 2;
 const TOTAL_MEMORY = 15.8 * GIB;
 
 const EXAMPLE_APP = 'nextcloud';
-const INDEXED_APPS = [EXAMPLE_APP];
 
 const APP_USAGE = {
 	traefik: { cpu: 0.42, memory: 48, rx: 1.2, tx: 2.4, data: 0.02, snapshots: 0.01 },
@@ -298,8 +297,7 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 		containers,
 		appsResourceMetrics,
 		imageUpdates: (updated ? [{ containerId: updated.id, app: updatable, service: updated.labels.comDockerComposeService }] : []),
-		templates: catalogueTemplates,
-		indexerDatasets: INDEXED_APPS.map((name) => { return `messier/apps/${name}`; })
+		templates: catalogueTemplates
 	};
 };
 

@@ -33,7 +33,7 @@ On a narrow screen, the timeline becomes a set of orbits around the app's icon, 
 
 ## Searching files
 
-When the app's **Indexer** is on, its snapshots are added to the [indexer](/management/dashboard/#indexer)'s catalogue of files, and you can search it for earlier and deleted versions of the app's files. Turn it on with the **Indexer** switch next to the search, below the timeline. The indexer catalogues new snapshots every hour, so files show up in the search after its next run.
+Nextcloud's snapshots can be searched for earlier and deleted versions of the files people keep in it. The node catalogues the files in those snapshots by itself, every hour at ten past, so files show up in the search after its next run. Other apps have no search.
 
 Type part of a file's name, or of a folder it is in, into **Search in snapshots** and press Enter.
 

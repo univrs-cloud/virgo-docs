@@ -347,8 +347,7 @@ const pages = {
 				weather: settings.weather(),
 				shortcutList: shortcuts.shortcuts(DOMAINS.univrs),
 				shareList: [...shares.folders(), ...shares.timeMachines(settings.WEATHER_CLOCK)],
-				peer,
-				indexedAt: settings.WEATHER_CLOCK
+				peer
 			});
 		};
 
@@ -357,18 +356,11 @@ const pages = {
 		await controlClock(page, settings.WEATHER_CLOCK);
 		await open(page, backend.url, '/', '#peer .card');
 		await page.waitForSelector('#resources-monitor .network-chart', { visible: true });
-		await page.waitForSelector('#resources-monitor .indexer-stats h6', { visible: true });
 		await fillNetworkHistory(page, backend);
 		await waitForImages(page, '#apps-shortcuts img');
 		await capture.fullPage(page, 'dashboard');
 
 		await capture.region(page, ['#resources-monitor'], 'dashboard-status', TIGHT_PADDING);
-
-		await page.click('#resources-monitor .indexer-stats .details-toggle');
-		await page.waitForSelector('#indexer-details.show', { visible: true });
-		await page.mouse.move(0, 0);
-		await sleep(SETTLE_MS);
-		await capture.region(page, ['#resources-monitor .indexer-stats'], 'dashboard-indexer', FLUSH_TOP_PADDING);
 
 		await page.click(`${REORDER_GROUP} .order`);
 		await page.waitForSelector(`${REORDER_GROUP}.dragging`, { visible: true });
@@ -714,7 +706,7 @@ const pages = {
 
 		await page.click('#system-services .filter-type [data-filter-type="service"]');
 		await sleep(SETTLE_MS);
-		await openMenu(page, `${SERVICES_FILTER} u-button`, '#system-services .filter-menu.show');
+		await openMenu(page, `${SERVICES_FILTER} [data-bs-toggle="dropdown"]`, '#system-services .filter-menu.show');
 		await page.click('#system-services-filter-sub-running');
 		await sleep(SETTLE_MS);
 		await capture.region(page, ['#system-services .search', '#system-services .filter-type', '#system-services .filter-pills', '#system-services .filter-menu.show'], 'services-filter', PADDING);

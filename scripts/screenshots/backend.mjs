@@ -145,12 +145,6 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 	io.of('/shortcut');
 
 	io.of('/indexer').on('connection', (socket) => {
-		if (state.indexerStats) {
-			socket.emit('indexer:stats', state.indexerStats);
-		}
-		if (state.indexerDatasets) {
-			socket.emit('indexer:datasets', state.indexerDatasets);
-		}
 		socket.on('indexer:search', (_query, acknowledge) => {
 			acknowledge?.({ status: 'succeeded', results: state.snapshotSearch ?? [], hasMore: false });
 		});

@@ -7,7 +7,7 @@ sidebar:
 
 ## virgo indexer index
 
-Index ZFS datasets and snapshots (uses configured indexer paths)
+Index the files in Nextcloud's snapshots
 
 ```sh
 virgo indexer index [options]
