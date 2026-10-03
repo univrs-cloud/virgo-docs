@@ -148,6 +148,12 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.on('indexer:search', (_query, acknowledge) => {
 			acknowledge?.({ status: 'succeeded', results: state.snapshotSearch ?? [], hasMore: false });
 		});
+		socket.on('indexer:restore:folders', (config, acknowledge) => {
+			acknowledge?.({ status: 'succeeded', folders: state.restoreFolders?.[config?.path ?? ''] ?? [] });
+		});
+		socket.on('indexer:restore:inspect', (_config, acknowledge) => {
+			acknowledge?.(state.restoreInspection ?? { status: 'failed', message: 'Nothing to restore.' });
+		});
 	});
 
 	io.of('/docker').on('connection', (socket) => {

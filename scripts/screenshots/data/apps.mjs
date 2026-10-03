@@ -336,6 +336,34 @@ const snapshotSearch = (name = EXAMPLE_APP) => {
 	});
 };
 
+const RESTORE_FILE = '/data/olivia/files/Documents/Budget 2026.xlsx';
+const RESTORE_SNAPSHOT = 'autosnap_2026-08-01_00:00:17_monthly';
+const RESTORE_FOLDER = '/data/olivia/files/Documents';
+const RESTORE_NEW_FOLDER = 'Restored';
+
+const RESTORE_TREE = {
+	'': ['/data/james/files', '/data/olivia/files'],
+	'/data/olivia/files': ['Documents', 'Photos', 'Projects'],
+	'/data/olivia/files/Documents': ['Budget drafts', 'Invoices', 'Taxes']
+};
+
+const restoreFolders = () => {
+	return Object.fromEntries(Object.entries(RESTORE_TREE).map(([parent, children]) => {
+		return [parent, children.map((child) => {
+			return (parent ? { name: child, path: `${parent}/${child}` } : { name: child.split('/')[2], path: child });
+		})];
+	}));
+};
+
+const restoreInspection = () => {
+	return {
+		status: 'succeeded',
+		name: RESTORE_FILE.split('/').pop(),
+		source: { size: 44109, modifiedAt: '2026-07-28T14:12:00.000Z' },
+		existing: { size: 47918, modifiedAt: '2026-09-28T16:41:00.000Z' }
+	};
+};
+
 const installingJobFor = (name = EXAMPLE_APP) => {
 	return { id: `job-install-${name}`, name: 'app:install', opts: {}, data: { config: { name } }, progress: { state: 'active', message: 'Downloading...', progress: {} } };
 };
@@ -390,6 +418,12 @@ export {
 	SNAPSHOT_CLOCK,
 	SNAPSHOT_SEARCH_TERM,
 	snapshotSearch,
+	RESTORE_FILE,
+	RESTORE_SNAPSHOT,
+	RESTORE_FOLDER,
+	RESTORE_NEW_FOLDER,
+	restoreFolders,
+	restoreInspection,
 	installingJobFor,
 	updatingJob,
 	updatedJob,

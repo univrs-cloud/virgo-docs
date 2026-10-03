@@ -122,6 +122,8 @@ const SNAPSHOTS_TAB = '#apps .details [data-app-tab="snapshots"]';
 const SNAPSHOT_SEARCH = '#apps .details .snapshot-search';
 const SNAPSHOT_RESULTS = '#apps .details .snapshots .card-body:has(.snapshot-search-clear)';
 const SNAPSHOT_DOWNLOADS = `${SNAPSHOT_RESULTS} .dropdown-menu.show`;
+const SNAPSHOT_RESTORE = '#snapshot-restore';
+const SNAPSHOT_RESTORE_CONFLICT = '#snapshot-restore-conflict';
 
 const appsNode = (backend, { names = apps.CORE_APP_NAMES, updatable = null, jobs = [], domain = 'univrs' } = {}) => {
 	const appState = apps.installed({ appsDir: backend.appsDir, parseYaml: backend.parseYaml, fqdn: fqdn(domain), domainName: DOMAINS[domain], names, updatable });
@@ -312,7 +314,7 @@ const pages = {
 		await closePage(updating);
 	},
 	snapshots: async ({ browser, backend, capture, viewport }) => {
-		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] }), snapshotSearch: apps.snapshotSearch() });
+		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] }), snapshotSearch: apps.snapshotSearch(), restoreFolders: apps.restoreFolders(), restoreInspection: apps.restoreInspection() });
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(page, apps.SNAPSHOT_CLOCK);
 		await open(page, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
@@ -337,6 +339,34 @@ const pages = {
 		await page.waitForSelector(SNAPSHOT_DOWNLOADS, { visible: true });
 		await sleep(SETTLE_MS);
 		await capture.region(page, [SNAPSHOT_RESULTS], 'app-snapshots-download', FLUSH_TOP_PADDING);
+		await page.keyboard.press('Escape');
+
+		await page.$eval(`${SNAPSHOT_RESULTS} .snapshot-restore[data-path$="${apps.RESTORE_SNAPSHOT}${apps.RESTORE_FILE}"]`, (element) => { element.click(); });
+		await page.waitForSelector(`${SNAPSHOT_RESTORE}.show .restore-folders .bg-primary-subtle`, { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_RESTORE} .modal-content`], 'app-snapshots-restore', PADDING);
+
+		await page.click(`${SNAPSHOT_RESTORE} .restore-submit`);
+		await page.waitForSelector(`${SNAPSHOT_RESTORE_CONFLICT}.show .restore-confirm`, { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_RESTORE_CONFLICT} .modal-content`], 'app-snapshots-restore-conflict', PADDING);
+
+		await page.click(`${SNAPSHOT_RESTORE_CONFLICT} [data-bs-dismiss="modal"]`);
+		await page.waitForSelector(SNAPSHOT_RESTORE_CONFLICT, { hidden: true });
+		await page.$eval(`${SNAPSHOT_RESTORE} .restore-folder[data-path="${apps.RESTORE_FOLDER}"] > .tree-row .folder-add`, (element) => { element.click(); });
+		await page.waitForSelector(`${SNAPSHOT_RESTORE} .folder-name`, { visible: true });
+		await page.type(`${SNAPSHOT_RESTORE} .folder-name`, apps.RESTORE_NEW_FOLDER);
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_RESTORE} .modal-content`], 'app-snapshots-restore-folder-name', PADDING);
+
+		await page.click(`${SNAPSHOT_RESTORE} .draft-add`);
+		await page.waitForSelector(`${SNAPSHOT_RESTORE} .folder-remove`, { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_RESTORE} .modal-content`], 'app-snapshots-restore-folder-new', PADDING);
 		await closePage(page);
 	},
 	dashboard: async ({ browser, backend, capture, viewport }) => {
