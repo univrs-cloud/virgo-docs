@@ -41,6 +41,10 @@ export default defineConfig({
 					items: [{ autogenerate: { directory: 'management' } }]
 				},
 				{
+					label: 'Troubleshooting',
+					items: [{ autogenerate: { directory: 'troubleshooting' } }]
+				},
+				{
 					label: 'CLI reference',
 					items: [{ autogenerate: { directory: 'cli' } }]
 				}
