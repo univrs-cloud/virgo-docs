@@ -27,6 +27,16 @@ The computer reaches the node over your local network only, so folders open whil
 
 Locking a user stops them from reaching every folder, until they are unlocked.
 
+## Scanning to a folder
+
+A folder is also a good place for a scanner or multifunction printer to save its scans. A device that can scan to a network folder (often called scan to folder or scan to SMB) saves each scan straight to the node, where everyone who can reach the folder finds it.
+
+Give each device a [user](/management/system/users/) of its own, then use the folder's **Authorized users** to decide two things at once: which devices can save scans there, and which people can open them. A folder for the accounting office, for example, lists that office's scanner and the people who work there, and nobody else.
+
+In the device's settings, enter the node's address and the folder's name, as they appear in the folder's address, together with the device's own username and password. If a device is replaced or lost, locking or deleting its user cuts its access without touching anyone else's.
+
+This works with Nextcloud too. [Share an existing path](#sharing-an-existing-path), such as a Nextcloud group folder or a user's files, and authorize the device on it: the scans land in Nextcloud, where the same people find them from their browser or phone.
+
 ## Adding a folder
 
 Select **New folder**, then enter:
