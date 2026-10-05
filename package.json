@@ -14,7 +14,7 @@
 		"screenshots": "node scripts/screenshots/index.mjs"
 	},
 	"dependencies": {
-		"@astrojs/starlight": "^0.42.4",
+		"@astrojs/starlight": "^0.42.5",
 		"@plausible-analytics/tracker": "^0.4.6",
 		"astro": "^7.3.5",
 		"astro-auto-import": "^0.6.0",
