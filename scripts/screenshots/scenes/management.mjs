@@ -124,6 +124,9 @@ const SNAPSHOT_RESULTS = '#apps .details .snapshots .card-body:has(.snapshot-sea
 const SNAPSHOT_DOWNLOADS = `${SNAPSHOT_RESULTS} .dropdown-menu.show`;
 const SNAPSHOT_RESTORE = '#snapshot-restore';
 const SNAPSHOT_RESTORE_CONFLICT = '#snapshot-restore-conflict';
+const SNAPSHOT_BROWSER = '#snapshot-browser';
+const BROWSER_HEIGHT = 760;
+const browseCheck = (path) => { return `${SNAPSHOT_BROWSER} .browse-check[data-path="${path}"]`; };
 
 const appsNode = (backend, { names = apps.CORE_APP_NAMES, updatable = null, jobs = [], domain = 'univrs' } = {}) => {
 	const appState = apps.installed({ appsDir: backend.appsDir, parseYaml: backend.parseYaml, fqdn: fqdn(domain), domainName: DOMAINS[domain], names, updatable });
@@ -314,7 +317,7 @@ const pages = {
 		await closePage(updating);
 	},
 	snapshots: async ({ browser, backend, capture, viewport }) => {
-		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] }), snapshotSearch: apps.snapshotSearch(), restoreFolders: apps.restoreFolders(), restoreInspection: apps.restoreInspection() });
+		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] }), snapshotSearch: apps.snapshotSearch(), restoreFolders: apps.restoreFolders(), restoreInspection: apps.restoreInspection(), browseListings: apps.browseListings() });
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(page, apps.SNAPSHOT_CLOCK);
 		await open(page, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
@@ -340,6 +343,67 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(page, [SNAPSHOT_RESULTS], 'app-snapshots-download', FLUSH_TOP_PADDING);
 		await page.keyboard.press('Escape');
+
+		const resultsViewport = page.viewport();
+		await page.setViewport({ ...viewport, height: BROWSER_HEIGHT });
+		await page.$eval(`${SNAPSHOT_RESULTS} .snapshot-browse[data-browse-snapshot="${apps.BROWSE_SNAPSHOT}"][data-browse-focus="${apps.BROWSE_FILE}"]`, (element) => { element.click(); });
+		await page.waitForSelector(`${SNAPSHOT_BROWSER}.show ${'.browse-check'}:checked`, { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse', PADDING);
+
+		const crumbToggles = await page.$$(`${SNAPSHOT_BROWSER} .breadcrumb [data-bs-toggle="dropdown"]`);
+		await crumbToggles.at(-1).click();
+		await page.waitForSelector(`${SNAPSHOT_BROWSER} .breadcrumb .dropdown-menu.show`, { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse-folders', PADDING);
+		await page.keyboard.press('Escape');
+
+		await page.click(`${SNAPSHOT_BROWSER} thead [data-bs-toggle="dropdown"][data-bs-auto-close="outside"]`);
+		await page.waitForSelector(`${SNAPSHOT_BROWSER} thead .dropdown-menu.show`, { visible: true });
+		await page.click(`${SNAPSHOT_BROWSER} .browse-filter[value="deleted"]`);
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse-filter', PADDING);
+		await page.click(`${SNAPSHOT_BROWSER} .browse-filter-clear`);
+		await page.keyboard.press('Escape');
+
+		await page.click(browseCheck(apps.BROWSE_FILE));
+		for (const pick of apps.BROWSE_PICKS) {
+			await page.click(browseCheck(pick));
+		}
+		await page.$eval(`${SNAPSHOT_BROWSER} .browse-go[data-path="${apps.BROWSE_SUBFOLDER}"]`, (element) => { element.click(); });
+		await page.waitForSelector(browseCheck(apps.BROWSE_EXCEPTION), { visible: true });
+		await page.click(`${SNAPSHOT_BROWSER} .browse-check-all`);
+		await page.click(browseCheck(apps.BROWSE_EXCEPTION));
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse-select', PADDING);
+
+		await page.click(`${SNAPSHOT_BROWSER} .modal-footer .browse-collection`);
+		await page.waitForSelector(`${SNAPSHOT_BROWSER} .browse-expand`, { visible: true });
+		const expandable = await page.$$eval(`${SNAPSHOT_BROWSER} .browse-expand`, (elements) => { return elements.map((element) => { return element.dataset.path; }); });
+		for (const expandPath of expandable) {
+			await page.click(`${SNAPSHOT_BROWSER} .browse-expand[data-path="${expandPath}"]`);
+		}
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse-selected', PADDING);
+
+		await page.click(`${SNAPSHOT_BROWSER} .browse-restore`);
+		await page.waitForSelector(`${SNAPSHOT_RESTORE}.show .restore-folders .restore-folder`, { visible: true });
+		await page.$eval(`${SNAPSHOT_RESTORE} .restore-folder[data-path="/data/olivia/files"] > .tree-row .folder-toggle`, (element) => { element.click(); });
+		await page.waitForSelector(`${SNAPSHOT_RESTORE} .restore-folder[data-path="${apps.RESTORE_FOLDER}"]`, { visible: true });
+		await page.$eval(`${SNAPSHOT_RESTORE} .restore-folder[data-path="${apps.RESTORE_FOLDER}"] > .tree-row .folder-select`, (element) => { element.click(); });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [`${SNAPSHOT_RESTORE} .modal-content`], 'app-snapshots-restore-selection', PADDING);
+		await page.click(`${SNAPSHOT_RESTORE} [data-bs-dismiss="modal"]`);
+		await page.waitForSelector(SNAPSHOT_RESTORE, { hidden: true });
+		await page.click(`${SNAPSHOT_BROWSER} .modal-footer [data-bs-dismiss="modal"]`);
+		await page.waitForSelector(SNAPSHOT_BROWSER, { hidden: true });
+		await page.setViewport(resultsViewport);
+		await sleep(SETTLE_MS);
 
 		await page.$eval(`${SNAPSHOT_RESULTS} .snapshot-restore[data-path$="${apps.RESTORE_SNAPSHOT}${apps.RESTORE_FILE}"]`, (element) => { element.click(); });
 		await page.waitForSelector(`${SNAPSHOT_RESTORE}.show .restore-folders .bg-primary-subtle`, { visible: true });

@@ -6,7 +6,7 @@ sidebar:
   order: 0
 ---
 
-Every virgoOS node ships with the `virgo` command. This reference matches version 2.19.35.
+Every virgoOS node ships with the `virgo` command. This reference matches version 2.19.44.
 
 ```sh
 virgo [options] [command]

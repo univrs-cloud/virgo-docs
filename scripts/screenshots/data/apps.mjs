@@ -355,6 +355,59 @@ const restoreFolders = () => {
 	}));
 };
 
+const BROWSE_SNAPSHOT = 'autosnap_2026-08-01_00:00:17_monthly';
+const BROWSE_FOLDER = '/data/olivia/files/Documents';
+const BROWSE_FILE = `${BROWSE_FOLDER}/Budget 2026.xlsx`;
+const BROWSE_SUBFOLDER = `${BROWSE_FOLDER}/Invoices`;
+const BROWSE_PICKS = [`${BROWSE_FOLDER}/Budget 2025.xlsx`, `${BROWSE_FOLDER}/Travel plan.docx`];
+const BROWSE_EXCEPTION = `${BROWSE_SUBFOLDER}/Invoice 2026-003.pdf`;
+
+const browseFolder = (parent, name, change = {}) => {
+	return { name, path: `${parent}/${name}`, states: [], currentPath: null, changesInside: 0, changeGroups: [], ...change };
+};
+
+const browseFile = (parent, name, size, change = {}) => {
+	return { name, path: `${parent}/${name}`, size, modifiedAt: '2026-07-28T14:12:00.000Z', states: [], currentPath: null, ...change };
+};
+
+const browseListings = () => {
+	const home = '/data/olivia/files';
+	const inside = (groups) => {
+		return { changesInside: groups.reduce((total, group) => { return total + group.count; }, 0), changeGroups: groups };
+	};
+	const listing = (folders, files) => {
+		return { status: 'succeeded', isIndexed: true, isDeleted: false, movedTo: null, folders, files };
+	};
+	return {
+		'': listing([browseFolder('/data/james', 'files', { name: 'james' }), browseFolder('/data/olivia', 'files', { name: 'olivia' })], []),
+		[home]: listing([
+			browseFolder(home, 'Documents', inside([{ states: ['deleted'], count: 3 }, { states: ['modified'], count: 2 }, { states: ['moved'], count: 1 }, { states: ['renamed'], count: 1 }])),
+			browseFolder(home, 'Photos', inside([{ states: ['deleted'], count: 14 }])),
+			browseFolder(home, 'Projects')
+		], [
+			browseFile(home, 'Notes.md', 2140, { states: ['modified'] }),
+			browseFile(home, 'Readme.md', 206)
+		]),
+		[BROWSE_FOLDER]: listing([
+			browseFolder(BROWSE_FOLDER, 'Budget drafts', inside([{ states: ['deleted'], count: 1 }, { states: ['modified'], count: 1 }])),
+			browseFolder(BROWSE_FOLDER, 'Invoices'),
+			browseFolder(BROWSE_FOLDER, 'Taxes', { states: ['renamed'], currentPath: `${BROWSE_FOLDER}/Taxes 2026` })
+		], [
+			browseFile(BROWSE_FOLDER, 'Budget 2025.xlsx', 51877, { states: ['deleted'] }),
+			browseFile(BROWSE_FOLDER, 'Budget 2026.xlsx', 44109, { states: ['modified'] }),
+			browseFile(BROWSE_FOLDER, 'Contract.pdf', 284672, { states: ['moved'], currentPath: `${home}/Projects/Contract.pdf` }),
+			browseFile(BROWSE_FOLDER, 'Meeting notes.docx', 31744),
+			browseFile(BROWSE_FOLDER, 'Travel plan.docx', 18230, { states: ['deleted'] })
+		]),
+		[BROWSE_SUBFOLDER]: listing([], [
+			browseFile(BROWSE_SUBFOLDER, 'Invoice 2026-001.pdf', 91204),
+			browseFile(BROWSE_SUBFOLDER, 'Invoice 2026-002.pdf', 88310),
+			browseFile(BROWSE_SUBFOLDER, 'Invoice 2026-003.pdf', 90112),
+			browseFile(BROWSE_SUBFOLDER, 'Invoice 2026-004.pdf', 93577)
+		])
+	};
+};
+
 const restoreInspection = () => {
 	return {
 		status: 'succeeded',
@@ -424,6 +477,13 @@ export {
 	RESTORE_NEW_FOLDER,
 	restoreFolders,
 	restoreInspection,
+	BROWSE_SNAPSHOT,
+	BROWSE_FOLDER,
+	BROWSE_FILE,
+	BROWSE_SUBFOLDER,
+	BROWSE_PICKS,
+	BROWSE_EXCEPTION,
+	browseListings,
 	installingJobFor,
 	updatingJob,
 	updatedJob,

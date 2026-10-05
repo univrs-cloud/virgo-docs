@@ -20,7 +20,10 @@ Every other page in the menu is for [administrators](/management/system/users/#r
 - [Dashboard](/management/dashboard/): the node's status, its nodes, apps, shortcuts, folders and time machines at a glance.
 - Resources
   - [Apps](/management/resources/apps/): installing apps from the App center and managing them.
-    - [Snapshots](/management/resources/apps/snapshots/): an app's restore points, and finding earlier and deleted files in them.
+    - [Snapshots](/management/resources/apps/snapshots/): an app's restore points, and the ways to get files back from them.
+      - [Browsing files](/management/resources/apps/snapshots/browse/): looking inside a restore point, seeing what changed since, and selecting what to get back.
+      - [Searching files](/management/resources/apps/snapshots/search/): finding earlier and deleted files across every restore point.
+      - [Restoring files](/management/resources/apps/snapshots/restore/): putting one file or a whole selection back into Nextcloud.
   - [Shortcuts](/management/resources/shortcuts/): links on the Dashboard to devices and websites, optionally reached through the node.
   - [Folders](/management/resources/folders/): shared folders for the computers on your local network.
   - [Time machines](/management/resources/time-machines/): backup destinations for the Time Machine app on Macs.

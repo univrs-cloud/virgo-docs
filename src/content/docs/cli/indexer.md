@@ -106,6 +106,24 @@ virgo indexer diff [options] <snapA> <snapB>
 | `--offset <n>` | No | Skip first N results |
 | `--json` | No | Output as JSON |
 
+## virgo indexer since
+
+Files of a snapshot folder that were deleted, modified, renamed or moved after it
+
+```sh
+virgo indexer since [options] <snapshot>
+```
+
+| Option | Required | Description |
+| --- | --- | --- |
+| `--path <folder>` | Yes | Folder as it was in the snapshot |
+| `--dataset <names>` | No | Resolve snapshot within these dataset root(s), comma-separated |
+| `--state <states>` | No | Filter by state, comma-separated: deleted, modified, renamed, moved |
+| `--summary` | No | One line per entry of the folder, with a count of changes inside |
+| `--limit <n>` | No | Max results (default 500) |
+| `--offset <n>` | No | Skip first N results |
+| `--json` | No | Output as JSON |
+
 ## virgo indexer stats
 
 Index statistics

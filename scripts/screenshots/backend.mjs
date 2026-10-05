@@ -148,6 +148,12 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.on('indexer:search', (_query, acknowledge) => {
 			acknowledge?.({ status: 'succeeded', results: state.snapshotSearch ?? [], hasMore: false });
 		});
+		socket.on('indexer:browse', (config, acknowledge) => {
+			acknowledge?.(state.browseListings?.[config?.path ?? ''] ?? { status: 'failed', message: 'The folder is not in that snapshot.' });
+		});
+		socket.on('indexer:browse:changes', (_config, acknowledge) => {
+			acknowledge?.({ status: 'succeeded', total: 0, hasMore: false, items: [] });
+		});
 		socket.on('indexer:restore:folders', (config, acknowledge) => {
 			acknowledge?.({ status: 'succeeded', folders: state.restoreFolders?.[config?.path ?? ''] ?? [] });
 		});
