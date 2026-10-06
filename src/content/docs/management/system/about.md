@@ -2,7 +2,7 @@
 title: About
 description: The versions of the software on the node and its hardware, from the About page.
 sidebar:
-  order: 14
+  order: 15
 ---
 
 **About** lists the versions of the software on the node and the hardware it runs on. Keep it at hand when you contact support.

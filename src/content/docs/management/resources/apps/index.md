@@ -3,7 +3,7 @@ title: Apps
 description: Installing apps from the App center and managing them.
 sidebar:
   label: Managing apps
-  order: 3
+  order: 4
 ---
 
 **Apps** lists the apps installed on the node. The core apps installed during [setup](/setup/apps/) are always there; every other app is installed from the **App center**.

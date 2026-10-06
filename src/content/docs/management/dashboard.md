@@ -20,7 +20,7 @@ The **Status** column shows the node's resources as they change:
 - **Network:** the traffic on the node's network connection over the last minute, received (**RX**) and sent (**TX**), with the connection's name and speed.
 - **VirgoOS:** how full the system drive is.
 - **Data:** the [storage pool](/management/system/storage/)'s health and how full it is, with the temperature of each drive. A drive's badge turns yellow or red when it gets too warm, and orange when its own health check reports a problem; hover over it to see what it reports. While a data integrity check runs, its progress shows here too.
-- **UPS:** whether the node runs on the grid or on battery, and how charged the battery is.
+- **UPS:** whether the node runs on the grid or on battery, and how charged the battery is. See [UPS](/management/ups/) for what happens during a power cut.
 - **Uptime:** how long the node has been running since it last started.
 
 ## Nodes

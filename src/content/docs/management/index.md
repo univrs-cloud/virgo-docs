@@ -18,6 +18,7 @@ Every other page in the menu is for [administrators](/management/system/users/#r
 
 - [Authentication](/management/authentication/): signing in and out, and what is gated by an account.
 - [Dashboard](/management/dashboard/): the node's status, its nodes, apps, shortcuts, folders and time machines at a glance.
+- [UPS](/management/ups/): what the node does during a power cut, and when it shuts itself down.
 - Resources
   - [Apps](/management/resources/apps/): installing apps from the App center and managing them.
     - [Snapshots](/management/resources/apps/snapshots/): an app's restore points, and the ways to get files back from them.

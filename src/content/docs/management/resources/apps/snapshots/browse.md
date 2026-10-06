@@ -2,7 +2,7 @@
 title: Browsing files
 description: Looking inside a Nextcloud restore point, seeing what changed since, and selecting files and folders to download or restore.
 sidebar:
-  order: 5
+  order: 6
 ---
 
 **Browse files** opens Nextcloud as it was at one restore point. You walk through everyone's folders the way they were then, see at a glance what has been changed, moved or deleted since, and tick what you want back.

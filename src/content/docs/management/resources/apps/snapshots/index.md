@@ -3,7 +3,7 @@ title: Snapshots
 description: An app's restore points, and the ways to look inside them and get files back.
 sidebar:
   label: Restore points
-  order: 4
+  order: 5
 ---
 
 A snapshot is a read-only copy of an app's data as it was at one moment. The node takes them by itself and removes old ones, following the pool's [snapshot schedule](/management/system/storage/#usage). A snapshot only takes up space for what has changed since it was taken, so keeping many of them costs little.

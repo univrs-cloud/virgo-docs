@@ -2,7 +2,7 @@
 title: Storage
 description: The node's storage pool, its health, data integrity, usage and drives.
 sidebar:
-  order: 7
+  order: 8
 ---
 
 **Storage** shows where the node keeps everything: the drive the system runs from, and the storage pool created during [setup](/setup/storage/) that holds your apps, their data and your folders.

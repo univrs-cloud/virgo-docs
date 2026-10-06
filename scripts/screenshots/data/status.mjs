@@ -8,6 +8,26 @@ const status = () => {
 	};
 };
 
+const upsCharging = () => {
+	return { powerSource: 'grid', capacity: 86, isCharging: true };
+};
+
+const upsOnBattery = () => {
+	return { powerSource: 'battery', capacity: 72, isCharging: false };
+};
+
+const upsMissing = () => {
+	return { batteryCharge: false, error: 'No UPS found' };
+};
+
+const upsUnreachable = () => {
+	return { error: 'unreachable', message: 'connect ENOENT /var/run/virgo-ups.sock' };
+};
+
+const upsFailed = () => {
+	return { error: 'invalid', message: 'Unexpected end of JSON input' };
+};
+
 const MIB = 1024 ** 2;
 const HISTORY_SECONDS = 61;
 
@@ -25,5 +45,10 @@ const networkHistory = () => {
 
 export {
 	status,
+	upsCharging,
+	upsOnBattery,
+	upsMissing,
+	upsUnreachable,
+	upsFailed,
 	networkHistory
 };

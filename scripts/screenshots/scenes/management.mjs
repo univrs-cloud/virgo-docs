@@ -2,7 +2,7 @@ import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open,
 import * as apps from '../data/apps.mjs';
 import { DOMAINS, fqdn } from '../data/network.mjs';
 import { nodeState } from '../data/node.mjs';
-import { networkHistory } from '../data/status.mjs';
+import { networkHistory, upsCharging, upsOnBattery, upsMissing, upsUnreachable, upsFailed } from '../data/status.mjs';
 import * as serviceData from '../data/services.mjs';
 import * as settings from '../data/settings.mjs';
 import * as shares from '../data/shares.mjs';
@@ -85,6 +85,9 @@ const storagePage = async (browser, backend, viewport) => {
 };
 
 const TIGHT_PADDING = 12;
+const UPS_ROW = '#resources-monitor .ups';
+const UPS_BADGE = `${UPS_ROW} u-badge`;
+const UPS_FAULT = `${UPS_ROW} h6 small`;
 const FLUSH_TOP_PADDING = { top: 0, right: TIGHT_PADDING, bottom: TIGHT_PADDING, left: TIGHT_PADDING };
 const REORDER_GROUP = '#apps-shortcuts .group:nth-child(2)';
 
@@ -485,6 +488,29 @@ const pages = {
 		await open(adopting, backend.url, '/', '#peer [data-action="adopt"]');
 		await capture.region(adopting, ['#peer .card'], 'dashboard-adopt', TIGHT_PADDING);
 		await closePage(adopting);
+	},
+	ups: async ({ browser, backend, capture, viewport }) => {
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		backend.setState({ ...managedNode(backend), ups: upsCharging() });
+		await open(page, backend.url, '/', UPS_BADGE);
+		await capture.region(page, [UPS_ROW], 'ups-grid', TIGHT_PADDING);
+
+		backend.setState({ ...managedNode(backend), ups: upsOnBattery() });
+		await open(page, backend.url, '/', UPS_BADGE);
+		await capture.region(page, [UPS_ROW], 'ups-battery', TIGHT_PADDING);
+
+		backend.setState({ ...managedNode(backend), ups: upsMissing() });
+		await open(page, backend.url, '/', UPS_BADGE);
+		await capture.region(page, [UPS_ROW], 'ups-missing', TIGHT_PADDING);
+
+		backend.setState({ ...managedNode(backend), ups: upsUnreachable() });
+		await open(page, backend.url, '/', UPS_FAULT);
+		await capture.region(page, [UPS_ROW], 'ups-unreachable', TIGHT_PADDING);
+
+		backend.setState({ ...managedNode(backend), ups: upsFailed() });
+		await open(page, backend.url, '/', UPS_FAULT);
+		await capture.region(page, [UPS_ROW], 'ups-failed', TIGHT_PADDING);
+		await closePage(page);
 	},
 	shortcuts: async ({ browser, backend, capture, viewport }) => {
 		const list = shortcuts.shortcuts(DOMAINS.univrs);

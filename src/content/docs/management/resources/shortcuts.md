@@ -2,7 +2,7 @@
 title: Shortcuts
 description: Links on the Dashboard to devices and websites, optionally reached through the node.
 sidebar:
-  order: 4
+  order: 5
 ---
 
 **Shortcuts** are links on the **Dashboard** to things that are not apps on the node, such as a printer, a router or a website. A shortcut can also give a device on your network its own address under the node's domain, reached through the node.

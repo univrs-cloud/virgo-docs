@@ -2,7 +2,7 @@
 title: Restoring files
 description: Putting earlier and deleted Nextcloud files back, one file to an exact place or a whole selection into a folder of its own.
 sidebar:
-  order: 7
+  order: 8
 ---
 
 Restoring copies files out of a restore point and back into Nextcloud, where they show up by themselves, for the person whose folder you chose. The restore point itself never changes, so the same files can be restored again.

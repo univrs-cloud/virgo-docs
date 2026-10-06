@@ -3,7 +3,7 @@ title: Users
 description: The people who can sign in to the node and their roles.
 sidebar:
   label: Managing users
-  order: 8
+  order: 9
 ---
 
 A user of the node signs in to the node itself, and uses the same username and password to reach folders and Time Machine backups. Apps keep their own users, separate from these.

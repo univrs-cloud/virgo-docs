@@ -2,7 +2,7 @@
 title: Network
 description: The node's name, its network interface and trusted proxies, from the Network page.
 sidebar:
-  order: 11
+  order: 12
 ---
 
 **Network** shows the name the node answers to, how it is connected to your network and which proxies it trusts.
