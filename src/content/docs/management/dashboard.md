@@ -53,6 +53,18 @@ Apps and [shortcuts](/management/resources/shortcuts/) are grouped by category. 
 
 Each app shows how many of its containers are running, for example **1 / 1**: green when all of them are, yellow when only some are, and red when none are. An app that is not running, or has no page of its own such as Gitea Runner, is greyed out and cannot be opened. A green download badge means an update is available for it.
 
+### Opening in a window
+
+On a computer screen, a card with a window icon can also open inside the node's interface, without leaving it for another browser tab. Select the icon to open it. An app with more than one address asks which one to open. Apps that cannot be shown this way, and shortcuts that are not [reached through the node](/management/resources/shortcuts/#reaching-a-device-through-the-node), have no icon.
+
+The window fills the page and gets its own entry in the menu, under **Dashboard**. Select the entry to hide the window or bring it back, and the cross next to it to close it. Selecting any other page in the menu hides it too.
+
+![An app open in a window](../../../assets/management/dashboard-window.png)
+
+Select the icon next to the cross to turn it into a floating window, which you can drag by its title bar, resize from its edges, and minimize, maximize or close with the buttons in its corner. Several windows can be open at once.
+
+![A floating window](../../../assets/management/dashboard-window-floating.png)
+
 ### Rearranging cards
 
 Select the lines next to a category's name to rearrange its cards. The category turns purple and the lines become a check mark.

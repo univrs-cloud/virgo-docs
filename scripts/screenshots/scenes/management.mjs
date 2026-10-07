@@ -92,6 +92,20 @@ const FLUSH_TOP_PADDING = { top: 0, right: TIGHT_PADDING, bottom: TIGHT_PADDING,
 const REORDER_GROUP = '#apps-shortcuts .group:nth-child(2)';
 
 const DRAG_IMAGE_OFFSET = { x: 90, y: 34 };
+const WINDOW_TOGGLE = `#apps-shortcuts .open-window[data-label="${apps.WINDOW_APP}"]`;
+const WINDOW_ENTRY = 'header .navbar .nav .nav-window';
+
+const serveWindowPage = async (page, url) => {
+	await page.setRequestInterception(true);
+	page.on('request', (request) => {
+		if (request.url().toLowerCase().startsWith(url.toLowerCase())) {
+			request.respond({ contentType: 'text/html', body: apps.windowPage() });
+			return;
+		}
+
+		request.continue();
+	});
+};
 
 const showDragImage = (card, pointer, offset) => {
 	const box = card.getBoundingClientRect();
@@ -458,6 +472,20 @@ const pages = {
 		await capture.fullPage(page, 'dashboard');
 
 		await capture.region(page, ['#resources-monitor'], 'dashboard-status', TIGHT_PADDING);
+
+		await serveWindowPage(page, await page.$eval(WINDOW_TOGGLE, (element) => { return element.dataset.url; }));
+		await page.click(WINDOW_TOGGLE);
+		await page.waitForSelector(WINDOW_ENTRY, { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS * 2);
+		await capture.viewport(page, 'dashboard-window');
+
+		await page.click(`${WINDOW_ENTRY} .unmaximize-window`);
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'dashboard-window-floating');
+		await page.click(`${WINDOW_ENTRY} .close-window`);
+		await sleep(SETTLE_MS);
 
 		await page.click(`${REORDER_GROUP} .order`);
 		await page.waitForSelector(`${REORDER_GROUP}.dragging`, { visible: true });

@@ -2,9 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const CORE_APPS = {
-	wetty: { title: 'Terminal', category: 'Networking', icon: 'terminal.svg', router: 'wetty', host: 'terminal' },
-	authelia: { title: 'Authelia', category: 'System', icon: 'authelia.svg', router: 'authelia', host: 'auth' },
-	traefik: { title: 'Traefik', category: 'System', icon: 'traefik-proxy.svg', router: 'dashboard', host: 'traefik' }
+	wetty: { title: 'Terminal', category: 'Networking', icon: 'terminal.svg', router: 'wetty', host: 'terminal', embed: true },
+	authelia: { title: 'Authelia', category: 'System', icon: 'authelia.svg', router: 'authelia', host: 'auth', embed: false },
+	traefik: { title: 'Traefik', category: 'System', icon: 'traefik-proxy.svg', router: 'dashboard', host: 'traefik', embed: true }
 };
 const CORE_APP_NAMES = Object.keys(CORE_APPS);
 
@@ -46,7 +46,8 @@ const catalogue = (appsDir) => {
 			category: template.categories[0],
 			icon: path.basename(template.logo),
 			router: template.name.replace(/[^a-z0-9]/gi, ''),
-			host: (prefix ? prefix.replace(/\.$/, '') : null)
+			host: (prefix ? prefix.replace(/\.$/, '') : null),
+			embed: template.embed ?? null
 		};
 	});
 };
@@ -54,7 +55,7 @@ const catalogue = (appsDir) => {
 const runningApps = (entries, fqdn) => {
 	return {
 		configured: entries.map((app, index) => {
-			return { id: index + 1, type: 'app', name: app.name, title: app.title, category: app.category, icon: app.icon };
+			return { id: index + 1, type: 'app', name: app.name, title: app.title, category: app.category, icon: app.icon, canEmbed: app.embed ?? null };
 		}),
 		containers: entries.map((app) => {
 			return {
@@ -194,6 +195,22 @@ const APP_LOG = [
 
 const TERMINAL_PROMPT = 'root@nextcloud:/# ';
 
+const WINDOW_APP = 'Terminal';
+const WINDOW_PROMPT = 'voyager@spica:~$ ';
+const WINDOW_LINES = [
+	`${WINDOW_PROMPT}uptime`,
+	' 17:40:12 up 5 days,  7:02,  1 user,  load average: 0.42, 0.38, 0.35',
+	`${WINDOW_PROMPT}<span class="cursor">&nbsp;</span>`
+];
+
+const windowPage = () => {
+	return `<!doctype html><html><head><meta charset="utf-8"><style>
+		html, body { height: 100%; margin: 0; background: #000; }
+		pre { margin: 0; padding: 4px 6px; color: #f0f0f0; font: 14px/1.25 ui-monospace, Menlo, Consolas, monospace; }
+		.cursor { background: #f0f0f0; }
+	</style></head><body><pre>${WINDOW_LINES.join('\n')}</pre></body></html>`;
+};
+
 const expandVariables = (value) => {
 	return String(value ?? '').replace(/\$\{[^}:]*:-([^}]*)\}/g, '$1').replace(/\$\{[^}]*\}/g, '');
 };
@@ -252,7 +269,7 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 		const host = (prefix ? `${prefix}${(Object.hasOwn(CORE_APPS, name) ? fqdn : domainName)}` : null);
 		const usage = APP_USAGE[name];
 		const services = Object.entries(compose.services).filter(([, service]) => { return !isOneShot(service); });
-		configured.push({ id: appIndex + 1, type: 'app', name, title: template.title, category: template.categories[0], icon: path.basename(template.logo), canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}` });
+		configured.push({ id: appIndex + 1, type: 'app', name, title: template.title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}` });
 		const routed = services.find(([, service]) => { return serviceHasRoute(service); })?.[0];
 		const containerMetrics = services.map(([serviceName, service], serviceIndex) => {
 			const id = `${name}-${serviceName}`;
@@ -467,6 +484,8 @@ export {
 	runningApps,
 	EXAMPLE_APP,
 	installed,
+	WINDOW_APP,
+	windowPage,
 	appSnapshots,
 	SNAPSHOT_CLOCK,
 	SNAPSHOT_SEARCH_TERM,
