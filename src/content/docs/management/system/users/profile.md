@@ -19,15 +19,13 @@ A user without the administrator role sees only the **Dashboard** and their prof
 
 ## Editing your profile
 
-Open the menu on your profile card, then select **Edit profile** to change your name and email address.
-
-![The profile menu](../../../../../assets/management/profile-menu.png)
+Select **Edit** on the **Account** card to change your name and email address.
 
 ![Editing your profile](../../../../../assets/management/profile-edit.png)
 
 ## Changing your password
 
-Open the menu on your profile card, then select **Change password** and enter the new password twice.
+Select **Change** on the **Password** card and enter the new password twice.
 
 ![Changing your password](../../../../../assets/management/profile-password.png)
 

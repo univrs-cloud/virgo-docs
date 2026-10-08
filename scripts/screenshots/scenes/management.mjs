@@ -231,7 +231,6 @@ const hoverTooltip = async (page, selector) => {
 };
 
 const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
-const CHECKING_PADDING = { top: 48, right: 160, bottom: 48, left: 160 };
 const MENU_PADDING = { top: 4, right: 16, bottom: 8, left: 16 };
 
 const pages = {
@@ -714,14 +713,10 @@ const pages = {
 		await open(page, backend.url, '/users/profile', '#profile .container-fluid:not(.d-none)');
 		await capture.viewport(page, 'profile');
 
-		await openMenu(page, '#profile .dropdown-toggle', '#profile .dropdown-menu.show');
-		await capture.region(page, ['#profile .card', '#profile .dropdown-menu.show'], 'profile-menu', PADDING);
-
 		await openModal(page, '#profile a[href="#profile-edit"]', '#profile-edit');
 		await capture.region(page, ['#profile-edit .modal-content'], 'profile-edit', PADDING);
 		await closeModal(page, '#profile-edit');
 
-		await openMenu(page, '#profile .dropdown-toggle', '#profile .dropdown-menu.show');
 		await openModal(page, '#profile a[href="#profile-password"]', '#profile-password');
 		await setValue(page, '#profile-password .password', users.NEW_PASSWORD);
 		await setValue(page, '#profile-password .password-check', users.NEW_PASSWORD);
@@ -814,7 +809,7 @@ const pages = {
 		backend.setState(managedNode(backend, { trustedProxies: [TRUSTED_PROXY] }));
 		const proxies = await signedInPage(browser, backend, viewport, users.owner());
 		await open(proxies, backend.url, '/network', NETWORK_PAGE);
-		await openMenu(proxies, `#network tr[data-id="${TRUSTED_PROXY}"] .dropdown-toggle`, '#network .dropdown-menu.show');
+		await openMenu(proxies, `#network .item[data-id="${TRUSTED_PROXY}"] .dropdown-toggle`, '#network .dropdown-menu.show');
 		await capture.region(proxies, [networkCard(3), '#network .dropdown-menu.show'], 'network-proxies', CARD_PADDING);
 		await closePage(proxies);
 
@@ -931,7 +926,7 @@ const pages = {
 
 		backend.setState({ ...managedNode(backend), updates: [], checkUpdates: true });
 		await open(page, backend.url, '/system-updates', UPDATES_PAGE);
-		await capture.region(page, ['#system-updates .no-content .icon-face-party', '#system-updates .no-content .check-updates'], 'updates-checking', CHECKING_PADDING);
+		await capture.region(page, ['#system-updates .card'], 'updates-checking', CARD_PADDING);
 
 		backend.setState({ ...managedNode(backend), updates: updates.available() });
 		await open(page, backend.url, '/system-updates', UPDATES_PAGE);

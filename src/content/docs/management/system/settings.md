@@ -5,7 +5,7 @@ sidebar:
   order: 13
 ---
 
-**Settings** holds the node's fleet registration, its email notifications, its location and the reboot button. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, and **Power** lets you reboot the node.
+**Settings** holds the node's fleet registration, its email notifications, its location and the power buttons. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, and **Power** lets you reboot or shut down the node.
 
 ![Settings on a fresh install](../../../../assets/management/settings-empty.png)
 
@@ -52,6 +52,8 @@ Select it to see today's temperatures every two hours, with the current time hig
 **Reboot** restarts the node, after you confirm.
 
 ![Confirming a reboot](../../../../assets/management/settings-reboot.png)
+
+**Shut down** turns the node off, after you confirm. It stays off until you power it on again.
 
 ## Everything configured
 
