@@ -141,7 +141,8 @@ const createCapture = (outDir) => {
 			await save(page, name, { clip, captureBeyondViewport: (clip.y + clip.height > page.viewport().height) });
 		},
 		viewport: async (page, name) => {
-			await save(page, name);
+			const { width, height } = page.viewport();
+			await save(page, name, { clip: { x: 0, y: 0, width, height }, captureBeyondViewport: false });
 		},
 		fullPage: async (page, name) => {
 			const viewport = page.viewport();

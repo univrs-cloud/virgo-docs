@@ -57,13 +57,19 @@ Each app shows how many of its containers are running, for example **1 / 1**: gr
 
 On a computer screen, a card with a window icon can also open inside the node's interface, without leaving it for another browser tab. Select the icon to open it. An app with more than one address asks which one to open. Apps that cannot be shown this way, and shortcuts that are not [reached through the node](/management/resources/shortcuts/#reaching-a-device-through-the-node), have no icon.
 
-The window fills the page and gets its own entry in the menu, under **Dashboard**. Select the entry to hide the window or bring it back, and the cross next to it to close it. Selecting any other page in the menu hides it too.
+The window fills the page and gets its own entry in the menu, under **Dashboard**, with the icon and name of what you opened. Several windows can be open at once. Select an entry to hide its window or bring it back. Selecting any other page in the menu hides it too.
 
-![An app open in a window](../../../assets/management/dashboard-window.png)
+With the [menu collapsed](/management/#the-menu), the entries show only their icons, like a dock.
 
-Select the icon next to the cross to turn it into a floating window, which you can drag by its title bar, resize from its edges, and minimize, maximize or close with the buttons in its corner. Several windows can be open at once.
+![Three apps open in windows, with the menu collapsed](../../../assets/management/dashboard-window.png)
+
+With the menu expanded, hover over an entry, or select it, to show its two icons. The cross closes the window. The icon next to it turns it into a floating window, which you can drag by its title bar, resize from its edges, and minimize, maximize or close with the buttons in its corner.
 
 ![A floating window](../../../assets/management/dashboard-window-floating.png)
+
+Drag the entries in the menu to put the open windows in the order you want.
+
+Open windows are remembered in this browser, in their order. After you reload the page, their entries are back in the menu, and each window loads when you select its entry. Restarting, shutting down or updating the node closes every window.
 
 ### Rearranging cards
 

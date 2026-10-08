@@ -14,6 +14,18 @@ Users without the administrator role see only the **Dashboard** and their own [p
 
 Every other page in the menu is for [administrators](/management/system/users/#roles) only.
 
+## The menu
+
+The menu on the left lists every page you can open. On a computer screen, select the button at its bottom, above your name, to collapse it and leave more room for the page.
+
+![The button that collapses the menu](../../../assets/management/menu-toggle.png)
+
+Collapsed, the menu shows only icons. Hover over one to see its name. Select the same button to expand the menu again.
+
+![The collapsed menu](../../../assets/management/menu-collapsed.png)
+
+The menu stays the way you left it in this browser. When it is longer than the screen, scroll it: a shadow at its top or bottom edge shows there is more in that direction.
+
 ## Topics
 
 - [Authentication](/management/authentication/): signing in and out, and what is gated by an account.

@@ -92,13 +92,17 @@ const FLUSH_TOP_PADDING = { top: 0, right: TIGHT_PADDING, bottom: TIGHT_PADDING,
 const REORDER_GROUP = '#apps-shortcuts .group:nth-child(2)';
 
 const DRAG_IMAGE_OFFSET = { x: 90, y: 34 };
-const WINDOW_TOGGLE = `#apps-shortcuts .open-window[data-label="${apps.WINDOW_APP}"]`;
+const windowToggle = (label) => { return `#apps-shortcuts .open-window[data-label="${label}"]`; };
+const WINDOW_TOGGLE = windowToggle(apps.WINDOW_APP);
+const DOCKED_APPS = ['Nextcloud', 'Gitea'];
 const WINDOW_ENTRY = 'header .navbar .nav .nav-window';
+const MENU_TOGGLE = 'header nav .menu-toggle';
+const MENU_ITEM = 'header nav a[href="/storage"]';
 
-const serveWindowPage = async (page, url) => {
+const serveWindowPage = async (page, urls) => {
 	await page.setRequestInterception(true);
 	page.on('request', (request) => {
-		if (request.url().toLowerCase().startsWith(url.toLowerCase())) {
+		if (urls.some((url) => { return request.url().toLowerCase().startsWith(url.toLowerCase()); })) {
 			request.respond({ contentType: 'text/html', body: apps.windowPage() });
 			return;
 		}
@@ -473,19 +477,41 @@ const pages = {
 
 		await capture.region(page, ['#resources-monitor'], 'dashboard-status', TIGHT_PADDING);
 
-		await serveWindowPage(page, await page.$eval(WINDOW_TOGGLE, (element) => { return element.dataset.url; }));
-		await page.click(WINDOW_TOGGLE);
-		await page.waitForSelector(WINDOW_ENTRY, { visible: true });
+		await capture.region(page, [MENU_TOGGLE, `${VISIBLE_ACCOUNT} .account-toggle`], 'menu-toggle', MENU_PADDING);
+
+		const windowToggles = [...DOCKED_APPS.map(windowToggle), WINDOW_TOGGLE];
+		await serveWindowPage(page, await Promise.all(windowToggles.map((toggle) => { return page.$eval(toggle, (element) => { return element.dataset.url; }); })));
+		for (const toggle of windowToggles) {
+			await page.$eval(toggle, (element) => { element.click(); });
+			await sleep(SETTLE_MS);
+		}
+		await page.waitForSelector(`${WINDOW_ENTRY}.active`, { visible: true });
+		await page.click(MENU_TOGGLE);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS * 2);
 		await capture.viewport(page, 'dashboard-window');
 
-		await page.click(`${WINDOW_ENTRY} .unmaximize-window`);
+		await page.click('header nav a[href="/dashboard"]');
+		await sleep(SETTLE_MS);
+		const menuItem = await page.$eval(MENU_ITEM, centerOf);
+		await page.mouse.move(menuItem.x, menuItem.y);
+		await page.waitForSelector('.tooltip.show', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'menu-collapsed');
+
+		await page.click(MENU_TOGGLE);
+		await page.click(`header .navbar .nav .windows > div:last-child ${WINDOW_ENTRY.split(' ').pop()}`);
+		await page.click(`${WINDOW_ENTRY}.active .unmaximize-window`);
+		await page.click(MENU_TOGGLE);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(page, 'dashboard-window-floating');
-		await page.click(`${WINDOW_ENTRY} .close-window`);
-		await sleep(SETTLE_MS);
+		await page.click(MENU_TOGGLE);
+		for (const toggle of windowToggles) {
+			await page.hover(WINDOW_ENTRY);
+			await page.click(`${WINDOW_ENTRY} .close-window`);
+			await sleep(SETTLE_MS);
+		}
 
 		await page.click(`${REORDER_GROUP} .order`);
 		await page.waitForSelector(`${REORDER_GROUP}.dragging`, { visible: true });
