@@ -26,6 +26,10 @@ Each dot is a restore point. The bigger the dot, the more space it takes up, whi
 
 To choose a restore point, select its dot, drag the slider, or use **Newer** and **Older**. With the slider selected, the arrow keys step from one restore point to the next.
 
+:::tip
+With the slider selected, **Home** jumps to the newest restore point and **End** to the oldest.
+:::
+
 On a narrow screen, the timeline becomes a set of orbits around the app's icon, one per schedule, going round clockwise from **Now**.
 
 ## Getting files back

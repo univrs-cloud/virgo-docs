@@ -68,6 +68,14 @@ With the menu expanded, hover over an entry, or select it, to show its two icons
 ![A floating window](../../../assets/management/dashboard-window-floating.png)
 
 :::tip
+Drag a floating window by its title bar to an edge of the page to fit it to that half, or to a corner to fit it to that quarter. A blue outline shows where it will land. Drag it away again and it goes back to the size it had.
+:::
+
+:::tip
+Double-click a floating window's title bar to maximize it.
+:::
+
+:::tip
 Drag the entries in the menu to put the open windows in the order you want.
 :::
 

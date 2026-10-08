@@ -45,11 +45,15 @@ Open an app's menu in the list, or use the buttons at the top of its details:
 
 - **Update:** when an update is available, bring the app up to date. See [Updating an app](#updating-an-app).
 - **Start**, **Restart** and **Stop:** start, restart or stop all of the app's containers.
-- **Kill:** stop the app at once, without giving it time to shut down properly. Use it when **Stop** does not work.
-- **Recreate:** rebuild the app's containers from its template in the App center, keeping its settings and data. Use it when an app misbehaves.
+- **Kill:** stop the app at once, without giving it time to shut down properly.
+- **Recreate:** rebuild the app's containers from its template in the App center, keeping its settings and data.
 - **Uninstall:** remove the app. Its data stays in the storage pool, and installing the app again picks it back up.
 
 The core apps cannot be stopped, killed or uninstalled, because the node needs them.
+
+:::tip
+When an app misbehaves, **Recreate** it. Use **Kill** only when **Stop** does not work.
+:::
 
 While an action is running, a spinning gear takes the place of the menu.
 
@@ -84,3 +88,7 @@ Select **Logs** under a container to see its last 200 lines of output, followed 
 Select **Terminal** under a running container to open a command line inside it. Anything you change there outside the app's data is lost when the app is recreated or updated.
 
 ![A terminal in a container](../../../../../assets/management/app-terminal.png)
+
+:::tip
+Press **Ctrl+F**, or **⌘F** on a Mac, to find text in the terminal. **Enter** goes to the next match, **Shift+Enter** to the previous one, and **Esc** closes the search.
+:::
