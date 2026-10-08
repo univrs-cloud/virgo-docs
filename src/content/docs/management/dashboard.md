@@ -67,7 +67,9 @@ With the menu expanded, hover over an entry, or select it, to show its two icons
 
 ![A floating window](../../../assets/management/dashboard-window-floating.png)
 
+:::tip
 Drag the entries in the menu to put the open windows in the order you want.
+:::
 
 Open windows are remembered in this browser, in their order. After you reload the page, their entries are back in the menu, and each window loads when you select its entry. Restarting, shutting down or updating the node closes every window.
 
