@@ -242,3 +242,12 @@ header.header::after {
 .expressive-code .frame.is-terminal .copy .feedback.show {
 	transform: translate3d(0, -50%, 0);
 }
+
+.starlight-aside--tip .starlight-aside__icon {
+	background-color: currentColor;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 14c.2-1 .7-1.700 1.500-2.500 1-.9 1.500-2.200 1.500-3.500A6 6 0 0 0 6 8c0 1 .2 2.200 1.500 3.500.7.700 1.300 1.500 1.500 2.500'/%3E%3Cpath d='M9 18h6'/%3E%3Cpath d='M10 22h4'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.starlight-aside--tip .starlight-aside__icon > * {
+	display: none;
+}
