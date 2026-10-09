@@ -14,7 +14,7 @@ const PADDING = 32;
 const ACCOUNT_MENU_PADDING = { top: 12, right: PADDING, bottom: 8, left: PADDING };
 const DASHBOARD_HEIGHT = 960;
 const IN_USE_POOL_PERCENT = 34;
-const VISIBLE_ACCOUNT = 'header .account:not(.d-sm-none)';
+const VISIBLE_ACCOUNT = 'header .account:not(.sm\\:d-none)';
 
 const managedNode = (backend, overrides = {}) => {
 	return nodeState(backend.getTopologies, {
@@ -87,7 +87,7 @@ const storagePage = async (browser, backend, viewport) => {
 const TIGHT_PADDING = 12;
 const UPS_ROW = '#resources-monitor .ups';
 const UPS_BADGE = `${UPS_ROW} u-badge`;
-const UPS_FAULT = `${UPS_ROW} h6 small`;
+const UPS_FAULT = `${UPS_ROW} h5 small`;
 const FLUSH_TOP_PADDING = { top: 0, right: TIGHT_PADDING, bottom: TIGHT_PADDING, left: TIGHT_PADDING };
 const REORDER_GROUP = '#apps-shortcuts .group:nth-child(2)';
 
@@ -138,11 +138,11 @@ const APPS_PAGE = '#apps .container-fluid:not(.d-none)';
 const APP_CENTER_READY = '#app-center .tab-content:not(.d-none)';
 const appRow = (name) => { return `#apps tr[data-name="${name}"]`; };
 const appService = (id) => { return `#apps .details .service[data-id="${id}"]`; };
-const APP_FILTER_MENU = '#apps .app-filters .dropdown-menu.show';
+const APP_FILTER_MENU = '#apps .app-filters .menu.show';
 const SNAPSHOTS_TAB = '#apps .details [data-app-tab="snapshots"]';
 const SNAPSHOT_SEARCH = '#apps .details .snapshot-search';
 const SNAPSHOT_RESULTS = '#apps .details .snapshots .card-body:has(.snapshot-search-clear)';
-const SNAPSHOT_DOWNLOADS = `${SNAPSHOT_RESULTS} .dropdown-menu.show`;
+const SNAPSHOT_DOWNLOADS = `${SNAPSHOT_RESULTS} .menu.show`;
 const SNAPSHOT_RESTORE = '#snapshot-restore';
 const SNAPSHOT_RESTORE_CONFLICT = '#snapshot-restore-conflict';
 const SNAPSHOT_BROWSER = '#snapshot-browser';
@@ -254,8 +254,8 @@ const pages = {
 
 		const signedIn = await signedInPage(browser, backend, viewport, users.owner());
 		await open(signedIn, backend.url, '/', `${VISIBLE_ACCOUNT} .account-toggle`);
-		await openMenu(signedIn, `${VISIBLE_ACCOUNT} .account-toggle`, `${VISIBLE_ACCOUNT} .dropdown-menu.show`);
-		await capture.region(signedIn, [`${VISIBLE_ACCOUNT} .dropdown-menu.show`, `${VISIBLE_ACCOUNT} .account-toggle`], 'account-menu', ACCOUNT_MENU_PADDING);
+		await openMenu(signedIn, `${VISIBLE_ACCOUNT} .account-toggle`, `${VISIBLE_ACCOUNT} .menu.show`);
+		await capture.region(signedIn, [`${VISIBLE_ACCOUNT} .menu.show`, `${VISIBLE_ACCOUNT} .account-toggle`], 'account-menu', ACCOUNT_MENU_PADDING);
 		await closePage(signedIn);
 	},
 	apps: async ({ browser, backend, capture, viewport }) => {
@@ -265,27 +265,27 @@ const pages = {
 		const page = await appsPage(browser, backend, viewport);
 		await capture.viewport(page, 'apps');
 
-		await openMenu(page, '#apps .app-filters .dropdown:nth-child(2) [data-bs-toggle="dropdown"]', APP_FILTER_MENU);
+		await openMenu(page, '#apps .app-filters .dropdown:nth-child(2) [data-bs-toggle="menu"]', APP_FILTER_MENU);
 		await capture.region(page, ['#apps .search', '#apps .app-filters', '#apps table', APP_FILTER_MENU], 'apps-filter', PADDING);
 		await page.keyboard.press('Escape');
 		await sleep(SETTLE_MS);
 
 		await openAppCenter(page);
-		await capture.region(page, ['#app-center .modal-content'], 'app-center', PADDING);
+		await capture.region(page, ['#app-center'], 'app-center', PADDING);
 
 		await page.click(`${example} .install`);
-		await page.waitForSelector('#app-install.show', { visible: true });
+		await page.waitForSelector('#app-install[open]:not(.hiding)', { visible: true });
 		await sleep(SETTLE_MS);
-		await capture.region(page, ['#app-install .modal-content'], 'app-install', PADDING);
+		await capture.region(page, ['#app-install'], 'app-install', PADDING);
 		await closePage(page);
 
 		backend.setState(appsNode(backend, { domain: 'custom' }));
 		const custom = await appsPage(browser, backend, viewport);
 		await openAppCenter(custom);
 		await custom.click(`${example} .install`);
-		await custom.waitForSelector('#app-install.show', { visible: true });
+		await custom.waitForSelector('#app-install[open]:not(.hiding)', { visible: true });
 		await sleep(SETTLE_MS);
-		await capture.region(custom, ['#app-install .modal-content'], 'app-install-custom', PADDING);
+		await capture.region(custom, ['#app-install'], 'app-install-custom', PADDING);
 		await closePage(custom);
 
 		backend.setState(appsNode(backend, { jobs: [apps.installingJobFor()] }));
@@ -296,8 +296,8 @@ const pages = {
 
 		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP], updatable: apps.EXAMPLE_APP }));
 		const installed = await appsPage(browser, backend, viewport);
-		await openMenu(installed, `${appRow(apps.EXAMPLE_APP)} .dropdown-toggle`, '#apps .dropdown-menu.show');
-		await capture.region(installed, ['#apps .search', '#apps table', '#apps .dropdown-menu.show'], 'apps-menu', PADDING);
+		await openMenu(installed, `${appRow(apps.EXAMPLE_APP)} [data-bs-toggle="menu"]`, '#apps .menu.show');
+		await capture.region(installed, ['#apps .search', '#apps table', '#apps .menu.show'], 'apps-menu', PADDING);
 		await installed.keyboard.press('Escape');
 		await sleep(SETTLE_MS);
 
@@ -331,7 +331,7 @@ const pages = {
 
 		backend.broadcast('/docker', 'app:updates', []);
 		backend.broadcast('/job', 'job', apps.updatedJob(title));
-		await updating.waitForSelector(`${appRow(apps.EXAMPLE_APP)} .dropdown-toggle`, { visible: true });
+		await updating.waitForSelector(`${appRow(apps.EXAMPLE_APP)} [data-bs-toggle="menu"]`, { visible: true });
 		await sleep(SETTLE_MS);
 		await capture.viewport(updating, 'app-updated');
 		await closePage(updating);
@@ -357,7 +357,7 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(page, ['#apps .details .snapshots .card-body:has(.snapshot-search)', SNAPSHOT_RESULTS], 'app-snapshots-search', FLUSH_TOP_PADDING);
 
-		const folderDownloads = await page.$$(`${SNAPSHOT_RESULTS} .tree-rows [data-bs-toggle="dropdown"]`);
+		const folderDownloads = await page.$$(`${SNAPSHOT_RESULTS} .tree-rows [data-bs-toggle="menu"]`);
 		await folderDownloads.at(-1).click();
 		await page.waitForSelector(SNAPSHOT_DOWNLOADS, { visible: true });
 		await sleep(SETTLE_MS);
@@ -367,24 +367,24 @@ const pages = {
 		const resultsViewport = page.viewport();
 		await page.setViewport({ ...viewport, height: BROWSER_HEIGHT });
 		await page.$eval(`${SNAPSHOT_RESULTS} .snapshot-browse[data-browse-snapshot="${apps.BROWSE_SNAPSHOT}"][data-browse-focus="${apps.BROWSE_FILE}"]`, (element) => { element.click(); });
-		await page.waitForSelector(`${SNAPSHOT_BROWSER}.show ${'.browse-check'}:checked`, { visible: true });
+		await page.waitForSelector(`${SNAPSHOT_BROWSER}[open] ${'.browse-check'}:checked`, { visible: true });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse', PADDING);
+		await capture.region(page, [`${SNAPSHOT_BROWSER}`], 'app-snapshots-browse', PADDING);
 
-		const crumbToggles = await page.$$(`${SNAPSHOT_BROWSER} .breadcrumb [data-bs-toggle="dropdown"]`);
+		const crumbToggles = await page.$$(`${SNAPSHOT_BROWSER} .breadcrumb [data-bs-toggle="menu"]`);
 		await crumbToggles.at(-1).click();
-		await page.waitForSelector(`${SNAPSHOT_BROWSER} .breadcrumb .dropdown-menu.show`, { visible: true });
+		await page.waitForSelector(`${SNAPSHOT_BROWSER} .breadcrumb .menu.show`, { visible: true });
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse-folders', PADDING);
+		await capture.region(page, [`${SNAPSHOT_BROWSER}`], 'app-snapshots-browse-folders', PADDING);
 		await page.keyboard.press('Escape');
 
-		await page.click(`${SNAPSHOT_BROWSER} thead [data-bs-toggle="dropdown"][data-bs-auto-close="outside"]`);
-		await page.waitForSelector(`${SNAPSHOT_BROWSER} thead .dropdown-menu.show`, { visible: true });
+		await page.click(`${SNAPSHOT_BROWSER} thead [data-bs-toggle="menu"][data-bs-auto-close="outside"]`);
+		await page.waitForSelector(`${SNAPSHOT_BROWSER} thead .menu.show`, { visible: true });
 		await page.click(`${SNAPSHOT_BROWSER} .browse-filter[value="deleted"]`);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse-filter', PADDING);
+		await capture.region(page, [`${SNAPSHOT_BROWSER}`], 'app-snapshots-browse-filter', PADDING);
 		await page.click(`${SNAPSHOT_BROWSER} .browse-filter-clear`);
 		await page.keyboard.press('Escape');
 
@@ -398,9 +398,9 @@ const pages = {
 		await page.click(browseCheck(apps.BROWSE_EXCEPTION));
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse-select', PADDING);
+		await capture.region(page, [`${SNAPSHOT_BROWSER}`], 'app-snapshots-browse-select', PADDING);
 
-		await page.click(`${SNAPSHOT_BROWSER} .modal-footer .browse-collection`);
+		await page.click(`${SNAPSHOT_BROWSER} .dialog-footer .browse-collection`);
 		await page.waitForSelector(`${SNAPSHOT_BROWSER} .browse-expand`, { visible: true });
 		const expandable = await page.$$eval(`${SNAPSHOT_BROWSER} .browse-expand`, (elements) => { return elements.map((element) => { return element.dataset.path; }); });
 		for (const expandPath of expandable) {
@@ -408,49 +408,49 @@ const pages = {
 		}
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_BROWSER} .modal-content`], 'app-snapshots-browse-selected', PADDING);
+		await capture.region(page, [`${SNAPSHOT_BROWSER}`], 'app-snapshots-browse-selected', PADDING);
 
 		await page.click(`${SNAPSHOT_BROWSER} .browse-restore`);
-		await page.waitForSelector(`${SNAPSHOT_RESTORE}.show .restore-folders .restore-folder`, { visible: true });
+		await page.waitForSelector(`${SNAPSHOT_RESTORE}[open] .restore-folders .restore-folder`, { visible: true });
 		await page.$eval(`${SNAPSHOT_RESTORE} .restore-folder[data-path="/data/olivia/files"] > .tree-row .folder-toggle`, (element) => { element.click(); });
 		await page.waitForSelector(`${SNAPSHOT_RESTORE} .restore-folder[data-path="${apps.RESTORE_FOLDER}"]`, { visible: true });
 		await page.$eval(`${SNAPSHOT_RESTORE} .restore-folder[data-path="${apps.RESTORE_FOLDER}"] > .tree-row .folder-select`, (element) => { element.click(); });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_RESTORE} .modal-content`], 'app-snapshots-restore-selection', PADDING);
-		await page.click(`${SNAPSHOT_RESTORE} [data-bs-dismiss="modal"]`);
-		await page.waitForSelector(SNAPSHOT_RESTORE, { hidden: true });
-		await page.click(`${SNAPSHOT_BROWSER} .modal-footer [data-bs-dismiss="modal"]`);
-		await page.waitForSelector(SNAPSHOT_BROWSER, { hidden: true });
+		await capture.region(page, [`${SNAPSHOT_RESTORE}`], 'app-snapshots-restore-selection', PADDING);
+		await page.click(`${SNAPSHOT_RESTORE} [data-bs-dismiss="dialog"]`);
+		await page.waitForSelector(`${SNAPSHOT_RESTORE}[open]`, { hidden: true });
+		await page.click(`${SNAPSHOT_BROWSER} .dialog-footer [data-bs-dismiss="dialog"]`);
+		await page.waitForSelector(`${SNAPSHOT_BROWSER}[open]`, { hidden: true });
 		await page.setViewport(resultsViewport);
 		await sleep(SETTLE_MS);
 
 		await page.$eval(`${SNAPSHOT_RESULTS} .snapshot-restore[data-path$="${apps.RESTORE_SNAPSHOT}${apps.RESTORE_FILE}"]`, (element) => { element.click(); });
-		await page.waitForSelector(`${SNAPSHOT_RESTORE}.show .restore-folders .bg-primary-subtle`, { visible: true });
+		await page.waitForSelector(`${SNAPSHOT_RESTORE}[open] .restore-folders .bg-subtle-primary`, { visible: true });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_RESTORE} .modal-content`], 'app-snapshots-restore', PADDING);
+		await capture.region(page, [`${SNAPSHOT_RESTORE}`], 'app-snapshots-restore', PADDING);
 
 		await page.click(`${SNAPSHOT_RESTORE} .restore-submit`);
-		await page.waitForSelector(`${SNAPSHOT_RESTORE_CONFLICT}.show .restore-confirm`, { visible: true });
+		await page.waitForSelector(`${SNAPSHOT_RESTORE_CONFLICT}[open] .restore-confirm`, { visible: true });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_RESTORE_CONFLICT} .modal-content`], 'app-snapshots-restore-conflict', PADDING);
+		await capture.region(page, [`${SNAPSHOT_RESTORE_CONFLICT}`], 'app-snapshots-restore-conflict', PADDING);
 
-		await page.click(`${SNAPSHOT_RESTORE_CONFLICT} [data-bs-dismiss="modal"]`);
-		await page.waitForSelector(SNAPSHOT_RESTORE_CONFLICT, { hidden: true });
+		await page.click(`${SNAPSHOT_RESTORE_CONFLICT} [data-bs-dismiss="dialog"]`);
+		await page.waitForSelector(`${SNAPSHOT_RESTORE_CONFLICT}[open]`, { hidden: true });
 		await page.$eval(`${SNAPSHOT_RESTORE} .restore-folder[data-path="${apps.RESTORE_FOLDER}"] > .tree-row .folder-add`, (element) => { element.click(); });
 		await page.waitForSelector(`${SNAPSHOT_RESTORE} .folder-name`, { visible: true });
 		await page.type(`${SNAPSHOT_RESTORE} .folder-name`, apps.RESTORE_NEW_FOLDER);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_RESTORE} .modal-content`], 'app-snapshots-restore-folder-name', PADDING);
+		await capture.region(page, [`${SNAPSHOT_RESTORE}`], 'app-snapshots-restore-folder-name', PADDING);
 
 		await page.click(`${SNAPSHOT_RESTORE} .draft-add`);
 		await page.waitForSelector(`${SNAPSHOT_RESTORE} .folder-remove`, { visible: true });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(page, [`${SNAPSHOT_RESTORE} .modal-content`], 'app-snapshots-restore-folder-new', PADDING);
+		await capture.region(page, [`${SNAPSHOT_RESTORE}`], 'app-snapshots-restore-folder-new', PADDING);
 		await closePage(page);
 	},
 	dashboard: async ({ browser, backend, capture, viewport }) => {
@@ -532,8 +532,8 @@ const pages = {
 		await page.click(`${REORDER_GROUP} .order`);
 		await sleep(SETTLE_MS);
 
-		await openMenu(page, '#peer .dropdown-toggle', '#peer .dropdown-menu.show');
-		await capture.region(page, ['#peer .card', '#peer .dropdown-menu.show'], 'dashboard-nodes', TIGHT_PADDING);
+		await openMenu(page, '#peer [data-bs-toggle="menu"]', '#peer .menu.show');
+		await capture.region(page, ['#peer .card', '#peer .menu.show'], 'dashboard-nodes', TIGHT_PADDING);
 		await closePage(page);
 
 		backend.setState(dashboardNode('available'));
@@ -574,8 +574,8 @@ const pages = {
 		await waitForImages(page, '#shortcuts tbody img');
 		await capture.viewport(page, 'shortcuts');
 
-		await openMenu(page, `${shortcutRow(proxied)} .dropdown-toggle`, '#shortcuts .dropdown-menu.show');
-		await capture.region(page, ['#shortcuts .search', '#shortcuts table', '#shortcuts .dropdown-menu.show'], 'shortcuts-menu', PADDING);
+		await openMenu(page, `${shortcutRow(proxied)} [data-bs-toggle="menu"]`, '#shortcuts .menu.show');
+		await capture.region(page, ['#shortcuts .search', '#shortcuts table', '#shortcuts .menu.show'], 'shortcuts-menu', PADDING);
 		await closePage(page);
 
 		const link = await openShortcutCreate(browser, backend, viewport);
@@ -584,7 +584,7 @@ const pages = {
 		await setValue(link, '#shortcut-create .url', shortcuts.NEW_LINK.url);
 		await link.$eval('#shortcut-create .shortcut-icon-img', (image, src) => { image.src = src; }, shortcuts.iconUrl(shortcuts.NEW_LINK.icon));
 		await waitForImages(link, '#shortcut-create .shortcut-icon-img');
-		await capture.region(link, ['#shortcut-create .modal-content'], 'shortcut-create', PADDING);
+		await capture.region(link, ['#shortcut-create'], 'shortcut-create', PADDING);
 		await closePage(link);
 
 		const proxy = await openShortcutCreate(browser, backend, viewport);
@@ -594,7 +594,7 @@ const pages = {
 		await proxy.waitForSelector(`${ICON_POPOVER} .icon-search`, { visible: true });
 		await setValue(proxy, `${ICON_POPOVER} .icon-search`, shortcuts.ICON_SEARCH);
 		await waitForImages(proxy, `${ICON_POPOVER} .shortcut-icon-results img`);
-		await capture.region(proxy, ['#shortcut-create .modal-content', ICON_POPOVER], 'shortcut-icon', PADDING);
+		await capture.region(proxy, ['#shortcut-create', ICON_POPOVER], 'shortcut-icon', PADDING);
 		await proxy.click(`${ICON_POPOVER} .shortcut-icon-result-item`);
 		await proxy.waitForSelector(ICON_POPOVER, { hidden: true });
 		await proxy.click('#shortcut-create .use-proxy >>> input');
@@ -604,7 +604,7 @@ const pages = {
 		await proxy.click('#shortcut-create .require-auth >>> input');
 		await sleep(SETTLE_MS);
 		await waitForImages(proxy, '#shortcut-create .shortcut-icon-img');
-		await capture.region(proxy, ['#shortcut-create .modal-content'], 'shortcut-create-proxy', PADDING);
+		await capture.region(proxy, ['#shortcut-create'], 'shortcut-create-proxy', PADDING);
 		await closePage(proxy);
 
 		const dashboard = await signedInPage(browser, backend, viewport, users.owner());
@@ -627,11 +627,11 @@ const pages = {
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 
-		await openMenu(page, `${folderRow(documents)} .dropdown-toggle`, '#folders .dropdown-menu.show');
-		await capture.region(page, ['#folders .search', '#folders table', '#folders .dropdown-menu.show'], 'folders-menu', PADDING);
+		await openMenu(page, `${folderRow(documents)} [data-bs-toggle="menu"]`, '#folders .menu.show');
+		await capture.region(page, ['#folders .search', '#folders table', '#folders .menu.show'], 'folders-menu', PADDING);
 
 		await openModal(page, `${folderRow(documents)} a[href="#folder-update"]`, '#folder-update');
-		await capture.region(page, ['#folder-update .modal-content'], 'folder-edit', PADDING);
+		await capture.region(page, ['#folder-update'], 'folder-edit', PADDING);
 		await closePage(page);
 
 		for (const [folder, name] of [[shares.NEW_FOLDER, 'folder-create'], [shares.EXISTING_PATH_FOLDER, 'folder-create-existing']]) {
@@ -640,7 +640,7 @@ const pages = {
 			await openModal(creating, '#folders a[href="#folder-create"]', '#folder-create');
 			await creating.waitForSelector(FOLDER_CREATE_READY, { visible: true });
 			await fillFolder(creating, folder);
-			await capture.region(creating, ['#folder-create .modal-content'], name, PADDING);
+			await capture.region(creating, ['#folder-create'], name, PADDING);
 			await closePage(creating);
 		}
 
@@ -666,11 +666,11 @@ const pages = {
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 
-		await openMenu(page, `${timeMachineRow(second)} .dropdown-toggle`, '#time-machines .dropdown-menu.show');
-		await capture.region(page, ['#time-machines .search', '#time-machines table', '#time-machines .dropdown-menu.show'], 'time-machines-menu', PADDING);
+		await openMenu(page, `${timeMachineRow(second)} [data-bs-toggle="menu"]`, '#time-machines .menu.show');
+		await capture.region(page, ['#time-machines .search', '#time-machines table', '#time-machines .menu.show'], 'time-machines-menu', PADDING);
 
 		await openModal(page, `${timeMachineRow(second)} a[href="#time-machine-update"]`, '#time-machine-update');
-		await capture.region(page, ['#time-machine-update .modal-content'], 'time-machine-edit', PADDING);
+		await capture.region(page, ['#time-machine-update'], 'time-machine-edit', PADDING);
 		await closePage(page);
 
 		const creating = await signedInPage(browser, backend, viewport, users.owner());
@@ -679,7 +679,7 @@ const pages = {
 		await setValue(creating, '#time-machine-create .comment', shares.NEW_TIME_MACHINE.comment);
 		await setValue(creating, '#time-machine-create .valid-users', shares.NEW_TIME_MACHINE.user);
 		await setValue(creating, '#time-machine-create .refquota', shares.NEW_TIME_MACHINE.capacity);
-		await capture.region(creating, ['#time-machine-create .modal-content'], 'time-machine-create', PADDING);
+		await capture.region(creating, ['#time-machine-create'], 'time-machine-create', PADDING);
 		await closePage(creating);
 
 		const dashboard = await signedInPage(browser, backend, viewport, users.owner());
@@ -694,8 +694,8 @@ const pages = {
 		await capture.viewport(page, 'users');
 
 		const regular = users.regularUser();
-		await openMenu(page, `#users tr[data-uid="${regular.uid}"] .dropdown-toggle`, '#users .dropdown-menu.show');
-		await capture.region(page, ['#users .search', '#users table', '#users .dropdown-menu.show'], 'users-menu', PADDING);
+		await openMenu(page, `#users tr[data-uid="${regular.uid}"] [data-bs-toggle="menu"]`, '#users .menu.show');
+		await capture.region(page, ['#users .search', '#users table', '#users .menu.show'], 'users-menu', PADDING);
 		await page.keyboard.press('Escape');
 
 		await openModal(page, '#users a[href="#user-create"]', '#user-create');
@@ -704,7 +704,7 @@ const pages = {
 		await setValue(page, '#user-create .username', users.NEW_USER.username);
 		await setValue(page, '#user-create .password', users.NEW_USER.password);
 		await setValue(page, '#user-create .password-check', users.NEW_USER.password);
-		await capture.region(page, ['#user-create .modal-content'], 'user-create', PADDING);
+		await capture.region(page, ['#user-create'], 'user-create', PADDING);
 		await closePage(page);
 	},
 	profile: async ({ browser, backend, capture, viewport }) => {
@@ -714,13 +714,13 @@ const pages = {
 		await capture.viewport(page, 'profile');
 
 		await openModal(page, '#profile a[href="#profile-edit"]', '#profile-edit');
-		await capture.region(page, ['#profile-edit .modal-content'], 'profile-edit', PADDING);
+		await capture.region(page, ['#profile-edit'], 'profile-edit', PADDING);
 		await closeModal(page, '#profile-edit');
 
 		await openModal(page, '#profile a[href="#profile-password"]', '#profile-password');
 		await setValue(page, '#profile-password .password', users.NEW_PASSWORD);
 		await setValue(page, '#profile-password .password-check', users.NEW_PASSWORD);
-		await capture.region(page, ['#profile-password .modal-content'], 'profile-password', PADDING);
+		await capture.region(page, ['#profile-password'], 'profile-password', PADDING);
 		await closeModal(page, '#profile-password');
 		await closePage(page);
 
@@ -745,23 +745,23 @@ const pages = {
 		await setValue(page, '#smtp .sender', smtp.sender);
 		await page.$eval('#smtp .recipients', (element, recipients) => { element.tags = recipients; }, smtp.recipients);
 		await sleep(SETTLE_MS);
-		await capture.region(page, ['#smtp .modal-content'], 'settings-notifications', PADDING);
+		await capture.region(page, ['#smtp'], 'settings-notifications', PADDING);
 		await closeModal(page, '#smtp');
 
 		await openModal(page, '#settings a[href="#location"]', '#location');
 		await setValue(page, '#location .latitude', location.latitude);
 		await setValue(page, '#location .longitude', location.longitude);
-		await capture.region(page, ['#location .modal-content'], 'settings-location', PADDING);
+		await capture.region(page, ['#location'], 'settings-location', PADDING);
 		await closeModal(page, '#location');
 
 		await openModal(page, '#settings a[href="#fleet"]', '#fleet');
-		await capture.region(page, ['#fleet .modal-content'], 'settings-fleet', PADDING);
+		await capture.region(page, ['#fleet'], 'settings-fleet', PADDING);
 		await closeModal(page, '#fleet');
 
 		await page.click('#settings [data-action="reboot"]');
-		await page.waitForSelector('.modal.show', { visible: true });
+		await page.waitForSelector('dialog.dialog[open]:not(.hiding)', { visible: true });
 		await sleep(SETTLE_MS);
-		await capture.region(page, ['.modal.show .modal-content'], 'settings-reboot', PADDING);
+		await capture.region(page, ['dialog.dialog[open]'], 'settings-reboot', PADDING);
 		await closePage(page);
 
 		backend.setState(managedNode(backend, { smtp, location }));
@@ -794,23 +794,23 @@ const pages = {
 		await capture.fullPage(page, 'network');
 
 		await openModal(page, '#network a[href="#network-identifier"]', '#network-identifier');
-		await capture.region(page, ['#network-identifier .modal-content'], 'network-host', PADDING);
+		await capture.region(page, ['#network-identifier'], 'network-host', PADDING);
 		await closeModal(page, '#network-identifier');
 
 		await openModal(page, '#network a[href="#network-interface"]', '#network-interface');
-		await capture.region(page, ['#network-interface .modal-content'], 'network-interface', PADDING);
+		await capture.region(page, ['#network-interface'], 'network-interface', PADDING);
 		await closeModal(page, '#network-interface');
 
 		await openModal(page, '#network a[href="#trusted-proxy-add"]', '#trusted-proxy-add');
 		await setValue(page, '#trusted-proxy-add .address', TRUSTED_PROXY);
-		await capture.region(page, ['#trusted-proxy-add .modal-content'], 'network-proxy-add', PADDING);
+		await capture.region(page, ['#trusted-proxy-add'], 'network-proxy-add', PADDING);
 		await closePage(page);
 
 		backend.setState(managedNode(backend, { trustedProxies: [TRUSTED_PROXY] }));
 		const proxies = await signedInPage(browser, backend, viewport, users.owner());
 		await open(proxies, backend.url, '/network', NETWORK_PAGE);
-		await openMenu(proxies, `#network .item[data-id="${TRUSTED_PROXY}"] .dropdown-toggle`, '#network .dropdown-menu.show');
-		await capture.region(proxies, [networkCard(3), '#network .dropdown-menu.show'], 'network-proxies', CARD_PADDING);
+		await openMenu(proxies, `#network .item[data-id="${TRUSTED_PROXY}"] [data-bs-toggle="menu"]`, '#network .menu.show');
+		await capture.region(proxies, [networkCard(3), '#network .menu.show'], 'network-proxies', CARD_PADDING);
 		await closePage(proxies);
 
 		backend.setState(managedNode(backend, { isStandby: true }));
@@ -821,7 +821,7 @@ const pages = {
 		await standby.hover('#network-interface .virtual-ip >>> .help-inline');
 		await standby.waitForSelector('.tooltip.show', { visible: true });
 		await sleep(SETTLE_MS);
-		await capture.region(standby, ['#network-interface .modal-content', '.tooltip.show'], 'network-interface-standby', PADDING);
+		await capture.region(standby, ['#network-interface', '.tooltip.show'], 'network-interface-standby', PADDING);
 		await closePage(standby);
 	},
 	storage: async ({ browser, backend, capture, viewport }) => {
@@ -875,7 +875,7 @@ const pages = {
 
 		await page.click('#system-services .filter-type [data-filter-type="service"]');
 		await sleep(SETTLE_MS);
-		await openMenu(page, `${SERVICES_FILTER} [data-bs-toggle="dropdown"]`, '#system-services .filter-menu.show');
+		await openMenu(page, `${SERVICES_FILTER} [data-bs-toggle="menu"]`, '#system-services .filter-menu.show');
 		await page.click('#system-services-filter-sub-running');
 		await sleep(SETTLE_MS);
 		await capture.region(page, ['#system-services .search', '#system-services .filter-type', '#system-services .filter-pills', '#system-services .filter-menu.show'], 'services-filter', PADDING);
@@ -897,8 +897,8 @@ const pages = {
 		await searchServices(page, '');
 
 		const unitRow = `#system-services tbody tr[data-unit="${serviceData.LOG_UNIT}"]`;
-		await openMenu(page, `${unitRow} .dropdown-toggle`, '#system-services tbody .dropdown-menu.show');
-		await capture.region(page, [unitRow, '#system-services tbody .dropdown-menu.show'], 'services-menu', PADDING);
+		await openMenu(page, `${unitRow} [data-bs-toggle="menu"]`, '#system-services tbody .menu.show');
+		await capture.region(page, [unitRow, '#system-services tbody .menu.show'], 'services-menu', PADDING);
 		await page.keyboard.press('Escape');
 		await sleep(SETTLE_MS);
 

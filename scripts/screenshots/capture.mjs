@@ -72,13 +72,13 @@ const openMenu = async (page, toggle, menu) => {
 
 const openModal = async (page, trigger, modal) => {
 	await page.click(trigger);
-	await page.waitForSelector(`${modal}.show`, { visible: true });
+	await page.waitForSelector(`${modal}[open]:not(.hiding)`, { visible: true });
 	await sleep(SETTLE_MS);
 };
 
 const closeModal = async (page, modal) => {
-	await page.click(`${modal} [data-bs-dismiss="modal"]`);
-	await page.waitForSelector(`${modal}.show`, { hidden: true });
+	await page.click(`${modal} [data-bs-dismiss="dialog"]`);
+	await page.waitForSelector(`${modal}[open]`, { hidden: true });
 	await sleep(SETTLE_MS);
 };
 

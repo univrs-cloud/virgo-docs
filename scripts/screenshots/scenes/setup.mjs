@@ -79,9 +79,9 @@ const pages = {
 		await capture.step(page, 'storage', 'storage', PADDING);
 
 		await page.click('#storage [data-action="create"]');
-		await page.waitForSelector('.modal.show', { visible: true });
+		await page.waitForSelector('dialog.dialog[open]:not(.hiding)', { visible: true });
 		await sleep(SETTLE_MS);
-		await capture.region(page, ['.modal.show .modal-content'], 'storage-confirm', PADDING);
+		await capture.region(page, ['dialog.dialog[open]'], 'storage-confirm', PADDING);
 
 		backend.setState(nodeState(backend.getTopologies, { poolUsedPercent: FRESH_POOL_USED_PERCENT }));
 		await openStep(page, backend.url, '/storage', 'storage');

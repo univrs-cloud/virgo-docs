@@ -24,7 +24,7 @@ Type in **Search** to find services by name or description. The buttons next to 
 
 ![Filtering the list](../../../../assets/management/services-filter.png)
 
-Each active filter appears as a pill; remove it with its **×**, or select **Clear all**.
+Each active filter appears as a pill; remove it with its **×**, or select **Clear filters**.
 
 ![A filtered list](../../../../assets/management/services-filtered.png)
 
