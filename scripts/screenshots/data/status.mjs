@@ -1,6 +1,6 @@
 const status = () => {
 	return {
-		cpuStats: { currentLoad: 12, temperature: { main: 41 } },
+		cpuStats: { currentLoad: 12, temperature: { main: 41 }, fan: '2460' },
 		memory: { total: 15.8 * 1024 ** 3, available: 10.3 * 1024 ** 3 },
 		networkStats: { iface: 'bond0', rx_sec: 1.8 * 1024 ** 2, tx_sec: 0.4 * 1024 ** 2 },
 		time: { uptime: 5 * 86400 + 7 * 3600 },
