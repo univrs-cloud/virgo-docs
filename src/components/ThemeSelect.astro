@@ -1,12 +1,8 @@
----
-import { Icon } from '@astrojs/starlight/components';
----
-
 <univrs-theme-toggle>
 	<button type="button" role="switch" aria-checked="false" aria-label={Astro.locals.t('themeSelect.dark')}>
 		<span class="knob"></span>
-		<span class="icon sun"><Icon name="sun" size="0.95rem" /></span>
-		<span class="icon moon"><Icon name="moon" size="0.95rem" /></span>
+		<span class="icon sun"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/></svg></span>
+		<span class="icon moon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.500A8 8 0 1 1 9.500 4a6.500 6.500 0 0 0 10.500 10.500z"/></svg></span>
 	</button>
 </univrs-theme-toggle>
 
@@ -90,6 +86,16 @@ import { Icon } from '@astrojs/starlight/components';
 		height: 1.5rem;
 		color: var(--sl-color-gray-3);
 		transition: color 0.2s ease;
+	}
+
+	.ico {
+		width: 0.95rem;
+		height: 0.95rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
 	}
 
 	:global(:root[data-theme='light']) .sun,

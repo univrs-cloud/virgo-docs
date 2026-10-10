@@ -16,8 +16,12 @@ export default defineConfig({
 			customCss: ['./src/styles/univrs.css'],
 			components: {
 				Head: './src/components/Head.astro',
+				Header: './src/components/Header.astro',
 				MarkdownContent: './src/components/MarkdownContent.astro',
+				MobileMenuFooter: './src/components/MobileMenuFooter.astro',
+				MobileMenuToggle: './src/components/MobileMenuToggle.astro',
 				Pagination: './src/components/Pagination.astro',
+				SiteTitle: './src/components/SiteTitle.astro',
 				SocialIcons: './src/components/SocialIcons.astro',
 				ThemeSelect: './src/components/ThemeSelect.astro'
 			},

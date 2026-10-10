@@ -1,0 +1,24 @@
+---
+import Default from '@astrojs/starlight/components/Header.astro';
+import { siteLinks } from '../links';
+
+const { hasSidebar } = Astro.locals.starlightRoute;
+---
+
+<Default />
+{
+	!hasSidebar && (
+		<>
+			<button popovertarget="site-menu" class="site-toggle md:sl-hidden print:hidden">
+				<span class="bar"></span>
+				<span class="bar"></span>
+				<span class="sr-only">{Astro.locals.t('menuButton.accessibleLabel')}</span>
+			</button>
+			<nav popover="" id="site-menu" class="site-menu" aria-label="univrs">
+				{siteLinks.map(({ label, href }) => (
+					<a {href}>{label}</a>
+				))}
+			</nav>
+		</>
+	)
+}

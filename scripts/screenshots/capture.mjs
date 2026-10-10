@@ -7,7 +7,7 @@ const sleep = (delay) => {
 	return new Promise((resolve) => { setTimeout(resolve, delay); });
 };
 
-const FROZEN_ANIMATIONS = '*, *::before, *::after { animation-delay: -0.35s !important; animation-play-state: paused !important; transition: none !important; caret-color: transparent !important; }';
+const FROZEN_ANIMATIONS = '*, *::before, *::after { animation-delay: -0.35s !important; animation-play-state: paused !important; transition: none !important; caret-color: transparent !important; } .login-logo-orb, .fleet-logo-cube { animation: none !important; }';
 
 const newPage = async (browser, viewport) => {
 	const context = await browser.createBrowserContext();
@@ -18,6 +18,15 @@ const newPage = async (browser, viewport) => {
 			const style = document.createElement('style');
 			style.textContent = css;
 			document.head.append(style);
+
+			const freeze = () => {
+				document.querySelectorAll('svg').forEach((svg) => {
+					svg.pauseAnimations?.();
+					svg.setCurrentTime?.(0);
+				});
+			};
+			new MutationObserver(freeze).observe(document.body, { childList: true, subtree: true });
+			freeze();
 		});
 	}, FROZEN_ANIMATIONS);
 	return page;
