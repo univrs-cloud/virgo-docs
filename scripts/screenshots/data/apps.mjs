@@ -253,6 +253,8 @@ const serviceHasRoute = (service) => {
 	return labels.some((label) => { return label.startsWith('traefik.http.routers.') && label.includes('.rule='); });
 };
 
+const SNAPSHOT_RETENTION = { frequently: 0, hourly: 36, daily: 30, weekly: 0, monthly: 60, yearly: 5 };
+
 const isOneShot = (service) => {
 	return String(service.restart) === 'no';
 };
@@ -269,7 +271,7 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 		const host = (prefix ? `${prefix}${(Object.hasOwn(CORE_APPS, name) ? fqdn : domainName)}` : null);
 		const usage = APP_USAGE[name];
 		const services = Object.entries(compose.services).filter(([, service]) => { return !isOneShot(service); });
-		configured.push({ id: appIndex + 1, type: 'app', name, title: template.title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}` });
+		configured.push({ id: appIndex + 1, type: 'app', name, title: template.title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}`, snapshotPolicy: { mode: 'enabled', retention: SNAPSHOT_RETENTION } });
 		const routed = services.find(([, service]) => { return serviceHasRoute(service); })?.[0];
 		const containerMetrics = services.map(([serviceName, service], serviceIndex) => {
 			const id = `${name}-${serviceName}`;

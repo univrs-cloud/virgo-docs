@@ -92,6 +92,8 @@ const disk = (drive, state, extra = {}) => {
 	return { name: drive.id, vdevType: 'disk', state, physSpace: drive.size, readErrors: 0, writeErrors: 0, checksumErrors: 0, ...extra };
 };
 
+const NEXT_SCRUB = new Date(2026, 6, 12, 0, 24);
+
 const dataPool = (members, topology, usedPercent, { now = null, scan = null, missingDrive = null, replacedDrive = null } = {}) => {
 	const disks = members.filter((drive) => { return !drive.system; });
 	const isDegraded = Boolean(missingDrive || replacedDrive);
@@ -127,7 +129,7 @@ const dataPool = (members, topology, usedPercent, { now = null, scan = null, mis
 		vdevs: {
 			messier: { name: 'messier', vdevType: 'root', state: (isDegraded ? 'DEGRADED' : 'ONLINE'), vdevs: groups }
 		},
-		...(scanStats ? { scanStats } : {}),
+		...(scanStats ? { scanStats, nextScrub: NEXT_SCRUB.toISOString() } : {}),
 		errorCount: 0
 	};
 };

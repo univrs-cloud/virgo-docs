@@ -1,6 +1,6 @@
 import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open, setValue, openMenu, openModal, closeModal } from '../capture.mjs';
 import * as apps from '../data/apps.mjs';
-import { DOMAINS, fqdn } from '../data/network.mjs';
+import { DOMAINS, BANNED_ADDRESS, fqdn } from '../data/network.mjs';
 import { nodeState } from '../data/node.mjs';
 import { networkHistory, upsCharging, upsOnBattery, upsMissing, upsUnreachable, upsFailed } from '../data/status.mjs';
 import * as serviceData from '../data/services.mjs';
@@ -55,6 +55,8 @@ const FLEET_CARD = '#settings .row > .col-12:nth-child(1) .card';
 const NETWORK_PAGE = '#network .container-fluid:not(.d-none)';
 const networkCard = (index) => { return `#network .container-fluid > .row > .col-12:nth-child(${index}) .card`; };
 const TRUSTED_PROXY = '192.168.1.5';
+const FIREWALL_BANS = `${networkCard(4)} dl.row`;
+const BAN_DETAILS = `#network .item[data-address="${BANNED_ADDRESS}"] .icon-circle-info`;
 
 const SERVICES_PAGE = '#system-services .container-fluid:not(.d-none)';
 const SERVICES_FILTER = '#system-services .dropdown:has(.filter-menu)';
@@ -138,7 +140,8 @@ const APPS_PAGE = '#apps .container-fluid:not(.d-none)';
 const APP_CENTER_READY = '#app-center .tab-content:not(.d-none)';
 const appRow = (name) => { return `#apps tr[data-name="${name}"]`; };
 const appService = (id) => { return `#apps .details .service[data-id="${id}"]`; };
-const APP_FILTER_MENU = '#apps .app-filters .menu.show';
+const APP_FILTER = '#apps .dropdown:has(.filter-menu)';
+const APP_FILTER_MENU = '#apps .filter-menu.show';
 const SNAPSHOTS_TAB = '#apps .details [data-app-tab="snapshots"]';
 const SNAPSHOT_SEARCH = '#apps .details .snapshot-search';
 const SNAPSHOT_RESULTS = '#apps .details .snapshots .card-body:has(.snapshot-search-clear)';
@@ -265,8 +268,11 @@ const pages = {
 		const page = await appsPage(browser, backend, viewport);
 		await capture.viewport(page, 'apps');
 
-		await openMenu(page, '#apps .app-filters .dropdown:nth-child(2) [data-bs-toggle="menu"]', APP_FILTER_MENU);
-		await capture.region(page, ['#apps .search', '#apps .app-filters', '#apps table', APP_FILTER_MENU], 'apps-filter', PADDING);
+		await openMenu(page, `${APP_FILTER} [data-bs-toggle="menu"]`, APP_FILTER_MENU);
+		await page.click(`${APP_FILTER_MENU} [data-filter-key="status"][data-value="running"]`);
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['#apps .search', APP_FILTER, '#apps table', APP_FILTER_MENU], 'apps-filter', PADDING);
+		await page.click(`${APP_FILTER_MENU} [data-action="reset-filters"]`);
 		await page.keyboard.press('Escape');
 		await sleep(SETTLE_MS);
 
@@ -813,6 +819,15 @@ const pages = {
 		await capture.region(proxies, [networkCard(3), '#network .menu.show'], 'network-proxies', CARD_PADDING);
 		await closePage(proxies);
 
+		backend.setState(managedNode(backend, { now: settings.WEATHER_CLOCK, hasBans: true }));
+		const firewall = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(firewall, settings.WEATHER_CLOCK);
+		await open(firewall, backend.url, '/network', NETWORK_PAGE);
+		await capture.region(firewall, [networkCard(4)], 'network-firewall', CARD_PADDING);
+		await hoverTooltip(firewall, BAN_DETAILS);
+		await capture.region(firewall, [FIREWALL_BANS, '.tooltip.show'], 'network-firewall-ban', TIGHT_PADDING);
+		await closePage(firewall);
+
 		backend.setState(managedNode(backend, { isStandby: true }));
 		const standby = await signedInPage(browser, backend, viewport, users.owner());
 		await open(standby, backend.url, '/network', NETWORK_PAGE);
@@ -876,13 +891,15 @@ const pages = {
 		await page.click('#system-services .filter-type [data-filter-type="service"]');
 		await sleep(SETTLE_MS);
 		await openMenu(page, `${SERVICES_FILTER} [data-bs-toggle="menu"]`, '#system-services .filter-menu.show');
-		await page.click('#system-services-filter-sub-running');
+		await page.click('#system-services .filter-menu [data-filter-key="sub"][data-value="running"]');
 		await sleep(SETTLE_MS);
-		await capture.region(page, ['#system-services .search', '#system-services .filter-type', '#system-services .filter-pills', '#system-services .filter-menu.show'], 'services-filter', PADDING);
+		await capture.region(page, ['#system-services .search', '#system-services .filter-type', SERVICES_FILTER, '#system-services .filter-menu.show'], 'services-filter', PADDING);
 		await page.keyboard.press('Escape');
 		await sleep(SETTLE_MS);
 		await capture.viewport(page, 'services-filtered');
-		await page.click('#system-services [data-action="clear-filters"]');
+		await openMenu(page, `${SERVICES_FILTER} [data-bs-toggle="menu"]`, '#system-services .filter-menu.show');
+		await page.click('#system-services .filter-menu [data-action="reset-filters"]');
+		await page.keyboard.press('Escape');
 		await page.click('#system-services .filter-type [data-filter-type=""]');
 		await sleep(SETTLE_MS);
 

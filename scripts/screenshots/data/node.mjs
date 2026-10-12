@@ -19,7 +19,7 @@ const withAbout = (system, apiVersion) => {
 	return { ...system, ...details, osInfo: { ...system.osInfo, kernel: about.SOFTWARE.kernel } };
 };
 
-const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, shortcutList = [], peer = null, appEntries = null, apiVersion = null } = {}) => {
+const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, shortcutList = [], peer = null, appEntries = null, apiVersion = null, hasBans = false } = {}) => {
 	const drives = storage.drives({ isReplaced: Boolean(replacedDrive) });
 	const topologies = getTopologies(drives);
 	const hasPool = (poolUsedPercent !== null);
@@ -28,6 +28,7 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 		system: withAbout(network.system(domain, !isStandby), apiVersion),
 		discovery: (isStandby ? network.holdingPeer(domain) : (peer ? network.discoveredPeers(domain, peer === 'adopted') : [])),
 		peers: (peer === 'adopted' ? network.adoptedPeers() : []),
+		firewall: network.firewall(hasBans ? now : null),
 		drives: (missingDrive ? drives.filter((drive) => { return drive.name !== missingDrive; }) : drives),
 		topologies,
 		storage: [storage.systemPool(), ...(hasPool ? [storage.dataPool(drives, topologies[0], poolUsedPercent, { now, scan: scrub, missingDrive, replacedDrive })] : [])],

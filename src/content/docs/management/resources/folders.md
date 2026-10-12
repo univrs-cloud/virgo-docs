@@ -9,7 +9,7 @@ sidebar:
 
 ![The Folders page](../../../../assets/management/folders.png)
 
-For each folder, the list shows its name and path, the users who can reach it, its capacity and how much of it is used. Sort the list by name, capacity or usage with the arrows in the column headers, and use **Search** to find a folder by its name, path or users.
+For each folder, the list shows its name and path, the users who can reach it, its capacity and how much of it is used. The clock icon next to a name shows the state of the folder's [snapshots](#history); hover over it for details. Sort the list by name, capacity or usage with the arrows in the column headers, and use **Search** to find a folder by its name, path or users.
 
 ## Opening a folder
 
@@ -45,6 +45,7 @@ Select **New folder**, then enter:
 - **Name:** what the folder is called.
 - **Authorized users:** the users who can reach it. Leave them all unchecked for **Guest**, open access for anyone on your local network.
 - **Capacity:** how much space the folder can take up, in GiB. Only for a new share.
+- **Take snapshots:** keep a [history](#history) of the folder's files. Only for a new share.
 
 ![Adding a folder](../../../../assets/management/folder-create.png)
 
@@ -72,7 +73,19 @@ While a change is being applied, a spinning gear takes the place of the menu.
 
 ## History
 
-Folders are part of the pool's [snapshots](/management/system/storage/#usage), its automatic history of your files.
+A new share is part of the pool's [snapshots](/management/system/storage/#usage), its automatic history of your files, unless **Take snapshots** was cleared when it was added. The clock icon next to its name is green while snapshots are enabled, orange while they are paused and grey when they are disabled.
+
+To change that, open the folder's menu and choose under **Snapshots**:
+
+- **Pause:** stop taking new snapshots. The ones already taken are kept.
+- **Disable:** stop taking snapshots and delete the ones already taken, after you confirm.
+- **Resume** or **Enable:** take snapshots again.
+
+:::caution
+Disabling snapshots permanently deletes every snapshot of the folder. Without them, files that are deleted, overwritten or encrypted by mistake cannot be recovered. To keep the existing snapshots, pause them instead.
+:::
+
+A folder on an existing path has no snapshots of its own. Its history is that of the place it lives in.
 
 ## On the Dashboard
 

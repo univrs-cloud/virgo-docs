@@ -45,7 +45,7 @@ The menu stays the way you left it in this browser. When it is longer than the s
   - [Users](/management/system/users/): the people who can sign in and their roles.
     - [Your profile](/management/system/users/profile/): your own name, email address and password.
   - [Services](/management/system/services/): the system services on the node, their logs, and starting or stopping them.
-  - [Network](/management/system/network/): the node's name, its network interface and trusted proxies.
+  - [Network](/management/system/network/): the node's name, its network interface, trusted proxies and firewall.
   - [Settings](/management/system/settings/): fleet, notifications, location and the weather, and power.
   - [Updates](/management/system/updates/): keeping virgoOS up to date.
   - [About](/management/system/about/): the versions of the software on the node and its hardware.

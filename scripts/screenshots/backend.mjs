@@ -101,6 +101,10 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.on('host:system:services:fetch', () => {
 			socket.emit('host:system:services', state.services ?? null);
 		});
+		socket.emit('host:firewall', state.firewall ?? null);
+		socket.on('host:firewall:fetch', () => {
+			socket.emit('host:firewall', state.firewall ?? null);
+		});
 		socket.on('host:service:logs:connect', (unit) => {
 			socket.emit('host:service:logs:connected');
 			for (const line of (state.serviceLogs?.[unit] || [])) {

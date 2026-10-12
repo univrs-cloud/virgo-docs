@@ -1,11 +1,11 @@
 ---
 title: Network
-description: The node's name, its network interface and trusted proxies, from the Network page.
+description: The node's name, its network interface, trusted proxies and firewall, from the Network page.
 sidebar:
   order: 12
 ---
 
-**Network** shows the name the node answers to, how it is connected to your network and which proxies it trusts.
+**Network** shows the name the node answers to, how it is connected to your network, which proxies it trusts and what its firewall lets in.
 
 ![The Network page](../../../../assets/management/network.png)
 
@@ -56,3 +56,23 @@ Select **Add** and enter the proxy's IP address.
 Open a proxy's menu to **Edit** or **Delete** it.
 
 ![A trusted proxy's menu](../../../../assets/management/network-proxies.png)
+
+## Firewall
+
+The **Firewall** card shows what the node accepts from the network. Incoming connections are blocked unless a rule allows them, and **Allowed** lists those rules: what each one is for, its port and its protocol.
+
+![The Firewall card](../../../../assets/management/network-firewall.png)
+
+The rules cover the node itself. An app that publishes its own port is not listed here.
+
+### Blocked addresses
+
+After repeated failed logins from the same address, the node blocks that address for a while. **Blocked addresses** lists the addresses blocked at the moment, with the service they were trying to log in to in brackets: `sshd` is the remote shell (SSH). The line under it counts every address blocked since the node last started and the failed attempts it is still watching.
+
+Hover over the **i** next to an address to see when it was blocked and when the block expires. A block is lifted by itself when it expires.
+
+![When an address was blocked and when the block expires](../../../../assets/management/network-firewall-ban.png)
+
+To lift a block sooner, for example after locking yourself out with a wrong password, select the **×** next to the address and confirm.
+
+The card is read again every hour. Select **Refresh** to read it now.

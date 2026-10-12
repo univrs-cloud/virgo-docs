@@ -12,6 +12,22 @@ Open an app's details and select **Snapshots**.
 
 ![Nextcloud's snapshots](../../../../../../assets/management/app-snapshots.png)
 
+## Snapshotting
+
+The top of the tab says whether the node takes snapshots of this app, and how many of each kind it keeps. The buttons next to it change that:
+
+- **Pause:** stop taking new snapshots. The ones already taken are kept.
+- **Disable:** stop taking snapshots and delete the ones already taken, after you confirm.
+- **Resume** or **Enable:** take snapshots again.
+
+:::caution
+Disabling snapshots permanently deletes every snapshot of the app. Without them, its data cannot be recovered after an accidental deletion, a corruption or a failed update. To keep the existing snapshots, pause them instead.
+:::
+
+The dot on the **Snapshots** tab shows the same state: green for enabled, orange for paused and grey for disabled.
+
+For some apps the buttons are greyed out, and the line under the state says why. Nextcloud's snapshots, for example, cannot be paused or disabled, because searching and restoring its files relies on them.
+
 ## Restore points
 
 Snapshots taken at the same moment by different schedules, such as the daily and the monthly one at midnight on the first of the month, are shown together as one restore point.

@@ -32,6 +32,8 @@ const CUSTOM_PATHS = [
 const NEW_FOLDER = { comment: 'Projects', users: ['james', 'olivia'], capacity: 200 };
 const EXISTING_PATH_FOLDER = { comment: 'James Nextcloud', users: ['james'], path: `${NEXTCLOUD_DATA}/james/files` };
 
+const SNAPSHOT_RETENTION = { frequently: 0, hourly: 36, daily: 30, weekly: 0, monthly: 60, yearly: 5 };
+
 const slug = (comment) => {
 	return comment.toLowerCase().trim().replace(/\s+/g, '_');
 };
@@ -85,6 +87,7 @@ const folder = ({ comment, users, capacity = APPS_DATASET_SIZE, used, path = nul
 		comment,
 		path: (path ?? `/messier/folders/${slug(comment)}`),
 		dataset: (path ? null : `messier/folders/${slug(comment)}`),
+		snapshotPolicy: (path ? null : { mode: 'enabled', retention: SNAPSHOT_RETENTION }),
 		...(users ? { validUsers: users } : {}),
 		size,
 		free: size - alloc,

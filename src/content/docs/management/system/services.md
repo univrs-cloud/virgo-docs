@@ -20,11 +20,11 @@ The list is not live. It is read when the node starts and again after each actio
 
 ## Finding a service
 
-Type in **Search** to find services by name or description. The buttons next to it show only one kind at a time: **service**, **timer**, **socket**, **target** or **path**. **Filter** narrows the list by state and automatic startup, with the number of matches next to each choice.
+Type in **Search** to find services by name or description. The buttons next to it show only one kind at a time: **service**, **timer**, **socket**, **target** or **path**. The filter button narrows the list by state and automatic startup, with the number of matches next to each choice. Select a choice to turn it on, and again to turn it off.
 
 ![Filtering the list](../../../../assets/management/services-filter.png)
 
-Each active filter appears as a pill; remove it with its **×**, or select **Clear filters**.
+The filter button counts the filters in use. **Reset filters** removes them all.
 
 ![A filtered list](../../../../assets/management/services-filtered.png)
 

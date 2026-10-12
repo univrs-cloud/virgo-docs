@@ -34,7 +34,7 @@ The pool keeps a checksum of everything it stores. A **scrub** reads all of it b
 
 ![A scrub in progress](../../../../assets/management/storage-scrub.png)
 
-The node scrubs the pool by itself on the second Sunday of every month, shortly after midnight. Only a healthy pool is scrubbed: while it is **DEGRADED**, the monthly scrub is skipped until the pool is repaired.
+The node scrubs the pool by itself on the second Sunday of every month, shortly after midnight. While no scrub is running, the card says when the next one is due. Only a healthy pool is scrubbed: while it is **DEGRADED**, the monthly scrub is skipped until the pool is repaired.
 
 **No known data errors** means every block checked out.
 

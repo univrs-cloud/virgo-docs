@@ -10,9 +10,9 @@ sidebar:
 
 ![The Apps page](../../../../../assets/management/apps.png)
 
-For each app, the list shows its name and addresses, how much CPU, RAM and network it uses, how much space its data and its snapshots take up, and its state: how many of its containers are running, green when all of them are, yellow when only some are, and red when none are. Select an address to open the app. Sort the list by name or by any of the figures with the arrows in the column headers, and use **Search** to find an app by its name or address.
+For each app, the list shows its name and addresses, how much CPU, RAM and network it uses, how much space its data and its snapshots take up, and its state: how many of its containers are running, green when all of them are, yellow when only some are, and red when none are. The icon next to the snapshots figure says whether the app's [snapshots](/management/resources/apps/snapshots/#snapshotting) are enabled, paused or disabled. Select an address to open the app. Sort the list by name or by any of the figures with the arrows in the column headers, and use **Search** to find an app by its name or address.
 
-Narrow the list down with the filters next to **Search**: **Category**, **Status** for whether the app is running, partly running or stopped, and **Updates** for whether an update is available. A filter in use turns blue, and **Clear filters** removes them all.
+Narrow the list down with the filter button next to **Search**: **Status** for whether the app is running, partly running or stopped, **Updates** for whether an update is available, **Snapshots** for whether its snapshots are enabled, paused or disabled, and **Category**. A choice in use turns blue and the button counts the filters in use. **Reset filters** removes them all.
 
 ![Filtering the apps by status](../../../../../assets/management/apps-filter.png)
 
@@ -75,17 +75,17 @@ Select an app to open its details. **Services** shows the app's containers, and 
 
 ![Nextcloud's details](../../../../../assets/management/app-details.png)
 
-At the top are the app's CPU and RAM use, and the space its data and snapshots take up. Below are the app's containers, each with its image, the folders it mounts, its network addresses and ports, and how much CPU, RAM and network it uses. Hover over a badge for more, such as where each folder is mounted from. Each container can be started, restarted, stopped or killed on its own.
+Each container is listed with its image, the folders it mounts, its network addresses and ports, and how much CPU, RAM and network it uses. The dot on its icon is green while it runs. Hover over a badge for more, such as where each folder is mounted from. Each container can be started, restarted, stopped or killed on its own, with the buttons at the end of its row.
 
 ### Logs
 
-Select **Logs** under a container to see its last 200 lines of output, followed by new lines as they come in.
+Select **Logs** on a container to see its last 200 lines of output, followed by new lines as they come in.
 
 ![A container's logs](../../../../../assets/management/app-logs.png)
 
 ### Terminal
 
-Select **Terminal** under a running container to open a command line inside it. Anything you change there outside the app's data is lost when the app is recreated or updated.
+Select **Terminal** on a running container to open a command line inside it. Anything you change there outside the app's data is lost when the app is recreated or updated.
 
 ![A terminal in a container](../../../../../assets/management/app-terminal.png)
 
