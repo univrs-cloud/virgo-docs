@@ -140,7 +140,7 @@ const createCapture = (outDir) => {
 
 	return {
 		step: async (page, step, name, padding) => {
-			const box = await unionBox(page, [`#${step} > div`]);
+			const box = await unionBox(page, ['main .stepper', `#${step} > div`]);
 			const top = await page.$eval('header .navbar', (element) => { return element.getBoundingClientRect().bottom; });
 			await save(page, name, { clip: clipAround(box, padding, page.viewport(), top), captureBeyondViewport: true });
 		},
