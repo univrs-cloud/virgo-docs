@@ -1,6 +1,6 @@
 ---
 title: Users
-description: The people who can sign in to the node and their roles.
+description: The people who can sign in to the node, their roles and their sessions.
 sidebar:
   label: Managing users
   order: 9
@@ -34,6 +34,25 @@ Open a user's menu to manage them:
 - **Delete:** remove the user.
 
 Your own account has no menu here; it links to your [profile](/management/system/users/profile/) instead.
+
+## Sessions
+
+Each browser a user signs in from gets its own session, which lasts until the user signs out there or the session expires. The **Sessions** column counts them for every user: the green dot counts the sessions that have the node open right now, the grey dot the ones that are still signed in but not open.
+
+Select the count to see that user's sessions.
+
+![A user's sessions](../../../../../assets/management/users-sessions.png)
+
+Every session shows the address it is used from, whether it is active now or when it was last active, when it signed in, and the browser.
+
+- **Sign out icon:** end that session. The user has to sign in again in that browser to reach the node.
+- **Sign out all sessions:** end every session of that user.
+
+On your own row the link is **Sign out everywhere else**, and it keeps the session you are using.
+
+Locking or deleting a user signs them out everywhere as well.
+
+Signing a session out does not end the user's sign-in to the apps themselves.
 
 ## Adding a user
 

@@ -58,6 +58,22 @@ const serveFile = (root, iconsDir, request, response) => {
 	fs.createReadStream(file).pipe(response);
 };
 
+const viewerOf = (socket) => {
+	const value = /(?:^|;\s*)account_[^=]+=([^;]+)/.exec(socket.handshake.headers.cookie || '')?.[1];
+	try {
+		return JSON.parse(Buffer.from(decodeURIComponent(value), 'base64').toString('utf8'));
+	} catch (error) {
+		return null;
+	}
+};
+
+const sessionsFor = (sessions, viewer) => {
+	const isAdmin = (viewer?.groups || []).includes('admins');
+	return (sessions || [])
+		.filter((session) => { return isAdmin || session.username === viewer?.user; })
+		.map(({ isViewer, ...session }) => { return { ...session, isCurrent: isViewer && session.username === viewer?.user }; });
+};
+
 const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 	const require = createRequire(path.join(apiDir, 'package.json'));
 	const { Server } = await import(pathToFileURL(require.resolve('socket.io')).href);
@@ -135,6 +151,10 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 
 	io.of('/user').on('connection', (socket) => {
 		socket.emit('users', state.users);
+		socket.emit('user:sessions', sessionsFor(state.sessions, viewerOf(socket)));
+		socket.on('user:sessions:list', (_data, acknowledge) => {
+			acknowledge?.({ status: 'succeeded' });
+		});
 	});
 
 	io.of('/share').on('connection', (socket) => {

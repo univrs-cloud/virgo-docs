@@ -39,6 +39,8 @@ Open the account menu with your name, then select **Sign out**.
 
 ![The account menu](../../../assets/management/account-menu.png)
 
+That signs you out in the browser you are using. To sign out somewhere else, use the sessions in your [profile](/management/system/users/profile/).
+
 ## Through your fleet
 
 When the node is registered with a fleet, you can also manage it from [fleet.univrs.cloud](https://fleet.univrs.cloud). There you sign in with your fleet account, not with a user of the node.

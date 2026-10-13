@@ -24,6 +24,7 @@ const managedNode = (backend, overrides = {}) => {
 		certificateIssued: true,
 		runningApps: apps.CORE_APP_NAMES,
 		userList: users.USERS,
+		sessionList: users.sessions(),
 		withStatus: true,
 		...overrides
 	});
@@ -48,6 +49,7 @@ const signedInPage = async (browser, backend, viewport, user) => {
 	return page;
 };
 
+const PROFILE_SESSIONS = '#profile .container-fluid > .row > .col:nth-child(3)';
 const SETTINGS_PAGE = '#settings .container-fluid:not(.d-none)';
 const CARD_PADDING = { top: PADDING, right: PADDING, bottom: PADDING, left: 8 };
 const FLEET_CARD = '#settings .row > .col-12:nth-child(1) .card';
@@ -699,6 +701,11 @@ const pages = {
 		await open(page, backend.url, '/users', '#users .container-fluid:not(.d-none)');
 		await capture.viewport(page, 'users');
 
+		const administrator = users.otherAdministrator();
+		await openModal(page, `#users tr[data-uid="${administrator.uid}"] a[href="#user-sessions"]`, '#user-sessions');
+		await capture.region(page, ['#user-sessions'], 'users-sessions', PADDING);
+		await closeModal(page, '#user-sessions');
+
 		const regular = users.regularUser();
 		await openMenu(page, `#users tr[data-uid="${regular.uid}"] [data-bs-toggle="menu"]`, '#users .menu.show');
 		await capture.region(page, ['#users .search', '#users table', '#users .menu.show'], 'users-menu', PADDING);
@@ -718,6 +725,7 @@ const pages = {
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await open(page, backend.url, '/users/profile', '#profile .container-fluid:not(.d-none)');
 		await capture.viewport(page, 'profile');
+		await capture.region(page, [PROFILE_SESSIONS], 'profile-sessions', { ...CARD_PADDING, left: 0 });
 
 		await openModal(page, '#profile a[href="#profile-edit"]', '#profile-edit');
 		await capture.region(page, ['#profile-edit'], 'profile-edit', PADDING);
