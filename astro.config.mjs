@@ -1,12 +1,53 @@
 // @ts-check
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import autoImport from 'astro-auto-import';
 import brokenLinksChecker from 'astro-broken-links-checker';
+import sitemap from '@astrojs/sitemap';
+
+const SITE = 'https://docs.univrs.cloud';
+const DOCS_DIR = 'src/content/docs/';
+
+const pageUrl = (file) => {
+	const slug = file.slice(DOCS_DIR.length).replace(/\.mdx?$/i, '').replace(/(^|\/)index$/i, '');
+	return `${SITE}/${slug}${(slug ? '/' : '')}`;
+};
+
+const pageDates = () => {
+	const dates = new Map();
+	let log = '';
+	try {
+		log = execFileSync('git', ['log', '--format=@%cI', '--name-only', '--', DOCS_DIR], { cwd: fileURLToPath(new URL('.', import.meta.url)), encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+	} catch (error) {
+		console.warn(`Sitemap dates unavailable: ${error.message}`);
+		return dates;
+	}
+
+	let date = null;
+	for (const line of log.split('\n')) {
+		if (line.startsWith('@')) {
+			date = line.slice(1);
+		} else if (/\.mdx?$/i.test(line) && !dates.has(pageUrl(line))) {
+			dates.set(pageUrl(line), date);
+		}
+	}
+
+	return dates;
+};
+
+const lastmods = pageDates();
 
 export default defineConfig({
-	site: 'https://docs.univrs.cloud',
+	site: SITE,
 	integrations: [
+		sitemap({
+			serialize: (item) => {
+				const lastmod = lastmods.get(item.url);
+				return (lastmod ? { ...item, lastmod } : item);
+			}
+		}),
 		starlight({
 			title: 'univrs',
 			logo: {
