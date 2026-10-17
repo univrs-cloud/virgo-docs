@@ -89,7 +89,12 @@ const APP_USAGE = {
 	traefik: { cpu: 0.42, memory: 48, rx: 1.2, tx: 2.4, data: 0.02, snapshots: 0.01 },
 	authelia: { cpu: 0.08, memory: 36, rx: 0.02, tx: 0.03, data: 0.01, snapshots: 0.004 },
 	wetty: { cpu: 0.02, memory: 24, rx: 0.002, tx: 0.004, data: 0.001, snapshots: 0.001 },
-	nextcloud: { cpu: 3.6, memory: 1180, rx: 3.1, tx: 8.4, data: 96, snapshots: 12.4 }
+	nextcloud: { cpu: 3.6, memory: 1180, rx: 3.1, tx: 8.4, data: 96, snapshots: 12.4 },
+	pihole: { cpu: 0.3, memory: 92, rx: 0.4, tx: 0.6, data: 0.2, snapshots: 0.05 },
+	'wg-easy': { cpu: 0.1, memory: 40, rx: 0.8, tx: 0.9, data: 0.01, snapshots: 0.002 },
+	plausible: { cpu: 0.9, memory: 640, rx: 0.3, tx: 0.2, data: 2.4, snapshots: 0.6 },
+	gitea: { cpu: 0.4, memory: 210, rx: 0.2, tx: 0.4, data: 6.2, snapshots: 1.1 },
+	'gitea-runner': { cpu: 0.2, memory: 120, rx: 0.1, tx: 0.1, data: 1.5, snapshots: 0.3 }
 };
 
 const SNAPSHOT_CLOCK = Date.UTC(2026, 8, 29, 17, 40);
@@ -226,7 +231,7 @@ const portsOf = (service) => {
 	return (service.ports || []).map((port) => {
 		const [mapping, type = 'tcp'] = String(port).split('/');
 		const parts = mapping.split(':');
-		return { publicPort: Number(parts.at(-2) ?? parts.at(-1)), privatePort: Number(parts.at(-1)), type };
+		return { ip: (parts.length === 3 ? expandVariables(parts[0]) : ''), publicPort: Number(parts.at(-2) ?? parts.at(-1)), privatePort: Number(parts.at(-1)), type };
 	});
 };
 
@@ -248,9 +253,17 @@ const networksOf = (service, appIndex, serviceIndex) => {
 	}));
 };
 
+const labelsOf = (service) => {
+	return (Array.isArray(service.labels) ? service.labels : Object.entries(service.labels || {}).map(([key, value]) => { return `${key}=${value}`; }));
+};
+
 const serviceHasRoute = (service) => {
-	const labels = (Array.isArray(service.labels) ? service.labels : Object.entries(service.labels || {}).map(([key, value]) => { return `${key}=${value}`; }));
-	return labels.some((label) => { return label.startsWith('traefik.http.routers.') && label.includes('.rule='); });
+	return labelsOf(service).some((label) => { return label.startsWith('traefik.http.routers.') && label.includes('.rule='); });
+};
+
+const middlewaresOf = (service) => {
+	const label = labelsOf(service).find((entry) => { return entry.startsWith('traefik.http.routers.') && entry.includes('.middlewares='); });
+	return (label ? label.slice(label.indexOf('=') + 1) : null);
 };
 
 const SNAPSHOT_RETENTION = { frequently: 0, hourly: 36, daily: 30, weekly: 0, monthly: 60, yearly: 5 };
@@ -259,19 +272,29 @@ const isOneShot = (service) => {
 	return String(service.restart) === 'no';
 };
 
+const templateFor = (catalogueTemplates, name) => {
+	const exact = catalogueTemplates.find((entry) => { return entry.name === name; });
+	if (exact) {
+		return { template: exact, title: exact.title };
+	}
+
+	const template = catalogueTemplates.find((entry) => { return entry.multiple === true && name.startsWith(`${entry.name}-`); });
+	return { template, title: `${template.title} (${name.slice(template.name.length + 1)})` };
+};
+
 const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAMES, updatable = null }) => {
 	const catalogueTemplates = templates(appsDir);
 	const configured = [];
 	const containers = [];
 	const appsResourceMetrics = [];
 	names.forEach((name, appIndex) => {
-		const template = catalogueTemplates.find((entry) => { return entry.name === name; });
+		const { template, title } = templateFor(catalogueTemplates, name);
 		const compose = parseYaml(path.join(appsDir, template.repository.stackfile));
 		const prefix = template.env?.find((variable) => { return variable.prefix; })?.prefix;
 		const host = (prefix ? `${prefix}${(Object.hasOwn(CORE_APPS, name) ? fqdn : domainName)}` : null);
-		const usage = APP_USAGE[name];
+		const usage = (APP_USAGE[name] ?? APP_USAGE[template.name]);
 		const services = Object.entries(compose.services).filter(([, service]) => { return !isOneShot(service); });
-		configured.push({ id: appIndex + 1, type: 'app', name, title: template.title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}`, snapshotPolicy: { mode: 'enabled', retention: SNAPSHOT_RETENTION } });
+		configured.push({ id: appIndex + 1, type: 'app', name, title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}`, snapshotPolicy: { mode: 'enabled', retention: SNAPSHOT_RETENTION } });
 		const routed = services.find(([, service]) => { return serviceHasRoute(service); })?.[0];
 		const containerMetrics = services.map(([serviceName, service], serviceIndex) => {
 			const id = `${name}-${serviceName}`;
@@ -286,7 +309,8 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 					comDockerComposeService: serviceName,
 					...((host && serviceName === routed) ? {
 						[routerLabel(name.replace(/[^a-z0-9]/gi, ''), 'Rule')]: `Host(\`${host}\`)`,
-						[routerLabel(name.replace(/[^a-z0-9]/gi, ''), 'Entrypoints')]: 'https'
+						[routerLabel(name.replace(/[^a-z0-9]/gi, ''), 'Entrypoints')]: 'https',
+						...(middlewaresOf(service) ? { [routerLabel(name.replace(/[^a-z0-9]/gi, ''), 'Middlewares')]: middlewaresOf(service) } : {})
 					} : {})
 				},
 				mounts: mountsOf(service),

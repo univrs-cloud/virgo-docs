@@ -235,6 +235,36 @@ const hoverTooltip = async (page, selector) => {
 	await sleep(SETTLE_MS);
 };
 
+const TOPOLOGY_PAGE = '#topology .container-fluid:not(.d-none)';
+const TOPOLOGY_APPS = [...apps.CORE_APP_NAMES, 'nextcloud', 'pihole', 'wg-easy', 'plausible', 'gitea', 'gitea-runner-build', 'gitea-runner-deploy'];
+
+const BRANCH_PADDING = { top: 0, right: 0, bottom: PADDING, left: 0 };
+const topologyBranch = (key) => { return `#topology li:has(> button[data-key="${key}"])`; };
+
+const toggleBranches = async (page, keys) => {
+	for (const key of keys) {
+		await page.click(`#topology button[data-key="${key}"]`);
+		await sleep(SETTLE_MS);
+	}
+	await page.click('#topology [data-action="fit"]');
+	await page.evaluate(() => { document.activeElement?.blur(); });
+	await page.mouse.move(0, 0);
+	await page.waitForSelector('.tooltip.show', { hidden: true });
+	await sleep(SETTLE_MS);
+};
+
+const topologyNode = (backend) => {
+	const node = appsNode(backend, { names: TOPOLOGY_APPS });
+	const peered = managedNode(backend, { peer: 'adopted' });
+	return {
+		...node,
+		discovery: peered.discovery,
+		peers: peered.peers,
+		configured: [...node.configured, ...shortcuts.shortcuts(DOMAINS.univrs)],
+		shares: [...shares.folders(), ...shares.timeMachines(settings.WEATHER_CLOCK)]
+	};
+};
+
 const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
 const MENU_PADDING = { top: 4, right: 16, bottom: 8, left: 16 };
 
@@ -846,6 +876,21 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(standby, ['#network-interface', '.tooltip.show'], 'network-interface-standby', PADDING);
 		await closePage(standby);
+	},
+	topology: async ({ browser, backend, capture, viewport }) => {
+		backend.setState(topologyNode(backend));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await open(page, backend.url, '/topology', TOPOLOGY_PAGE);
+		await waitForImages(page, '#topology .topology-content img');
+		await toggleBranches(page, ['auth', 'shares', 'internal']);
+		await capture.viewport(page, 'topology');
+
+		await toggleBranches(page, ['auth', 'internal']);
+		await capture.region(page, [topologyBranch('proxy')], 'topology-apps', BRANCH_PADDING);
+
+		await toggleBranches(page, ['auth', 'proxy', 'shares']);
+		await capture.region(page, [topologyBranch('shares')], 'topology-sharing', BRANCH_PADDING);
+		await closePage(page);
 	},
 	storage: async ({ browser, backend, capture, viewport }) => {
 		backend.setState(storageNode(backend));

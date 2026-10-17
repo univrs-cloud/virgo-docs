@@ -2,7 +2,7 @@
 title: Settings
 description: Fleet, notifications, location and power, from the Settings page.
 sidebar:
-  order: 13
+  order: 14
 ---
 
 **Settings** holds the node's fleet registration, its email notifications, its location and the power buttons. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, and **Power** lets you reboot or shut down the node.
