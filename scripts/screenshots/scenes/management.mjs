@@ -882,14 +882,19 @@ const pages = {
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await open(page, backend.url, '/topology', TOPOLOGY_PAGE);
 		await waitForImages(page, '#topology .topology-content img');
-		await toggleBranches(page, ['auth', 'shares', 'internal']);
+		await toggleBranches(page, ['shares', 'internal']);
 		await capture.viewport(page, 'topology');
 
-		await toggleBranches(page, ['auth', 'internal']);
+		await toggleBranches(page, ['internal']);
 		await capture.region(page, [topologyBranch('proxy')], 'topology-apps', BRANCH_PADDING);
 
-		await toggleBranches(page, ['auth', 'proxy', 'shares']);
+		await toggleBranches(page, ['proxy', 'shares']);
 		await capture.region(page, [topologyBranch('shares')], 'topology-sharing', BRANCH_PADDING);
+
+		await page.click('#topology .traffic-switch >>> input');
+		await toggleBranches(page, ['proxy', 'shares', 'internal']);
+		await sleep(SETTLE_MS * 3);
+		await capture.viewport(page, 'topology-traffic');
 		await closePage(page);
 	},
 	storage: async ({ browser, backend, capture, viewport }) => {

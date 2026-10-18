@@ -1,6 +1,6 @@
 ---
 title: Topology
-description: A map of how the node is reached, which apps need a login, what it shares and which other nodes are around, from the Topology page.
+description: A map of how the node is reached, which apps need a login, what it shares, which other nodes are around and how much traffic flows, from the Topology page.
 sidebar:
   order: 13
 ---
@@ -34,9 +34,9 @@ The legend under the map explains the lines:
 
 Apps reached by domain hang under **Traefik**, the app that receives every visit to your domain and passes it on to the app the address belongs to. Hover over an app's name to see the addresses it answers on.
 
-Apps that need a login on every address hang under **Authelia**, the app that asks for the login before letting a visit through. It counts these apps as gated. An app that needs a login on only some of its addresses stays under Traefik with a lock next to its name. As everywhere on the node, the login applies from outside your local network, see [Authentication](/management/authentication/#on-your-local-network-and-over-the-vpn).
+A lock next to an app's name means it is gated: **Authelia**, the app that asks for the login, checks every visit before Traefik lets it through. As everywhere on the node, the login applies from outside your local network, see [Authentication](/management/authentication/#on-your-local-network-and-over-the-vpn).
 
-![Apps under Traefik and Authelia](../../../../assets/management/topology-apps.png)
+![Apps under Traefik](../../../../assets/management/topology-apps.png)
 
 Shortcuts set to **Use proxy** appear among the apps, with an arrow to the address they open.
 
@@ -49,6 +49,16 @@ The dot in front of an app's name shows whether it is running: green when all of
 **Sharing** holds the folders and time machines, reached on your local network at port 445. A lock marks a private one. Hover over the lock to see who can use it.
 
 ![Folders and time machines under Sharing](../../../../assets/management/topology-sharing.png)
+
+## Traffic
+
+Turn on **Traffic** in the top left corner to see how much data flows right now. Each line becomes a band that grows wider with the traffic passing through it, and dots move along it: blue dots for data coming in, travelling down to the app, and purple dots for data going out, travelling back up. A line carries everything that flows to the parts below it, so the busiest paths stand out.
+
+The node and each app show their current speeds under their name: received and sent per second. The node's figures come from its network card and include everything it sends and receives, not only the apps.
+
+![The Topology page with traffic shown](../../../../assets/management/topology-traffic.png)
+
+While traffic is shown, the map leaves out what has no traffic of its own to show, such as ports and shortcuts. Lines with no data to measure, such as the way in from the internet and **Sharing**, stay still. Turn **Traffic** off to see the full map again.
 
 ## Moving around
 
