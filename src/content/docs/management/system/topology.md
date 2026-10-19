@@ -42,6 +42,8 @@ Shortcuts set to **Use proxy** appear among the apps, with an arrow to the addre
 
 Apps reached by port show their ports. **Host network** means the app shares the node's own network and can use any of its ports.
 
+Apps that nothing on your network can reach hang straight under the node, next to **Traefik**. **Authelia** is one of them: only Traefik talks to it, to check logins.
+
 The dot in front of an app's name shows whether it is running: green when all of it is, orange when only part of it is, red when none of it is. Hover over the dot to see how many of its parts are running.
 
 ## Sharing

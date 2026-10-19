@@ -241,10 +241,15 @@ const TOPOLOGY_APPS = [...apps.CORE_APP_NAMES, 'nextcloud', 'pihole', 'wg-easy',
 const BRANCH_PADDING = { top: 0, right: 0, bottom: PADDING, left: 0 };
 const topologyBranch = (key) => { return `#topology li:has(> button[data-key="${key}"])`; };
 
-const toggleBranches = async (page, keys) => {
-	for (const key of keys) {
-		await page.click(`#topology button[data-key="${key}"]`);
-		await sleep(SETTLE_MS);
+const setBranches = async (page, branches) => {
+	for (const [key, isOpen] of Object.entries(branches)) {
+		const button = `#topology button[data-key="${key}"]`;
+		const isOpened = await page.$eval(button, (element) => { return Boolean(element.querySelector('.icon-minus')); });
+		if (isOpened !== isOpen) {
+			await page.click(button);
+			await page.waitForFunction((selector, wanted) => { return Boolean(document.querySelector(selector)?.querySelector('.icon-minus')) === wanted; }, {}, button, isOpen);
+			await sleep(SETTLE_MS);
+		}
 	}
 	await page.click('#topology [data-action="fit"]');
 	await page.evaluate(() => { document.activeElement?.blur(); });
@@ -882,17 +887,17 @@ const pages = {
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await open(page, backend.url, '/topology', TOPOLOGY_PAGE);
 		await waitForImages(page, '#topology .topology-content img');
-		await toggleBranches(page, ['shares', 'internal']);
+		await setBranches(page, { proxy: true, shares: false });
 		await capture.viewport(page, 'topology');
 
-		await toggleBranches(page, ['internal']);
 		await capture.region(page, [topologyBranch('proxy')], 'topology-apps', BRANCH_PADDING);
 
-		await toggleBranches(page, ['proxy', 'shares']);
+		await setBranches(page, { shares: true });
 		await capture.region(page, [topologyBranch('shares')], 'topology-sharing', BRANCH_PADDING);
 
+		await setBranches(page, { shares: false });
 		await page.click('#topology .traffic-switch >>> input');
-		await toggleBranches(page, ['proxy', 'shares', 'internal']);
+		await setBranches(page, {});
 		await sleep(SETTLE_MS * 3);
 		await capture.viewport(page, 'topology-traffic');
 		await closePage(page);
