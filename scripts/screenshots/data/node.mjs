@@ -19,7 +19,7 @@ const withAbout = (system, apiVersion) => {
 	return { ...system, ...details, osInfo: { ...system.osInfo, kernel: about.SOFTWARE.kernel } };
 };
 
-const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], sessionList = [], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, shortcutList = [], peer = null, appEntries = null, apiVersion = null, hasBans = false } = {}) => {
+const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateIssued = null, userList = [users.FACTORY_OWNER], sessionList = [], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, clientList = null, shortcutList = [], peer = null, appEntries = null, apiVersion = null, hasBans = false } = {}) => {
 	const drives = storage.drives({ isReplaced: Boolean(replacedDrive) });
 	const topologies = getTopologies(drives);
 	const hasPool = (poolUsedPercent !== null);
@@ -46,6 +46,7 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 		users: userList,
 		sessions: sessionList,
 		shares: shareList,
+		shareClients: clientList,
 		updates: [],
 		...withShortcuts((appEntries ? apps.runningApps(appEntries, network.fqdn(domain)) : apps.running(runningApps, network.fqdn(domain))), shortcutList),
 		...(withStatus ? status.status() : { cpuStats: null, memory: null, networkStats: null, time: null, ups: null })

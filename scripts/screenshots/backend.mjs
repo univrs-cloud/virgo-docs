@@ -161,6 +161,9 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		if (state.shares) {
 			socket.emit('shares', state.shares);
 		}
+		if (state.shareClients) {
+			socket.emit('share:clients', state.shareClients);
+		}
 		socket.on('share:paths:custom', () => {
 			socket.emit('share:paths:custom', state.customPaths ?? []);
 		});

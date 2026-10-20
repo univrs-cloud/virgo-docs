@@ -20,6 +20,8 @@ The top of the map follows the way in:
 - **Router**, with its address.
 - The node, with its address. Hover over its name to see its full name. A badge shows when it holds the virtual IP.
 
+Computers that have a [folder](/management/resources/folders/) or [time machine](/management/resources/time-machines/) open are drawn next to **Internet**, with the user and the computer's address. Their lines join the map at the **Router**. Those connecting from outside your local network, such as over the VPN, are drawn at the top, next to **Fleet** when the node is registered with one, and join at **Internet**.
+
 Other nodes found on your network are drawn next to it, marked **Adopted** or **Not adopted**. An adopted node has a dot in front of its name: green while it is online, red while it is not. Nodes are adopted from the **Dashboard**, see [Adopting a node](/management/dashboard/#adopting-a-node).
 
 ## Lines
@@ -56,11 +58,15 @@ The dot in front of an app's name shows whether it is running: green when all of
 
 Turn on **Traffic** in the top left corner to see how much data flows right now. Each line becomes a band that grows wider with the traffic passing through it, and dots move along it: blue dots for data coming in, travelling down to the app, and purple dots for data going out, travelling back up. A line carries everything that flows to the parts below it, so the busiest paths stand out.
 
-The node and each app show their current speeds under their name: received and sent per second. The node's figures come from its network card and include everything it sends and receives, not only the apps.
+The node, each app, each connected computer, **Sharing** and each folder and time machine show their current speeds under their name: received and sent per second. The node's figures come from its network card and include everything it sends and receives, not only the apps.
 
 ![The Topology page with traffic shown](../../../../assets/management/topology-traffic.png)
 
-While traffic is shown, the map leaves out what has no traffic of its own to show, such as ports and shortcuts. Lines with no data to measure, such as the way in from the internet and **Sharing**, stay still. Turn **Traffic** off to see the full map again.
+A computer's traffic flows through the node and **Sharing** to the folders and time machines it has open. Unfold **Sharing** to see which ones.
+
+![Traffic to the folders and time machines](../../../../assets/management/topology-sharing-traffic.png)
+
+While traffic is shown, the map leaves out what has no traffic of its own to show, such as ports and shortcuts. Lines with no data to measure, such as the way in from the internet, stay still. Turn **Traffic** off to see the full map again.
 
 ## Moving around
 

@@ -1,4 +1,4 @@
-import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open, setValue, openMenu, openModal, closeModal } from '../capture.mjs';
+import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open, setValue, followLink, openMenu, openModal, closeModal } from '../capture.mjs';
 import * as apps from '../data/apps.mjs';
 import { DOMAINS, BANNED_ADDRESS, fqdn } from '../data/network.mjs';
 import { nodeState } from '../data/node.mjs';
@@ -73,10 +73,10 @@ const searchServices = async (page, value) => {
 
 const STORAGE_PAGE = '#storage .container-fluid:not(.d-none)';
 const STORAGE_POOL = '#storage .details .item';
-const poolCard = (index) => { return `#storage .details .overflow-y-scroll > .card:nth-child(${index})`; };
+const poolCard = (index) => { return `#storage .details .overflow-y-scroll > .list-group > .list-group-item:nth-child(${index})`; };
 const VDEV_DETAILS = '#storage .details [id^="vdev-details-"].show';
 const SNAPSHOT_COUNT = 142;
-const POOL_CARD_PADDING = { top: 8, right: PADDING, bottom: 8, left: 8 };
+const POOL_CARD_PADDING = { top: 0, right: PADDING, bottom: 8, left: 8 };
 
 const storageNode = (backend, overrides = {}) => {
 	return managedNode(backend, { now: settings.WEATHER_CLOCK, scrub: 'finished', snapshotCount: SNAPSHOT_COUNT, ...overrides });
@@ -205,9 +205,12 @@ const openShortcutCreate = async (browser, backend, viewport) => {
 const FOLDERS_PAGE = '#folders .container-fluid:not(.d-none)';
 const FOLDER_CREATE_READY = '#folder-create .content:not(.d-none)';
 const folderRow = (share) => { return `#folders tr[data-id="${share.name}"]`; };
+const FOLDER_DETAILS = '#folders .details .item';
+const DETAILS_TAB_PADDING = { top: 16, right: PADDING, bottom: PADDING, left: PADDING };
+const detailsTab = (details) => { return [`${details} .card-image-row`, `${details} .nav`, `${details} .table-scroll > div:not(.d-none) .list-group-item`]; };
 
 const foldersNode = (backend) => {
-	return { ...managedNode(backend, { shareList: shares.folders() }), customPaths: shares.customPaths() };
+	return { ...managedNode(backend, { shareList: shares.folders(), clientList: shares.clients() }), snapshots: shares.folderSnapshots(), customPaths: shares.customPaths() };
 };
 
 const fillFolder = async (page, folder) => {
@@ -228,6 +231,7 @@ const fillFolder = async (page, folder) => {
 const TIME_MACHINES_PAGE = '#time-machines .container-fluid:not(.d-none)';
 const DASHBOARD_GROUP_PADDING = { top: 12, right: 16, bottom: 16, left: 16 };
 const timeMachineRow = (share) => { return `#time-machines tr[data-id="${share.name}"]`; };
+const TIME_MACHINE_DETAILS = '#time-machines .details .item';
 
 const hoverTooltip = async (page, selector) => {
 	await page.hover(selector);
@@ -266,7 +270,8 @@ const topologyNode = (backend) => {
 		discovery: peered.discovery,
 		peers: peered.peers,
 		configured: [...node.configured, ...shortcuts.shortcuts(DOMAINS.univrs)],
-		shares: [...shares.folders(), ...shares.timeMachines(settings.WEATHER_CLOCK)]
+		shares: [...shares.folders(), ...shares.timeMachines(settings.WEATHER_CLOCK)],
+		shareClients: shares.clients()
 	};
 };
 
@@ -677,6 +682,22 @@ const pages = {
 		await capture.region(page, ['#folder-update'], 'folder-edit', PADDING);
 		await closePage(page);
 
+		const details = await signedInPage(browser, backend, viewport, users.owner());
+		await open(details, backend.url, '/folders', FOLDERS_PAGE);
+		await hoverTooltip(details, `${folderRow(documents)} u-badge[tip]`);
+		await capture.region(details, ['#folders .search', '#folders table', '.tooltip.show'], 'folders-clients', PADDING);
+		await details.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+
+		await followLink(details, `/folders/${documents.name}`, FOLDER_DETAILS);
+		await capture.viewport(details, 'folder-details');
+
+		await details.click('#folders .details [data-folder-tab="snapshots"]');
+		await details.waitForSelector('#folders .details [data-folder-tab="snapshots"].active', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(details, detailsTab(FOLDER_DETAILS), 'folder-snapshots', DETAILS_TAB_PADDING);
+		await closePage(details);
+
 		for (const [folder, name] of [[shares.NEW_FOLDER, 'folder-create'], [shares.EXISTING_PATH_FOLDER, 'folder-create-existing']]) {
 			const creating = await signedInPage(browser, backend, viewport, users.owner());
 			await open(creating, backend.url, '/folders', FOLDERS_PAGE);
@@ -695,7 +716,8 @@ const pages = {
 	'time-machines': async ({ browser, backend, capture, viewport }) => {
 		const timeMachines = shares.timeMachines(settings.WEATHER_CLOCK);
 		const [first, second] = timeMachines;
-		backend.setState(managedNode(backend, { shareList: timeMachines }));
+		const [, james] = timeMachines;
+		backend.setState(managedNode(backend, { shareList: timeMachines, clientList: shares.clients() }));
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(page, settings.WEATHER_CLOCK);
 		await open(page, backend.url, '/time-machines', TIME_MACHINES_PAGE);
@@ -704,7 +726,7 @@ const pages = {
 		await hoverTooltip(page, `${timeMachineRow(first)} [data-action="copy-to-clipboard"]`);
 		await capture.region(page, ['#time-machines .search', '#time-machines table', '.tooltip.show'], 'time-machines-address', PADDING);
 
-		await hoverTooltip(page, `${timeMachineRow(first)} td:nth-child(4) small`);
+		await hoverTooltip(page, `${timeMachineRow(first)} td:nth-child(5) small`);
 		await capture.region(page, ['#time-machines .search', '#time-machines table', '.tooltip.show'], 'time-machines-backups', PADDING);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
@@ -715,6 +737,17 @@ const pages = {
 		await openModal(page, `${timeMachineRow(second)} a[href="#time-machine-update"]`, '#time-machine-update');
 		await capture.region(page, ['#time-machine-update'], 'time-machine-edit', PADDING);
 		await closePage(page);
+
+		const details = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(details, settings.WEATHER_CLOCK);
+		await open(details, backend.url, `/time-machines/${james.name}`, TIME_MACHINE_DETAILS);
+		await capture.viewport(details, 'time-machine-details');
+
+		await details.click('#time-machines .details [data-time-machine-tab="backups"]');
+		await details.waitForSelector('#time-machines .details [data-time-machine-tab="backups"].active', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(details, detailsTab(TIME_MACHINE_DETAILS), 'time-machine-backups', DETAILS_TAB_PADDING);
+		await closePage(details);
 
 		const creating = await signedInPage(browser, backend, viewport, users.owner());
 		await open(creating, backend.url, '/time-machines', TIME_MACHINES_PAGE);
@@ -900,6 +933,10 @@ const pages = {
 		await setBranches(page, {});
 		await sleep(SETTLE_MS * 3);
 		await capture.viewport(page, 'topology-traffic');
+
+		await setBranches(page, { shares: true });
+		await sleep(SETTLE_MS * 3);
+		await capture.region(page, [topologyBranch('shares')], 'topology-sharing-traffic', BRANCH_PADDING);
 		await closePage(page);
 	},
 	storage: async ({ browser, backend, capture, viewport }) => {

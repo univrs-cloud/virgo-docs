@@ -9,19 +9,25 @@ sidebar:
 
 ![The Folders page](../../../../assets/management/folders.png)
 
-For each folder, the list shows its name and path, the users who can reach it, its capacity and how much of it is used. The clock icon next to a name shows the state of the folder's [snapshots](#history); hover over it for details. Sort the list by name, capacity or usage with the arrows in the column headers, and use **Search** to find a folder by its name, path or users.
+For each folder, the list shows its name and path, how many computers have it open right now, the users who can reach it, how much data it receives and sends per second, its capacity and how much of it is used. Hover over the number of computers to see who is connected and from which address. The clock icon next to a name shows the state of the folder's [snapshots](#history); hover over it for details. Sort the list by name, traffic, capacity or usage with the arrows in the column headers, and use **Search** to find a folder by its name, path or users.
+
+![Who has a folder open](../../../../assets/management/folders-clients.png)
 
 ## Opening a folder
 
 Select the Windows, Apple or Linux icon next to a folder to copy its address for that system:
 
-- **Windows:** `\\192.168.1.20\documents`, to paste in File Explorer's address bar.
-- **macOS:** `smb://192.168.1.20/documents`, to paste in Finder after pressing **⌘K**.
-- **Linux:** `smb://192.168.1.20/documents`, to paste in your file manager's address bar.
+- **Windows:** `\\192.168.1.10\documents`, to paste in File Explorer's address bar.
+- **macOS:** `smb://192.168.1.10/documents`, to paste in Finder after pressing **⌘K**.
+- **Linux:** `smb://192.168.1.10/documents`, to paste in your file manager's address bar.
+
+The address is the [virtual IP](/setup/interface/), the address the node shares with its cluster.
 
 ![Copying a folder's address](../../../../assets/management/folders-address.png)
 
 When asked, enter your node username and password. A folder marked **Guest** has open access: anyone on your local network can open it and change its files, without a username or password.
+
+On a Mac, the node also appears in Finder's sidebar under **Network**, by the name of its cluster, for example **virgo**. Select it and log in to see the folders you can reach.
 
 The computer reaches the node over your local network only, so folders open while it is on the same network as the node.
 
@@ -57,15 +63,29 @@ The existing paths are places on the node that already hold files, such as a Nex
 
 Such a folder has no capacity of its own. It shares the space of the place it lives in, which is the capacity the list shows, while its usage counts only its own files.
 
+## Folder details
+
+Select a folder in the list to see it in detail.
+
+![A folder in detail](../../../../assets/management/folder-details.png)
+
+- **Usage:** the folder's capacity, how much of it is used and how much is free. **Space saved** shows how much space compression saves. For a folder with snapshots, the bar splits the used space into the folder's **Data** and its **Snapshots**.
+- **Authorized users:** the users who can reach the folder, each with the icons that copy the folder's address for Windows, Apple or Linux. The Apple and Linux addresses include the user's name.
+- **Clients:** the computers that have the folder open right now, with the user, the computer's address and how much data the folder receives from it and sends to it per second.
+
+The **Snapshots** tab shows the state of the folder's [snapshots](#history) and how many it has. Select the arrow in the top left corner to go back to the list.
+
 ## Editing or deleting a folder
 
-Open a folder's menu:
+Open a folder's menu in the list:
 
 ![A folder's menu](../../../../assets/management/folders-menu.png)
 
 - **Edit:** change the authorized users, or the capacity of a new share. The name and path stay the same.
 - **Delete:** permanently delete the folder and every file in it.
 - **Remove:** for a folder on an existing path, stop sharing it. Its files stay where they are.
+
+In a folder's details, the pen edits the folder and the menu next to it deletes or removes it.
 
 ![Editing a folder](../../../../assets/management/folder-edit.png)
 
@@ -80,6 +100,10 @@ To change that, open the folder's menu and choose under **Snapshots**:
 - **Pause:** stop taking new snapshots. The ones already taken are kept.
 - **Disable:** stop taking snapshots and delete the ones already taken, after you confirm.
 - **Resume** or **Enable:** take snapshots again.
+
+The same choices are buttons on the **Snapshots** tab of the folder's details.
+
+![A folder's snapshots](../../../../assets/management/folder-snapshots.png)
 
 :::caution
 Disabling snapshots permanently deletes every snapshot of the folder. Without them, files that are deleted, overwritten or encrypted by mistake cannot be recovered. To keep the existing snapshots, pause them instead.
