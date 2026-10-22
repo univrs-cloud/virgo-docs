@@ -21,7 +21,7 @@
 		"@astrojs/sitemap": "^3.7.4",
 		"@astrojs/starlight": "^0.42.6",
 		"@plausible-analytics/tracker": "^0.4.6",
-		"astro": "^7.4.1",
+		"astro": "^7.4.2",
 		"astro-auto-import": "^0.6.0",
 		"astro-broken-links-checker": "^1.1.0",
 		"sharp": "^0.35.5"
@@ -31,7 +31,7 @@
 		"fsevents@2.3.3": true
 	},
 	"devDependencies": {
-		"@astrojs/check": "^0.9.11",
+		"@astrojs/check": "^0.9.12",
 		"puppeteer-core": "^25.15.0",
 		"typescript": "^6.0.3"
 	}
