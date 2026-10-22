@@ -26,13 +26,13 @@
 		"astro-broken-links-checker": "^1.1.0",
 		"sharp": "^0.35.5"
 	},
-	"allowScripts": {
-		"esbuild@0.28.2": true,
-		"fsevents@2.3.3": true
-	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.12",
 		"puppeteer-core": "^25.15.0",
 		"typescript": "^6.0.3"
+	},
+	"allowScripts": {
+		"esbuild@0.28.2": true,
+		"fsevents@2.3.3": true
 	}
 }
