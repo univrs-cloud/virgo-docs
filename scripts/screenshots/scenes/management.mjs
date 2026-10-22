@@ -554,7 +554,7 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.viewport(page, 'dashboard-window-floating');
 		await page.click(MENU_TOGGLE);
-		for (const toggle of windowToggles) {
+		for (let remaining = windowToggles.length; remaining > 0; remaining--) {
 			await page.hover(WINDOW_ENTRY);
 			await page.click(`${WINDOW_ENTRY} .close-window`);
 			await sleep(SETTLE_MS);

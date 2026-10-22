@@ -10,7 +10,7 @@ import sitemap from '@astrojs/sitemap';
 const SITE = 'https://docs.univrs.cloud';
 const DOCS_DIR = 'src/content/docs/';
 
-const pageUrl = (file) => {
+const pageUrl = (file = '') => {
 	const slug = file.slice(DOCS_DIR.length).replace(/\.mdx?$/i, '').replace(/(^|\/)index$/i, '');
 	return `${SITE}/${slug}${(slug ? '/' : '')}`;
 };
@@ -21,7 +21,7 @@ const pageDates = () => {
 	try {
 		log = execFileSync('git', ['log', '--format=@%cI', '--name-only', '--', DOCS_DIR], { cwd: fileURLToPath(new URL('.', import.meta.url)), encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
 	} catch (error) {
-		console.warn(`Sitemap dates unavailable: ${error.message}`);
+		console.warn(`Sitemap dates unavailable: ${(error instanceof Error ? error.message : error)}`);
 		return dates;
 	}
 
@@ -102,6 +102,7 @@ export default defineConfig({
 		}),
 		brokenLinksChecker({
 			checkExternalLinks: true,
+			cacheExternalLinks: false,
 			throwError: true
 		})
 	]
