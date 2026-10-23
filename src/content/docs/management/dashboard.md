@@ -32,7 +32,11 @@ The node records CPU, RAM and network every second and keeps the last hour, even
 - Select anywhere else on the bar to move the box there.
 - Double-click the bar to go back to the last 10 minutes.
 
-Hover over any of the charts to see the time and every reading at that moment. Each point on a chart is the highest reading over a few seconds, so short spikes stay visible. Seconds the node did not record, such as while it restarted, show as 0.
+Hover over any of the charts to see the time and every reading at that moment. A line marks the same moment on all three charts.
+
+![Hovering over the CPU chart](../../../assets/management/dashboard-status-hover.png)
+
+Each point on a chart is the highest reading over a few seconds, so short spikes stay visible. Seconds the node did not record, such as while it restarted, show as 0.
 
 ## Nodes
 

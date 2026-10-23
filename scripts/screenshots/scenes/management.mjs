@@ -30,6 +30,12 @@ const managedNode = (backend, overrides = {}) => {
 	});
 };
 
+const collapseMenu = async (page) => {
+	await page.click(MENU_TOGGLE);
+	await page.mouse.move(0, 0);
+	await sleep(SETTLE_MS);
+};
+
 const signedInPage = async (browser, backend, viewport, user) => {
 	const page = await newPage(browser, { ...viewport, height: DASHBOARD_HEIGHT });
 	await page.setCookie(users.accountCookie(backend.url, user));
@@ -88,6 +94,9 @@ const WINDOW_TOGGLE = windowToggle(apps.WINDOW_APP);
 const DOCKED_APPS = ['Nextcloud', 'Gitea'];
 const WINDOW_ENTRY = 'header .navbar .nav .nav-window';
 const MENU_TOGGLE = 'header nav .menu-toggle';
+const CPU_CHART = '#resources-monitor .resource-chart[data-chart="cpu"] .u-over';
+const CHART_TOOLTIP = '.uplot-tooltip:not(.d-none)';
+const STATUS_HOVER = { x: 0.27, y: 0.6 };
 const MENU_ITEM = 'header nav a[href="/storage"]';
 
 const serveWindowPage = async (page, urls) => {
@@ -279,6 +288,7 @@ const pages = {
 		const dashboard = await newPage(browser, { ...viewport, height: DASHBOARD_HEIGHT });
 		await controlClock(dashboard);
 		await open(dashboard, backend.url, '/', `${VISIBLE_ACCOUNT} a[href^="/login"]`);
+		await collapseMenu(dashboard);
 		await dashboard.waitForSelector('#resources-monitor .resource-chart canvas', { visible: true });
 		await capture.viewport(dashboard, 'local');
 		await closePage(dashboard);
@@ -505,11 +515,19 @@ const pages = {
 		await open(page, backend.url, '/', '#peer .card');
 		await page.waitForSelector('#resources-monitor .resource-chart canvas', { visible: true });
 		await waitForImages(page, '#apps-shortcuts img');
+		await capture.region(page, [MENU_TOGGLE, `${VISIBLE_ACCOUNT} .account-toggle`], 'menu-toggle', MENU_PADDING);
+
+		await collapseMenu(page);
 		await capture.fullPage(page, 'dashboard');
 
 		await capture.region(page, ['#resources-monitor'], 'dashboard-status', TIGHT_PADDING);
 
-		await capture.region(page, [MENU_TOGGLE, `${VISIBLE_ACCOUNT} .account-toggle`], 'menu-toggle', MENU_PADDING);
+		const cpuChart = await page.$eval(CPU_CHART, (element) => { return element.getBoundingClientRect().toJSON(); });
+		await page.mouse.move(cpuChart.left + (cpuChart.width * STATUS_HOVER.x), cpuChart.top + (cpuChart.height * STATUS_HOVER.y));
+		await page.waitForSelector(CHART_TOOLTIP, { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['#resources-monitor .timeline', '#resources-monitor .network', CHART_TOOLTIP], 'dashboard-status-hover', TIGHT_PADDING);
+		await page.mouse.move(0, 0);
 
 		const windowToggles = [...DOCKED_APPS.map(windowToggle), WINDOW_TOGGLE];
 		await serveWindowPage(page, await Promise.all(windowToggles.map((toggle) => { return page.$eval(toggle, (element) => { return element.dataset.url; }); })));
@@ -518,7 +536,6 @@ const pages = {
 			await sleep(SETTLE_MS);
 		}
 		await page.waitForSelector(`${WINDOW_ENTRY}.active`, { visible: true });
-		await page.click(MENU_TOGGLE);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS * 2);
 		await capture.viewport(page, 'dashboard-window');
@@ -544,6 +561,7 @@ const pages = {
 			await page.click(`${WINDOW_ENTRY} .close-window`);
 			await sleep(SETTLE_MS);
 		}
+		await collapseMenu(page);
 
 		await page.click(`${REORDER_GROUP} .order`);
 		await page.waitForSelector(`${REORDER_GROUP}.dragging`, { visible: true });
@@ -572,6 +590,7 @@ const pages = {
 		backend.setState(dashboardNode('available'));
 		const adopting = await signedInPage(browser, backend, viewport, users.owner());
 		await open(adopting, backend.url, '/', '#peer [data-action="adopt"]');
+		await collapseMenu(adopting);
 		await capture.region(adopting, ['#peer .card'], 'dashboard-adopt', TIGHT_PADDING);
 		await closePage(adopting);
 	},
