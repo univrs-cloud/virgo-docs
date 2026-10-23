@@ -49,7 +49,7 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 		shareClients: clientList,
 		updates: [],
 		...withShortcuts((appEntries ? apps.runningApps(appEntries, network.fqdn(domain)) : apps.running(runningApps, network.fqdn(domain))), shortcutList),
-		...(withStatus ? status.status() : { cpuStats: null, memory: null, networkStats: null, time: null, ups: null })
+		...(withStatus ? status.status() : { cpuStats: null, memory: null, stats: null, time: null, ups: null })
 	};
 };
 

@@ -1,8 +1,8 @@
-import { SETTLE_MS, sleep, newPage, closePage, controlClock, advanceClock, open, setValue, followLink, openMenu, openModal, closeModal } from '../capture.mjs';
+import { SETTLE_MS, sleep, newPage, closePage, controlClock, open, setValue, followLink, openMenu, openModal, closeModal } from '../capture.mjs';
 import * as apps from '../data/apps.mjs';
 import { DOMAINS, BANNED_ADDRESS, fqdn } from '../data/network.mjs';
 import { nodeState } from '../data/node.mjs';
-import { networkHistory, upsCharging, upsOnBattery, upsMissing, upsUnreachable, upsFailed } from '../data/status.mjs';
+import { upsCharging, upsOnBattery, upsMissing, upsUnreachable, upsFailed } from '../data/status.mjs';
 import * as serviceData from '../data/services.mjs';
 import * as settings from '../data/settings.mjs';
 import * as shares from '../data/shares.mjs';
@@ -28,19 +28,6 @@ const managedNode = (backend, overrides = {}) => {
 		withStatus: true,
 		...overrides
 	});
-};
-
-const NETWORK_SAMPLE_MS = 1000;
-const NETWORK_EMIT_GAP_MS = 25;
-
-const fillNetworkHistory = async (page, backend) => {
-	for (const sample of networkHistory()) {
-		await advanceClock(page, NETWORK_SAMPLE_MS);
-		backend.broadcast('/host', 'host:network:stats', sample);
-		await sleep(NETWORK_EMIT_GAP_MS);
-	}
-
-	await sleep(SETTLE_MS);
 };
 
 const signedInPage = async (browser, backend, viewport, user) => {
@@ -292,8 +279,7 @@ const pages = {
 		const dashboard = await newPage(browser, { ...viewport, height: DASHBOARD_HEIGHT });
 		await controlClock(dashboard);
 		await open(dashboard, backend.url, '/', `${VISIBLE_ACCOUNT} a[href^="/login"]`);
-		await dashboard.waitForSelector('#resources-monitor .network-chart', { visible: true });
-		await fillNetworkHistory(dashboard, backend);
+		await dashboard.waitForSelector('#resources-monitor .resource-chart canvas', { visible: true });
 		await capture.viewport(dashboard, 'local');
 		await closePage(dashboard);
 
@@ -517,8 +503,7 @@ const pages = {
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(page, settings.WEATHER_CLOCK);
 		await open(page, backend.url, '/', '#peer .card');
-		await page.waitForSelector('#resources-monitor .network-chart', { visible: true });
-		await fillNetworkHistory(page, backend);
+		await page.waitForSelector('#resources-monitor .resource-chart canvas', { visible: true });
 		await waitForImages(page, '#apps-shortcuts img');
 		await capture.fullPage(page, 'dashboard');
 

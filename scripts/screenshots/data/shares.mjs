@@ -37,10 +37,10 @@ const SNAPSHOT_RETENTION = { frequently: 0, hourly: 36, daily: 30, weekly: 0, mo
 const FOLDER_SNAPSHOTS = 66;
 
 const CLIENTS = [
-	{ username: 'olivia', address: '192.168.1.48', shares: ['documents', 'photos'], rx: 0.4, tx: 6.2 },
-	{ username: 'james', address: '192.168.1.63', shares: ['documents', 'time_machine_james_macbook_air'], rx: 14.8, tx: 0.2 },
-	{ username: 'voyager', address: '192.168.1.42', shares: ['public'], rx: 0.05, tx: 0.9 },
-	{ username: 'olivia', address: '10.8.0.2', shares: ['olivia_nextcloud'], rx: 0.1, tx: 1.3 }
+	{ username: 'olivia', address: '192.168.1.48', shares: ['documents', 'photos'], activeShares: ['photos'], rx: 0.4, tx: 6.2 },
+	{ username: 'james', address: '192.168.1.63', shares: ['documents', 'time_machine_james_macbook_air'], activeShares: ['time_machine_james_macbook_air'], rx: 14.8, tx: 0.2 },
+	{ username: 'voyager', address: '192.168.1.42', shares: ['public'], activeShares: ['public'], rx: 0.05, tx: 0.9 },
+	{ username: 'olivia', address: '10.8.0.2', shares: ['olivia_nextcloud'], activeShares: ['olivia_nextcloud'], rx: 0.1, tx: 1.3 }
 ];
 
 const slug = (comment) => {
@@ -140,8 +140,8 @@ const folderSnapshots = () => {
 };
 
 const clients = () => {
-	return CLIENTS.map(({ username, address, shares, rx, tx }, index) => {
-		return { id: String(index + 1), username, address, shares, rx: rx * MIB, tx: tx * MIB };
+	return CLIENTS.map(({ username, address, shares, activeShares, rx, tx }, index) => {
+		return { id: String(index + 1), username, address, shares, activeShares, rx: rx * MIB, tx: tx * MIB };
 	});
 };
 

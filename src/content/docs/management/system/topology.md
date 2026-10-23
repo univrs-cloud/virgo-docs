@@ -62,7 +62,7 @@ The node, each app, each connected computer, **Sharing** and each folder and tim
 
 ![The Topology page with traffic shown](../../../../assets/management/topology-traffic.png)
 
-A computer's traffic flows through the node and **Sharing** to the folders and time machines it has open. Unfold **Sharing** to see which ones.
+A computer's traffic flows through the node and **Sharing** to the folders and time machines it is reading from or writing to. Ones it has open but is not using stay still. Unfold **Sharing** to see which ones.
 
 ![Traffic to the folders and time machines](../../../../assets/management/topology-sharing-traffic.png)
 

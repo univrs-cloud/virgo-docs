@@ -15,13 +15,24 @@ The **Status** column shows the node's resources as they change:
 
 ![The node's status](../../../assets/management/dashboard-status.png)
 
-- **CPU:** the processor's load and temperature, and the fan speed when the node has a fan.
-- **RAM:** how much memory is in use.
-- **Network:** the traffic on the node's network connection over the last minute, received (**RX**) and sent (**TX**), with the connection's name and speed.
+- **CPU:** how busy the processor is over time, with its temperature, and the fan speed when the node has a fan.
+- **RAM:** how much memory is in use over time, out of the total.
+- **Network:** the traffic on the node's network connection over time, received (**RX**) and sent (**TX**), with the connection's name and speed.
 - **VirgoOS:** how full the system drive is.
 - **Data:** the [storage pool](/management/system/storage/)'s health and how full it is, with the temperature of each drive. A drive's badge turns yellow or red when it gets too warm, and orange when its own health check reports a problem; hover over it to see what it reports. While a data integrity check runs, its progress shows here too.
 - **UPS:** whether the node runs on the grid or on battery, and how charged the battery is. See [UPS](/management/ups/) for what happens during a power cut.
 - **Uptime:** how long the node has been running since it last started.
+
+### Looking back
+
+The node records CPU, RAM and network every second and keeps the last hour, even while nobody has the page open. The bar at the top of the column picks which part of that hour the three charts show. It starts at the last 10 minutes and follows along as time passes.
+
+- Drag the highlighted box back along the bar to see an earlier moment. The charts stay on that moment until you drag the box back to the right end, where they follow along again.
+- Drag either end of the box to show more or less time, up to the whole hour.
+- Select anywhere else on the bar to move the box there.
+- Double-click the bar to go back to the last 10 minutes.
+
+Hover over any of the charts to see the time and every reading at that moment. Each point on a chart is the highest reading over a few seconds, so short spikes stay visible. Seconds the node did not record, such as while it restarted, show as 0.
 
 ## Nodes
 
