@@ -54,7 +54,7 @@ const statsHistory = () => {
 
 const status = () => {
 	return {
-		cpuStats: { temperature: { main: 41 }, fan: '2460' },
+		cpuSensors: { temperature: { main: 41 }, fan: '2460' },
 		memory: { total: 15.8 * 1024 ** 3 },
 		stats: statsHistory(),
 		time: { uptime: 5 * 86400 + 7 * 3600 },
