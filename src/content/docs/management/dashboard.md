@@ -36,7 +36,7 @@ Hover over any of the charts to see the time and every reading at that moment. A
 
 ![Hovering over the CPU chart](../../../assets/management/dashboard-status-hover.png)
 
-Each point on a chart is the highest reading over a few seconds, so short spikes stay visible. Seconds the node did not record, such as while it restarted, show as 0.
+Each point on a chart is the average reading over a few seconds. Seconds the node did not record, such as while it restarted, show as 0.
 
 ## Nodes
 
