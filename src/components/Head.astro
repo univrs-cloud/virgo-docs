@@ -8,24 +8,3 @@ const { id } = Astro.locals.starlightRoute;
 <Head><slot /></Head>
 
 {hasMarkdown(id) && <link rel="alternate" type="text/markdown" href={new URL(`/${id}.md`, Astro.site).href} />}
-
-{Astro.locals.starlightRoute.id === '404' && <meta name="plausible-404" content="true" />}
-
-<script>
-	import { init, track } from '@plausible-analytics/tracker';
-
-	init({
-		domain: 'docs.univrs.cloud',
-		endpoint: 'https://analytics.univrs.cloud/api/event',
-		autoCapturePageviews: true,
-		outboundLinks: true,
-		fileDownloads: true,
-		formSubmissions: true,
-		hashBasedRouting: true,
-		captureOnLocalhost: false
-	});
-
-	if (document.querySelector('meta[name="plausible-404"]')) {
-		track('404', { props: { path: window.location.pathname } });
-	}
-</script>
