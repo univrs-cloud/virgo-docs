@@ -1,11 +1,11 @@
 ---
 title: Settings
-description: Fleet, notifications, location, memory cache and power, from the Settings page.
+description: Fleet, notifications, location, RAM cache and power, from the Settings page.
 sidebar:
   order: 14
 ---
 
-**Settings** holds the node's fleet registration, its email notifications, its location, its memory cache and the power buttons. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, **Memory cache** is limited to 1.5 GiB, and **Power** lets you reboot or shut down the node.
+**Settings** holds the node's fleet registration, its email notifications, its location, its RAM cache and the power buttons. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, **RAM cache** is limited to 1.5 GiB, and **Power** lets you reboot or shut down the node.
 
 ![Settings on a fresh install](../../../../assets/management/settings-empty.png)
 
@@ -47,11 +47,13 @@ Select it to see today's temperatures every two hours, with the current time hig
 
 ![The weather forecast](../../../../assets/management/weather-forecast.png)
 
-## Memory cache
+## RAM cache
 
-The node keeps recently used files in memory, so opening them again does not need the drives. The **Memory cache** card sets the most memory that cache may use. A larger cache makes files open faster, a smaller one leaves more memory for apps. The cache gives memory back when apps need it, so the limit is a ceiling, not memory set aside.
+The node keeps recently used files in memory, so opening them again does not need the drives. This cache is the ZFS ARC, the memory cache of the storage pool. The **RAM cache** card sets the most memory that cache may use. A larger cache makes files open faster, a smaller one leaves more memory for apps. The cache gives memory back when apps need it, so the limit is a ceiling, not memory set aside.
 
-![The memory cache card](../../../../assets/management/settings-memory-cache.png)
+The limit matters most during heavy reading, such as a data integrity check, a backup or a large copy, when the cache would otherwise keep growing. The [Dashboard](/management/dashboard/#ram) shows how much of the limit the cache uses and how often it saves a trip to the drives.
+
+![The RAM cache card](../../../../assets/management/settings-memory-cache.png)
 
 Drag the slider to the new **Size limit**. The bubble above it shows the size, and the new limit takes effect as soon as you let go, without a reboot. It is kept when the node restarts.
 

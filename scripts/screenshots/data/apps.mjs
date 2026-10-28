@@ -237,7 +237,9 @@ const portsOf = (service) => {
 
 const mountsOf = (service) => {
 	return (service.volumes || [])
-		.filter((volume) => { return typeof volume === 'string' && volume.startsWith('/'); })
+		.filter((volume) => { return typeof volume === 'string'; })
+		.map(expandVariables)
+		.filter((volume) => { return volume.startsWith('/'); })
 		.map((volume) => {
 			const [source, destination, mode] = volume.split(':');
 			return { type: 'bind', source, destination, rw: mode !== 'ro' };
@@ -351,6 +353,23 @@ const appSnapshots = (name = EXAMPLE_APP) => {
 		const fullName = `${dataset}@${snapshotName}`;
 		return [fullName, { name: fullName, dataset, snapshotName, pool: 'messier', properties: { used: { value: used } } }];
 	}));
+};
+
+const ROLLBACK_APP = 'gitea';
+const ROLLBACK_POINT = '2026-09-27_08:12:40';
+const ROLLBACK_SNAPSHOT = `update_${ROLLBACK_POINT}`;
+const ROLLBACK_IMAGES = {
+	server: { image: 'docker.gitea.com/gitea:1.24.5', digest: 'sha256:5f1c8b0d3e6a92f47c1d0b8e4a7f3c29d6e8b1a0f4c7e2d9b3a6f5e8c1d4b7a0' },
+	db: { image: 'postgres:17-alpine', digest: 'sha256:a3e9c7d1f5b2846e0c9a1d7f3b5e8c2a4d6f0b9e7c1a3d5f8b2e4c6a9d0f1b3e' }
+};
+
+const rollbackSnapshots = (name = ROLLBACK_APP) => {
+	const dataset = `messier/apps/${name}`;
+	const fullName = `${dataset}@${ROLLBACK_SNAPSHOT}`;
+	return {
+		...appSnapshots(name),
+		[fullName]: { name: fullName, dataset, snapshotName: ROLLBACK_SNAPSHOT, pool: 'messier', properties: { used: { value: 48234496 }, 'univrs:images': { value: JSON.stringify(ROLLBACK_IMAGES) } } }
+	};
 };
 
 const SNAPSHOT_SEARCH_TERM = 'budget';
@@ -480,6 +499,10 @@ const updatingJob = (title, name = EXAMPLE_APP) => {
 	}, name);
 };
 
+const rollingBackJob = (title, name = ROLLBACK_APP) => {
+	return { id: `job-rollback-${name}`, name: 'app:rollback', opts: {}, data: { config: { name, snapshot: ROLLBACK_SNAPSHOT } }, progress: { state: 'active', message: `Rolling back ${title} data and settings...`, progress: {} } };
+};
+
 const updatedJob = (title, name = EXAMPLE_APP) => {
 	return updateJob({ state: 'completed', message: `${title} updated.`, progress: {} }, name);
 };
@@ -513,6 +536,10 @@ export {
 	WINDOW_APP,
 	windowPage,
 	appSnapshots,
+	ROLLBACK_APP,
+	ROLLBACK_POINT,
+	rollbackSnapshots,
+	rollingBackJob,
 	SNAPSHOT_CLOCK,
 	SNAPSHOT_SEARCH_TERM,
 	snapshotSearch,

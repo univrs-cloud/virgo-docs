@@ -36,8 +36,8 @@ const collapseMenu = async (page) => {
 	await sleep(SETTLE_MS);
 };
 
-const signedInPage = async (browser, backend, viewport, user) => {
-	const page = await newPage(browser, { ...viewport, height: DASHBOARD_HEIGHT });
+const signedInPage = async (browser, backend, viewport, user, options) => {
+	const page = await newPage(browser, { ...viewport, height: DASHBOARD_HEIGHT }, options);
 	await page.setCookie(users.accountCookie(backend.url, user));
 	return page;
 };
@@ -141,7 +141,9 @@ const appRow = (name) => { return `#apps tr[data-name="${name}"]`; };
 const appService = (id) => { return `#apps .details .service[data-id="${id}"]`; };
 const APP_FILTER = '#apps .dropdown:has(.filter-menu)';
 const APP_FILTER_MENU = '#apps .filter-menu.show';
+const STOPPED_APP = 'wetty';
 const SNAPSHOTS_TAB = '#apps .details [data-app-tab="snapshots"]';
+const ROLLBACK_BUTTON = '#apps .details [data-rollback-snapshot]:not([disabled])';
 const SNAPSHOT_SEARCH = '#apps .details .snapshot-search';
 const SNAPSHOT_RESULTS = '#apps .details .snapshots .card-body:has(.snapshot-search-clear)';
 const SNAPSHOT_DOWNLOADS = `${SNAPSHOT_RESULTS} .menu.show`;
@@ -289,7 +291,6 @@ const pages = {
 		const dashboard = await newPage(browser, { ...viewport, height: DASHBOARD_HEIGHT });
 		await controlClock(dashboard);
 		await open(dashboard, backend.url, '/', `${VISIBLE_ACCOUNT} a[href^="/login"]`);
-		await collapseMenu(dashboard);
 		await dashboard.waitForSelector('#resources-monitor .resource-chart canvas', { visible: true });
 		await capture.viewport(dashboard, 'local');
 		await closePage(dashboard);
@@ -303,16 +304,22 @@ const pages = {
 	apps: async ({ browser, backend, capture, viewport }) => {
 		const example = `#app-center .item[data-name="${apps.EXAMPLE_APP}"]`;
 		const exampleContainer = `${apps.EXAMPLE_APP}-${apps.EXAMPLE_APP}`;
-		backend.setState(appsNode(backend));
+		const node = appsNode(backend);
+		backend.setState(node);
 		const page = await appsPage(browser, backend, viewport);
 		await capture.viewport(page, 'apps');
 
+		backend.broadcast('/docker', 'app:containers', node.containers.map((container) => {
+			return (container.labels.comDockerComposeProject === STOPPED_APP ? { ...container, state: 'exited' } : container);
+		}));
+		await sleep(SETTLE_MS);
 		await openMenu(page, `${APP_FILTER} [data-bs-toggle="menu"]`, APP_FILTER_MENU);
 		await page.click(`${APP_FILTER_MENU} [data-filter-key="status"][data-value="running"]`);
 		await sleep(SETTLE_MS);
 		await capture.region(page, ['#apps .search', APP_FILTER, '#apps table', APP_FILTER_MENU], 'apps-filter', PADDING);
 		await page.click(`${APP_FILTER_MENU} [data-action="reset-filters"]`);
 		await page.keyboard.press('Escape');
+		backend.broadcast('/docker', 'app:containers', node.containers);
 		await sleep(SETTLE_MS);
 
 		await openAppCenter(page);
@@ -498,6 +505,38 @@ const pages = {
 		await capture.region(page, [`${SNAPSHOT_RESTORE}`], 'app-snapshots-restore-folder-new', PADDING);
 		await closePage(page);
 	},
+	rollback: async ({ browser, backend, capture, viewport }) => {
+		const title = 'Gitea';
+		const node = appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.ROLLBACK_APP] });
+		backend.setState({ ...node, snapshots: { ...node.snapshots, ...apps.rollbackSnapshots() } });
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(page, apps.SNAPSHOT_CLOCK);
+		await open(page, backend.url, `/apps/${apps.ROLLBACK_APP}`, '#apps .details .item');
+		await waitForImages(page, '#apps .details img');
+		await page.click(SNAPSHOTS_TAB);
+		await page.waitForSelector('#apps .details .snapshots', { visible: true });
+		await page.$$eval(`#apps .details .snapshots [data-snapshot="${apps.ROLLBACK_POINT}"]`, (points) => {
+			points.find((point) => { return point.getBoundingClientRect().width > 0; })?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+		});
+		await page.waitForSelector(ROLLBACK_BUTTON, { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'app-rollback');
+
+		await page.click(ROLLBACK_BUTTON);
+		await page.waitForSelector('dialog.dialog[open]:not(.hiding)', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['dialog.dialog[open]'], 'app-rollback-confirm', PADDING);
+		await page.click('dialog.dialog[open] .dialog-footer button[data-index="0"]');
+		await page.waitForSelector('dialog.dialog[open]', { hidden: true });
+
+		backend.broadcast('/job', 'job', apps.rollingBackJob(title));
+		await page.waitForSelector('#apps .details .snapshot-action[disabled] .icon-spin', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'app-rollback-progress');
+		await closePage(page);
+	},
 	dashboard: async ({ browser, backend, capture, viewport }) => {
 		const dashboardNode = (peer) => {
 			return managedNode(backend, {
@@ -511,7 +550,7 @@ const pages = {
 		};
 
 		backend.setState(dashboardNode('adopted'));
-		const page = await signedInPage(browser, backend, viewport, users.owner());
+		const page = await signedInPage(browser, backend, viewport, users.owner(), { menuCollapsed: false });
 		await controlClock(page, settings.WEATHER_CLOCK);
 		await open(page, backend.url, '/', '#peer .card');
 		await page.waitForSelector('#resources-monitor .resource-chart canvas', { visible: true });
@@ -591,7 +630,6 @@ const pages = {
 		backend.setState(dashboardNode('available'));
 		const adopting = await signedInPage(browser, backend, viewport, users.owner());
 		await open(adopting, backend.url, '/', '#peer [data-action="adopt"]');
-		await collapseMenu(adopting);
 		await capture.region(adopting, ['#peer .card'], 'dashboard-adopt', TIGHT_PADDING);
 		await closePage(adopting);
 	},

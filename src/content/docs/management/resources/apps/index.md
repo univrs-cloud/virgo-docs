@@ -67,6 +67,8 @@ A notification follows the update while a spinning gear takes the place of the a
 
 When the update finishes, the notification says so and the badge disappears. The app keeps its settings and data.
 
+Before updating, the node takes a snapshot of the app. If the new version does not work out, [roll back](/management/resources/apps/snapshots/rollback/) to it.
+
 ![Nextcloud updated](../../../../../assets/management/app-updated.png)
 
 ## An app's details

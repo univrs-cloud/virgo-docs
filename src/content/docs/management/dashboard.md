@@ -16,12 +16,25 @@ The **Status** column shows the node's resources as they change:
 ![The node's status](../../../assets/management/dashboard-status.png)
 
 - **CPU:** how busy the processor is over time, with its temperature, and the fan speed when the node has a fan.
-- **RAM:** how much memory is in use over time, out of the total.
+- **RAM:** how much memory is in use over time, with the cache stacked on top. See [RAM](#ram) below.
 - **Network:** the traffic on the node's network connection over time, received (**RX**) and sent (**TX**), with the connection's name and speed.
 - **VirgoOS:** how full the system drive is.
 - **Data:** the [storage pool](/management/system/storage/)'s health and how full it is, with the temperature of each drive. A drive's badge turns yellow or red when it gets too warm, and orange when its own health check reports a problem; hover over it to see what it reports. While a data integrity check runs, its progress shows here too.
 - **UPS:** whether the node runs on the grid or on battery, and how charged the battery is. See [UPS](/management/ups/) for what happens during a power cut.
 - **Uptime:** how long the node has been running since it last started.
+
+### RAM
+
+The RAM chart splits the node's memory in two parts that add up:
+
+- **In use:** memory that apps, system services and the node itself hold. It is shown out of the total, and the percentage at the top of the card counts only this part.
+- **Cache:** recently used files and folders kept in memory, so opening them again does not need the drives. It is shown out of the most memory it may use, which you set in [RAM cache](/management/system/settings/#ram-cache).
+
+The cache is the ZFS ARC, the memory cache of the storage pool. It fills up as files are read and keeps the ones that are read again. It gives memory back when apps need it, so it is not counted as in use. A cache well below its limit is normal: it only grows as far as the files you use need.
+
+Next to **Cache**, the hit rate is the share of reads served from memory instead of the drives, counted since the node last started. Higher is better: above 90% the cache is doing its job. A lower rate on a node that keeps reading the same files suggests a larger limit would help. Some work, such as copying or streaming large files once, keeps the rate low whatever the limit, because those files are not read again.
+
+Hover over the underlined text in the card for a short reminder of each part.
 
 ### Looking back
 

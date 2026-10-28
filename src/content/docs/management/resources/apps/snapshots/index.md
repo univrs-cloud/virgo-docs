@@ -32,7 +32,7 @@ For some apps the buttons are greyed out, and the line under the state says why.
 
 Snapshots taken at the same moment by different schedules, such as the daily and the monthly one at midnight on the first of the month, are shown together as one restore point.
 
-The selected restore point shows when it was taken and the schedules that keep it: **Frequently**, **Hourly**, **Daily**, **Monthly** or **Yearly**.
+The selected restore point shows when it was taken and the schedules that keep it: **Frequently**, **Hourly**, **Daily**, **Monthly** or **Yearly**. **Update** marks the snapshot the node takes right before it [updates the app](/management/resources/apps/#updating-an-app). Only the one from the latest update is kept.
 
 ### Timeline
 
@@ -47,6 +47,10 @@ With the slider selected, **Home** jumps to the newest restore point and **End**
 :::
 
 On a narrow screen, the timeline becomes a set of orbits around the app's icon, one per schedule, going round clockwise from **Now**.
+
+## Rolling back
+
+An app can be put back as a whole, with its data, settings and versions, to the snapshot taken before its latest update. See [Rolling back](/management/resources/apps/snapshots/rollback/).
 
 ## Getting files back
 

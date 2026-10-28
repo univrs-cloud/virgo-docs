@@ -6,6 +6,8 @@ const COPY = { from: 500, to: 380 };
 const JOB = { from: 210, to: 150 };
 const EARLIER_COPY = { from: 2100, to: 1920 };
 const BACKUP = { from: 60, to: 0 };
+const ARC_START = 2.4;
+const ARC_GROWTH_PER_SECOND = 0.0012;
 
 const random = (seed) => {
 	let state = seed;
@@ -25,6 +27,7 @@ const statsHistory = () => {
 	const next = random(42);
 	const end = Math.floor(Date.now() / 1000) * 1000;
 	let spike = 0;
+	let arc = ARC_START;
 	return Array.from({ length: HISTORY_SECONDS }, (_, second) => {
 		const secondsAgo = HISTORY_SECONDS - 1 - second;
 		const isCopying = isWithin(secondsAgo, COPY);
@@ -40,12 +43,16 @@ const statsHistory = () => {
 		const baseLoad = 9 + (2 * Math.sin(second / 420)) + (next() * 7) + (next() < 0.15 ? next() * 12 : 0);
 		const transferLoad = ((isCopying || isUploading || isBackingUp) ? 8 + (next() * 6) : 0);
 		const jobLoad = (isWorking ? 30 + (next() * 12) : 0);
-		const memory = 7.5 + (0.05 * Math.sin(second / 900)) + (next() * 0.02) + (isWorking ? 0.3 : 0);
+		if (isCopying || isUploading || isBackingUp) {
+			arc += ARC_GROWTH_PER_SECOND;
+		}
+		const memory = 7.5 + (0.05 * Math.sin(second / 900)) + (next() * 0.02) + (isWorking ? 0.3 : 0) + (arc - ARC_START);
 		const transfer = 52 + (next() * 14) - (next() * next() * 18);
 		return {
 			time: end - (secondsAgo * 1000),
 			cpu: Math.round(Math.min(baseLoad + transferLoad + jobLoad + spikeLoad, 100) * 10) / 10,
 			memory: Math.round(memory * GIB),
+			arc: Math.round(arc * GIB),
 			rx: Math.round(isUploading ? transfer * MIB : (isBackingUp ? (15.2 + (next() * 1.6)) * MIB : ((18 + (next() * 50)) * KIB) + (isCopying ? (0.8 + next() * 0.6) * MIB : 0))),
 			tx: Math.round(isCopying ? transfer * MIB : (isBackingUp ? (8.8 + (next() * 1.2)) * MIB : ((9 + (next() * 30)) * KIB) + (isUploading ? (0.7 + next() * 0.5) * MIB : 0)))
 		};

@@ -49,7 +49,7 @@ const weather = () => {
 };
 
 const arc = () => {
-	return { max: 4 * GIB, min: 512 * MIB, limit: Math.floor(TOTAL_MEMORY / 2) };
+	return { max: 4 * GIB, min: 512 * MIB, limit: Math.floor(TOTAL_MEMORY / 2), hits: 4504042538, misses: 6542107 };
 };
 
 export {
