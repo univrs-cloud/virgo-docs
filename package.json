@@ -19,15 +19,15 @@
 	},
 	"dependencies": {
 		"@astrojs/sitemap": "^3.7.4",
-		"@astrojs/starlight": "^0.42.6",
-		"astro": "^7.4.2",
+		"@astrojs/starlight": "^0.42.7",
+		"astro": "^7.4.3",
 		"astro-auto-import": "^0.6.0",
 		"astro-broken-links-checker": "^1.1.0",
 		"sharp": "^0.35.5"
 	},
 	"devDependencies": {
 		"@astrojs/check": "^0.9.12",
-		"puppeteer-core": "^25.15.0",
+		"puppeteer-core": "^25.16.0",
 		"typescript": "^6.0.3"
 	},
 	"allowScripts": {
