@@ -46,6 +46,7 @@ const PROFILE_SESSIONS = '#profile .container-fluid > .row > .col:nth-child(3)';
 const SETTINGS_PAGE = '#settings .container-fluid:not(.d-none)';
 const CARD_PADDING = { top: PADDING, right: PADDING, bottom: PADDING, left: 8 };
 const FLEET_CARD = '#settings .row > .col-12:nth-child(1) .card';
+const MEMORY_CACHE_CARD = '#settings .row > .col-12:nth-child(4) .card';
 
 const NETWORK_PAGE = '#network .container-fluid:not(.d-none)';
 const networkCard = (index) => { return `#network .container-fluid > .row > .col-12:nth-child(${index}) .card`; };
@@ -822,6 +823,7 @@ const pages = {
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await open(page, backend.url, '/settings', SETTINGS_PAGE);
 		await capture.fullPage(page, 'settings-empty');
+		await capture.region(page, [MEMORY_CACHE_CARD], 'settings-memory-cache', CARD_PADDING);
 
 		await openModal(page, '#settings a[href="#smtp"]', '#smtp');
 		await setValue(page, '#smtp .address', smtp.address);

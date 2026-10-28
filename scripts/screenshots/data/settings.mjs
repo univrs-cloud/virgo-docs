@@ -1,6 +1,9 @@
 const WEATHER_TIMEZONE = 'Europe/Amsterdam';
 const WEATHER_DAY = '2026-06-15';
 const WEATHER_CLOCK = Date.UTC(2026, 5, 15, 12, 30);
+const MIB = 1024 ** 2;
+const GIB = 1024 ** 3;
+const TOTAL_MEMORY = 15.8 * GIB;
 
 const smtp = () => {
 	return {
@@ -45,9 +48,14 @@ const weather = () => {
 	};
 };
 
+const arc = () => {
+	return { max: 4 * GIB, min: 512 * MIB, limit: Math.floor(TOTAL_MEMORY / 2) };
+};
+
 export {
 	WEATHER_CLOCK,
 	smtp,
 	location,
-	weather
+	weather,
+	arc
 };

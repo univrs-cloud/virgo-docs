@@ -2,6 +2,7 @@ import * as about from './about.mjs';
 import * as apps from './apps.mjs';
 import * as fleet from './fleet.mjs';
 import * as network from './network.mjs';
+import * as settings from './settings.mjs';
 import * as status from './status.mjs';
 import * as storage from './storage.mjs';
 import * as users from './users.mjs';
@@ -42,6 +43,7 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 			trustedProxies
 		},
 		weather,
+		arc: settings.arc(),
 		jobs,
 		users: userList,
 		sessions: sessionList,

@@ -109,6 +109,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.emit('host:updates', state.updates);
 		socket.emit('host:cpu:sensors', state.cpuSensors);
 		socket.emit('host:memory', state.memory);
+		socket.emit('host:arc', state.arc);
 		socket.emit('host:stats:history', state.stats);
 		socket.emit('host:time', state.time);
 		socket.emit('host:ups', state.ups);

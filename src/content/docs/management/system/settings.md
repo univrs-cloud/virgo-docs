@@ -1,11 +1,11 @@
 ---
 title: Settings
-description: Fleet, notifications, location and power, from the Settings page.
+description: Fleet, notifications, location, memory cache and power, from the Settings page.
 sidebar:
   order: 14
 ---
 
-**Settings** holds the node's fleet registration, its email notifications, its location and the power buttons. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, and **Power** lets you reboot or shut down the node.
+**Settings** holds the node's fleet registration, its email notifications, its location, its memory cache and the power buttons. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, **Memory cache** is limited to 1.5 GiB, and **Power** lets you reboot or shut down the node.
 
 ![Settings on a fresh install](../../../../assets/management/settings-empty.png)
 
@@ -46,6 +46,14 @@ Once a location is set, the **Dashboard** shows the current weather there, updat
 Select it to see today's temperatures every two hours, with the current time highlighted. The shaded part is daylight, and dotted columns mark hours with a chance of rain.
 
 ![The weather forecast](../../../../assets/management/weather-forecast.png)
+
+## Memory cache
+
+The node keeps recently used files in memory, so opening them again does not need the drives. The **Memory cache** card sets the most memory that cache may use. A larger cache makes files open faster, a smaller one leaves more memory for apps. The cache gives memory back when apps need it, so the limit is a ceiling, not memory set aside.
+
+![The memory cache card](../../../../assets/management/settings-memory-cache.png)
+
+Drag the slider to the new **Size limit**. The bubble above it shows the size, and the new limit takes effect as soon as you let go, without a reboot. It is kept when the node restarts.
 
 ## Power
 
