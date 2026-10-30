@@ -208,8 +208,23 @@ const FOLDER_DETAILS = '#folders .details .item';
 const DETAILS_TAB_PADDING = { top: 16, right: PADDING, bottom: PADDING, left: PADDING };
 const detailsTab = (details) => { return [`${details} .card-image-row`, `${details} .nav`, `${details} .table-scroll > div:not(.d-none) .list-group-item`]; };
 
+const SHARE_SNAPSHOTS_TAB = '#folders .details [data-folder-tab="snapshots"]';
+const SHARE_SNAPSHOT_SEARCH = '#folders .details .snapshot-search';
+const SHARE_SNAPSHOT_RESULTS = '#folders .details .snapshots .card-body:has(.snapshot-search-clear)';
+
 const foldersNode = (backend) => {
-	return { ...managedNode(backend, { shareList: shares.folders(), clientList: shares.clients() }), snapshots: shares.folderSnapshots(), customPaths: shares.customPaths() };
+	const node = appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] });
+	return {
+		...node,
+		shares: shares.folders(),
+		shareClients: shares.clients(),
+		snapshots: { ...shares.folderSnapshots(), ...node.snapshots },
+		customPaths: shares.customPaths(),
+		snapshotSearch: apps.snapshotSearch().filter((result) => { return result.path.startsWith(`${shares.NEXTCLOUD_SHARE_ROOT}/`); }),
+		browseListings: apps.browseListings(),
+		restoreFolders: apps.restoreFolders(),
+		restoreInspection: apps.restoreInspection()
+	};
 };
 
 const fillFolder = async (page, folder) => {
@@ -740,6 +755,44 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(details, detailsTab(FOLDER_DETAILS), 'folder-snapshots', DETAILS_TAB_PADDING);
 		await closePage(details);
+
+		const share = folders.find((folder) => { return folder.path.endsWith(shares.NEXTCLOUD_SHARE_ROOT); });
+		const sharePage = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(sharePage, apps.SNAPSHOT_CLOCK);
+		await open(sharePage, backend.url, `/folders/${share.name}`, FOLDER_DETAILS);
+		await sharePage.click(SHARE_SNAPSHOTS_TAB);
+		await sharePage.waitForSelector('#folders .details .snapshot-timeline', { visible: true });
+		await sharePage.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(sharePage, 'folder-share-snapshots');
+
+		await setValue(sharePage, SHARE_SNAPSHOT_SEARCH, apps.SNAPSHOT_SEARCH_TERM);
+		await sharePage.$eval(SHARE_SNAPSHOT_SEARCH, (element) => { element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true })); });
+		await sharePage.waitForSelector(SHARE_SNAPSHOT_RESULTS, { visible: true });
+		await sleep(SETTLE_MS);
+		const shareResultsBottom = await sharePage.$eval(SHARE_SNAPSHOT_RESULTS, (element) => { return Math.ceil(element.getBoundingClientRect().bottom); });
+		await sharePage.setViewport({ ...viewport, height: Math.max(viewport.height, shareResultsBottom + PADDING) });
+		await sleep(SETTLE_MS);
+		await capture.region(sharePage, ['#folders .details .snapshots .card-body:has(.snapshot-search)', SHARE_SNAPSHOT_RESULTS], 'folder-share-snapshots-search', FLUSH_TOP_PADDING);
+
+		const shareResultsViewport = sharePage.viewport();
+		await sharePage.setViewport({ ...viewport, height: BROWSER_HEIGHT });
+		await sharePage.$eval(`${SHARE_SNAPSHOT_RESULTS} .snapshot-browse[data-browse-snapshot="${apps.BROWSE_SNAPSHOT}"][data-browse-focus="${apps.BROWSE_FILE}"]`, (element) => { element.click(); });
+		await sharePage.waitForSelector(`${SNAPSHOT_BROWSER}[open] .browse-check:checked`, { visible: true });
+		await sharePage.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(sharePage, [SNAPSHOT_BROWSER], 'folder-share-snapshots-browse', PADDING);
+		await sharePage.click(`${SNAPSHOT_BROWSER} .dialog-footer [data-bs-dismiss="dialog"]`);
+		await sharePage.waitForSelector(`${SNAPSHOT_BROWSER}[open]`, { hidden: true });
+		await sharePage.setViewport(shareResultsViewport);
+		await sleep(SETTLE_MS);
+
+		await sharePage.$eval(`${SHARE_SNAPSHOT_RESULTS} .snapshot-restore[data-path$="${apps.RESTORE_SNAPSHOT}${apps.RESTORE_FILE}"]`, (element) => { element.click(); });
+		await sharePage.waitForSelector(`${SNAPSHOT_RESTORE}[open] .restore-folders .bg-subtle-primary`, { visible: true });
+		await sharePage.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(sharePage, [SNAPSHOT_RESTORE], 'folder-share-snapshots-restore', PADDING);
+		await closePage(sharePage);
 
 		for (const [folder, name] of [[shares.NEW_FOLDER, 'folder-create'], [shares.EXISTING_PATH_FOLDER, 'folder-create-existing']]) {
 			const creating = await signedInPage(browser, backend, viewport, users.owner());

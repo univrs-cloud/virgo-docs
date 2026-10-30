@@ -15,6 +15,7 @@ const TIME_MACHINES = [
 const NEW_TIME_MACHINE = { comment: 'Reception Mac mini', user: 'james', capacity: 200 };
 
 const NEXTCLOUD_DATA = '/messier/apps/nextcloud/data';
+const NEXTCLOUD_SHARE_ROOT = '/data/olivia/files';
 const APPS_DATASET_SIZE = 1260;
 
 const FOLDERS = [
@@ -146,6 +147,7 @@ const clients = () => {
 };
 
 export {
+	NEXTCLOUD_SHARE_ROOT,
 	NEW_FOLDER,
 	EXISTING_PATH_FOLDER,
 	NEW_TIME_MACHINE,

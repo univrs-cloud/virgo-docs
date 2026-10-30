@@ -64,6 +64,8 @@ Nextcloud's restore points can be opened, to get back the files people keep in i
 
 The two meet in the middle: every search result can be opened in **Browse files**, at its folder and its date.
 
+A Nextcloud user's files that are shared as a [folder](/management/resources/folders/snapshots/) can be searched, browsed and restored from that folder too, limited to that user's files.
+
 The node catalogues the files in Nextcloud's snapshots by itself, every hour at ten past. Searching, and what **Browse files** says about changes, both rely on that catalogue, so the newest changes show up after its next run.
 
 Other apps have restore points and a timeline, but their files cannot be browsed, searched or restored from here.
