@@ -140,6 +140,73 @@ const folderSnapshots = () => {
 	}));
 };
 
+const FOLDER_SNAPSHOTS_DATASET = 'messier/folders/documents';
+const FOLDER_SNAPSHOTS_MOUNTPOINT = `/${FOLDER_SNAPSHOTS_DATASET}`;
+const FOLDER_SEARCH_TERM = 'budget';
+const FOLDER_BROWSE_SNAPSHOT = 'autosnap_2026-08-01_00:00:17_monthly';
+const FOLDER_BROWSE_FILE = '/Budget 2026.xlsx';
+
+const FOLDER_SEARCH_RESULTS = [
+	{ path: '/Budget 2025.xlsx', type: 'file', deleted: true, lastSeenSnap: 'autosnap_2026-09-24_00:00:06_daily', versions: [['2025-12-01_00:00:03_monthly', 'added', 48213], ['2026-01-01_00:00:03_monthly', 'modified', 51877]] },
+	{ path: '/Budget 2026.xlsx', type: 'file', deleted: false, versions: [['2026-01-01_00:00:03_monthly', 'added', 18342], ['2026-08-01_00:00:17_monthly', 'modified', 44109], ['2026-09-16_00:00:03_daily', 'modified', 46230]] },
+	{ path: '/Contracts/Budget annex.pdf', type: 'file', deleted: false, versions: [['2026-08-01_00:00:17_monthly', 'added', 284672]] }
+];
+
+const ownFolderSnapshots = (snapshots) => {
+	return Object.fromEntries(Object.values(snapshots).map((snapshot) => {
+		const name = `${FOLDER_SNAPSHOTS_DATASET}@${snapshot.snapshotName}`;
+		return [name, { ...snapshot, name, dataset: FOLDER_SNAPSHOTS_DATASET }];
+	}));
+};
+
+const folderSnapshotSearch = () => {
+	return FOLDER_SEARCH_RESULTS.map((result) => {
+		return {
+			...result,
+			dataset: FOLDER_SNAPSHOTS_DATASET,
+			mountpoint: FOLDER_SNAPSHOTS_MOUNTPOINT,
+			versions: result.versions.map(([stamp, change, size]) => {
+				const snapshot = `autosnap_${stamp}`;
+				return { snapshot, change, size, snapshotPath: `${FOLDER_SNAPSHOTS_MOUNTPOINT}/.zfs/snapshot/${snapshot}${result.path}` };
+			})
+		};
+	});
+};
+
+const listedFolder = (name, change = {}) => {
+	return { name, path: `/${name}`, states: [], currentPath: null, changesInside: 0, changeGroups: [], ...change };
+};
+
+const listedFile = (name, size, change = {}) => {
+	return { name, path: `/${name}`, size, modifiedAt: '2026-07-28T14:12:00.000Z', states: [], currentPath: null, ...change };
+};
+
+const folderBrowseListings = () => {
+	return {
+		'': {
+			status: 'succeeded',
+			isIndexed: true,
+			isDeleted: false,
+			movedTo: null,
+			folders: [
+				listedFolder('Contracts', { changesInside: 2, changeGroups: [{ states: ['deleted'], count: 2 }] }),
+				listedFolder('Invoices'),
+				listedFolder('Templates', { states: ['renamed'], currentPath: '/Templates 2026' })
+			],
+			files: [
+				listedFile('Budget 2025.xlsx', 51877, { states: ['deleted'] }),
+				listedFile('Budget 2026.xlsx', 44109, { states: ['modified'] }),
+				listedFile('Price list.pdf', 128410, { states: ['moved'], currentPath: '/Contracts/Price list.pdf' }),
+				listedFile('Team.docx', 31744)
+			]
+		}
+	};
+};
+
+const folderRestoreFolders = () => {
+	return { '': ['Contracts', 'Invoices', 'Templates'].map((name) => { return { name, path: `/${name}` }; }) };
+};
+
 const clients = () => {
 	return CLIENTS.map(({ username, address, shares, activeShares, rx, tx }, index) => {
 		return { id: String(index + 1), username, address, shares, activeShares, rx: rx * MIB, tx: tx * MIB };
@@ -148,6 +215,14 @@ const clients = () => {
 
 export {
 	NEXTCLOUD_SHARE_ROOT,
+	FOLDER_SNAPSHOTS_DATASET,
+	FOLDER_SEARCH_TERM,
+	FOLDER_BROWSE_SNAPSHOT,
+	FOLDER_BROWSE_FILE,
+	ownFolderSnapshots,
+	folderSnapshotSearch,
+	folderBrowseListings,
+	folderRestoreFolders,
 	NEW_FOLDER,
 	EXISTING_PATH_FOLDER,
 	NEW_TIME_MACHINE,

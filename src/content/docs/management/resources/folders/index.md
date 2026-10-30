@@ -94,7 +94,7 @@ While a change is being applied, a spinning gear takes the place of the menu.
 
 ## Snapshots
 
-A new share keeps snapshots of its own, unless **Take snapshots** was cleared when it was added. A folder on a Nextcloud path has Nextcloud's snapshots, and its files can be searched, browsed and restored from the folder itself. See [Snapshots](/management/resources/folders/snapshots/).
+A new share keeps snapshots of its own, unless **Take snapshots** was cleared when it was added. A folder on a Nextcloud user's path has Nextcloud's snapshots. Either way, the folder's files can be searched, browsed and restored from the folder itself. See [Snapshots](/management/resources/folders/snapshots/).
 
 ## On the Dashboard
 

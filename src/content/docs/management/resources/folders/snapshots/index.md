@@ -1,6 +1,6 @@
 ---
 title: Snapshots
-description: A folder's snapshots, which folders have them, and getting files back from a Nextcloud user's folder.
+description: A folder's snapshots, which folders have them, and getting files back from them.
 sidebar:
   label: Restore points
   order: 5
@@ -36,22 +36,26 @@ A folder that shares a Nextcloud user's files has Nextcloud's snapshots. The tab
 
 ![The snapshots of Olivia's Nextcloud folder](../../../../../../assets/management/folder-share-snapshots.png)
 
-Below the state are Nextcloud's restore points, with the same [timeline](/management/resources/apps/snapshots/#timeline) as Nextcloud's own tab. Choose a restore point by its dot, by dragging the slider, or with **Newer** and **Older**.
-
 A folder that shares a Nextcloud group folder shows Nextcloud's state too, but its files can only be searched, browsed and restored from [Nextcloud's snapshots](/management/resources/apps/snapshots/#getting-files-back).
 
 ### Downloads
 
 A folder that shares Downloads has no snapshots.
 
+## Restore points
+
+Below the state are the folder's restore points, with the same [timeline](/management/resources/apps/snapshots/#timeline) as an app's. Choose a restore point by its dot, by dragging the slider, or with **Newer** and **Older**.
+
 ## Getting files back
 
-From a Nextcloud user's folder, the files in its restore points can be searched, browsed and restored, and everything stays inside that folder: the other users' files, the trash and the group folders do not show up.
+The files in a folder's restore points can be searched, browsed and restored, and everything stays inside that folder. In a Nextcloud user's folder, the other users' files, the trash and the group folders do not show up.
 
 | You know | Start here |
 | --- | --- |
 | Roughly when things were still right | [Browse files](/management/resources/folders/snapshots/browse/) of that restore point |
 | The name of the file, but not when it went missing | [Search](/management/resources/folders/snapshots/search/) every restore point at once |
 | Which version you want | [Restore](/management/resources/folders/snapshots/restore/) it, or download it to your computer |
+
+The node catalogues the files in the folders' snapshots by itself, every hour at ten past. Searching, and what **Browse files** says about changes, both rely on that catalogue, so a new share shows them after its first run, and the newest changes show up after the next one.
 
 A folder does not roll back. To put all of Nextcloud back, see [Rolling back](/management/resources/apps/snapshots/rollback/).

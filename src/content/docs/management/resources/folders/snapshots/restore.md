@@ -1,17 +1,17 @@
 ---
 title: Restoring files
-description: Putting earlier and deleted files back into a Nextcloud user's folder.
+description: Putting earlier and deleted files back into a folder.
 sidebar:
   order: 8
 ---
 
-Restoring copies files out of a restore point and back into the folder, where they show up in Nextcloud by themselves. From a folder, files can only be restored into that same folder or the folders inside it.
+Restoring copies files out of a restore point and back into the folder. From a folder, files can only be restored into that same folder or the folders inside it. In a Nextcloud user's folder they show up in Nextcloud by themselves.
 
 ## Restoring one file
 
 In the [search results](/management/resources/folders/snapshots/search/), select the restore button next to a version. **Restore to** starts at the folder, with the folder the file was in already selected.
 
-![Restoring Budget 2026.xlsx to Documents](../../../../../../assets/management/folder-share-snapshots-restore.png)
+![Restoring Budget 2026.xlsx to Documents](../../../../../../assets/management/folder-snapshots-restore.png)
 
 If the file was not there anymore, it is restored straight away. If a file with that name is there, you choose to [keep both or overwrite](/management/resources/apps/snapshots/restore/#the-folder-already-has-a-file-with-that-name).
 

@@ -173,17 +173,19 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 	io.of('/shortcut');
 
 	io.of('/indexer').on('connection', (socket) => {
-		socket.on('indexer:search', (_query, acknowledge) => {
-			acknowledge?.({ status: 'succeeded', results: state.snapshotSearch ?? [], hasMore: false });
+		socket.on('indexer:search', (query, acknowledge) => {
+			acknowledge?.({ status: 'succeeded', results: (query?.dataset ? state.folderSnapshotSearch : state.snapshotSearch) ?? [], hasMore: false });
 		});
 		socket.on('indexer:browse', (config, acknowledge) => {
-			acknowledge?.(state.browseListings?.[config?.path ?? ''] ?? { status: 'failed', message: 'The folder is not in that snapshot.' });
+			const listings = (config?.dataset ? state.folderBrowseListings : state.browseListings);
+			acknowledge?.(listings?.[config?.path ?? ''] ?? { status: 'failed', message: 'The folder is not in that snapshot.' });
 		});
 		socket.on('indexer:browse:changes', (_config, acknowledge) => {
 			acknowledge?.({ status: 'succeeded', total: 0, hasMore: false, items: [] });
 		});
 		socket.on('indexer:restore:folders', (config, acknowledge) => {
-			acknowledge?.({ status: 'succeeded', folders: state.restoreFolders?.[config?.path ?? ''] ?? [] });
+			const folders = (config?.dataset ? state.folderRestoreFolders : state.restoreFolders);
+			acknowledge?.({ status: 'succeeded', folders: folders?.[config?.path ?? ''] ?? [] });
 		});
 		socket.on('indexer:restore:inspect', (_config, acknowledge) => {
 			acknowledge?.(state.restoreInspection ?? { status: 'failed', message: 'Nothing to restore.' });
