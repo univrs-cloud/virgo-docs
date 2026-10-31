@@ -729,16 +729,10 @@ const pages = {
 	folders: async ({ browser, backend, capture, viewport }) => {
 		const folders = shares.folders();
 		const [documents] = folders;
-		const guest = folders.find((folder) => { return !folder.isPrivate; });
 		backend.setState(foldersNode(backend));
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await open(page, backend.url, '/folders', FOLDERS_PAGE);
 		await capture.viewport(page, 'folders');
-
-		await hoverTooltip(page, `${folderRow(guest)} [data-action="copy-to-clipboard"]`);
-		await capture.region(page, ['#folders .search', '#folders table', '.tooltip.show'], 'folders-address', PADDING);
-		await page.mouse.move(0, 0);
-		await sleep(SETTLE_MS);
 
 		await openMenu(page, `${folderRow(documents)} [data-bs-toggle="menu"]`, '#folders .menu.show');
 		await capture.region(page, ['#folders .search', '#folders table', '#folders .menu.show'], 'folders-menu', PADDING);
@@ -756,6 +750,9 @@ const pages = {
 
 		await followLink(details, `/folders/${documents.name}`, FOLDER_DETAILS);
 		await capture.viewport(details, 'folder-details');
+
+		await hoverTooltip(details, `${FOLDER_DETAILS} [data-action="copy-to-clipboard"]`);
+		await capture.region(details, [...detailsTab(FOLDER_DETAILS), '.tooltip.show'], 'folders-address', DETAILS_TAB_PADDING);
 		await closePage(details);
 
 		const ownPage = await signedInPage(browser, backend, viewport, users.owner());
@@ -842,10 +839,7 @@ const pages = {
 		await open(page, backend.url, '/time-machines', TIME_MACHINES_PAGE);
 		await capture.viewport(page, 'time-machines');
 
-		await hoverTooltip(page, `${timeMachineRow(first)} [data-action="copy-to-clipboard"]`);
-		await capture.region(page, ['#time-machines .search', '#time-machines table', '.tooltip.show'], 'time-machines-address', PADDING);
-
-		await hoverTooltip(page, `${timeMachineRow(first)} td:nth-child(5) small`);
+		await hoverTooltip(page, `${timeMachineRow(first)} td:nth-child(7) small`);
 		await capture.region(page, ['#time-machines .search', '#time-machines table', '.tooltip.show'], 'time-machines-backups', PADDING);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
@@ -861,6 +855,11 @@ const pages = {
 		await controlClock(details, settings.WEATHER_CLOCK);
 		await open(details, backend.url, `/time-machines/${james.name}`, TIME_MACHINE_DETAILS);
 		await capture.viewport(details, 'time-machine-details');
+
+		await hoverTooltip(details, `${TIME_MACHINE_DETAILS} [data-action="copy-to-clipboard"]`);
+		await capture.region(details, [...detailsTab(TIME_MACHINE_DETAILS), '.tooltip.show'], 'time-machines-address', DETAILS_TAB_PADDING);
+		await details.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
 
 		await details.click('#time-machines .details [data-time-machine-tab="backups"]');
 		await details.waitForSelector('#time-machines .details [data-time-machine-tab="backups"].active', { visible: true });

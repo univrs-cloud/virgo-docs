@@ -9,7 +9,7 @@ sidebar:
 
 ![The Time machines page](../../../../assets/management/time-machines.png)
 
-For each time machine, the list shows its name, how many Macs are connected to it right now, the user who can reach it, how many backups Time Machine has stored in it, how much data it receives and sends per second, its capacity and how much of it is used. Hover over the number of Macs to see who is connected and from which address. Sort the list by name, traffic, capacity or usage with the arrows in the column headers, and use **Search** to find a time machine by its name or its user.
+For each time machine, the list shows its name, how many Macs are connected to it right now, the user who can reach it, how much data it receives and sends per second, its capacity, how much of it is used and how many backups Time Machine has stored in it. Hover over the number of Macs to see who is connected and from which address. Sort the list by name, traffic, capacity, usage or backups with the arrows in the column headers, and use **Search** to find a time machine by its name or its user.
 
 Hover over the number of backups to see the latest and the oldest.
 
@@ -27,7 +27,7 @@ Select **New time machine**, then enter:
 
 ## Backing up a Mac
 
-1. On the **Time machines** page, select the Apple icon next to the time machine. This copies its address, for example `smb://olivia@192.168.1.10/time_machine_olivia_macbook_pro`. The address is the [virtual IP](/setup/interface/), the address the node shares with its cluster.
+1. On the **Time machines** page, open the time machine and select the Apple icon next to its authorized user. This copies its address, for example `smb://olivia@192.168.1.10/time_machine_olivia_macbook_pro`. The address is the [virtual IP](/setup/interface/), the address the node shares with its cluster.
 2. On the Mac, in Finder, press **⌘K**, paste the address and select **Connect**. When asked, enter the authorized user's node username and password.
 3. Open **System Settings**, select **General**, then **Time Machine**. Select **Add Backup Disk**, choose the time machine and follow the steps.
 

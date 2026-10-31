@@ -16,11 +16,11 @@ For each folder, the list shows its name and path, how many computers have it op
 
 ## Opening a folder
 
-Select the Windows, Apple or Linux icon next to a folder to copy its address for that system:
+Open the folder and, under **Authorized users**, select the Windows, Apple or Linux icon next to your user to copy the folder's address for that system:
 
 - **Windows:** `\\192.168.1.10\documents`, to paste in File Explorer's address bar.
-- **macOS:** `smb://192.168.1.10/documents`, to paste in Finder after pressing **⌘K**.
-- **Linux:** `smb://192.168.1.10/documents`, to paste in your file manager's address bar.
+- **macOS:** `smb://olivia@192.168.1.10/documents`, to paste in Finder after pressing **⌘K**.
+- **Linux:** `smb://olivia@192.168.1.10/documents`, to paste in your file manager's address bar.
 
 The address is the [virtual IP](/setup/interface/), the address the node shares with its cluster.
 
