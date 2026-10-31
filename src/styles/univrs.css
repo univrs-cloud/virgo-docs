@@ -259,6 +259,10 @@ header.header::after {
 	--sl-menu-button-size: 2.5rem;
 }
 
+body {
+	text-wrap: pretty;
+}
+
 .site-toggle {
 	position: fixed;
 	top: calc((var(--sl-nav-height) - 1px - var(--sl-menu-button-size)) / 2);
