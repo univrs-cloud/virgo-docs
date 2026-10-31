@@ -273,6 +273,15 @@ h6 {
 	text-wrap: balance;
 }
 
+.sl-markdown-content img {
+	outline: 1px solid rgba(255, 255, 255, 0.1);
+	outline-offset: -1px;
+}
+
+:root[data-theme='light'] .sl-markdown-content img {
+	outline-color: rgba(0, 0, 0, 0.1);
+}
+
 .site-toggle {
 	position: fixed;
 	top: calc((var(--sl-nav-height) - 1px - var(--sl-menu-button-size)) / 2);
