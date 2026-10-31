@@ -44,7 +44,7 @@ A folder that shares Downloads has no snapshots.
 
 ## Restore points
 
-Below the state are the folder's restore points, with the same [timeline](/management/resources/apps/snapshots/#timeline) as an app's. Choose a restore point by its dot, by dragging the slider, or with **Newer** and **Older**.
+Below the state are the folder's restore points, on the same [timeline](/management/resources/apps/snapshots/#timeline) as an app's.
 
 ## Getting files back
 

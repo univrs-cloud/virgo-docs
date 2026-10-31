@@ -15,7 +15,7 @@ Type part of a file's name, or of a folder it is in, into **Search in snapshots*
 
 ![Searching Nextcloud's snapshots for "budget"](../../../../../../assets/management/app-snapshots-search.png)
 
-The results are shown as a tree of the folders they are in. A file that no longer exists is marked **Deleted**. Under each file are the restore points that hold a version of it, with what happened to it there, such as **added**, **modified** or **last seen**, and its size. Select a restore point to show it on the timeline. A restore point that the node has since removed is shown without a link, and its version can no longer be downloaded.
+The results are shown as a tree of the folders they are in. A file that no longer exists is marked **Deleted**. Under each file are the restore points that hold a version of it, with what happened to it there, such as **added**, **modified** or **last seen**, and its size. A restore point that the node has since removed has no buttons next to it, and its version can no longer be downloaded.
 
 Narrow the search down with **Type** for files or folders only, **State** for files that still exist, were changed, renamed or moved, never changed or deleted, **Modified** for when the file was last changed, and **Size**. When there are more results, **Load more** shows the next ones. **Clear** empties the search, its filters and the results.
 

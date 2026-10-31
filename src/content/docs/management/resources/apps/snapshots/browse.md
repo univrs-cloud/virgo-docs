@@ -12,8 +12,7 @@ It is the place to start when you know roughly when things were still right: bef
 ## Opening a restore point
 
 1. Open Nextcloud's details and select **Snapshots**.
-2. Choose a restore point on the [timeline](/management/resources/apps/snapshots/#timeline).
-3. Select **Browse files**.
+2. Find the restore point on the [timeline](/management/resources/apps/snapshots/#timeline) and select **Browse files** next to it.
 
 The title shows the date you are looking at.
 
@@ -46,7 +45,7 @@ The **Now** column compares each file and folder with what Nextcloud holds today
 | **Moved** | Still there in another folder, shown under it as **Now at**. |
 | **Deleted** | No longer there. Something that sits in someone's Nextcloud trash counts as deleted too. |
 
-A folder also says how much is going on beneath it. **3 changed inside** means three files somewhere inside it, at any depth, are modified, renamed, moved or deleted, so you know which folders are worth opening.
+A folder also says how much is going on beneath it. **3 changed** means three files somewhere inside it, at any depth, are modified, renamed, moved or deleted, so you know which folders are worth opening.
 
 When the folder you are in was itself moved or deleted later, a line under the path says so.
 

@@ -32,21 +32,22 @@ For some apps the buttons are greyed out, and the line under the state says why.
 
 Snapshots taken at the same moment by different schedules, such as the daily and the monthly one at midnight on the first of the month, are shown together as one restore point.
 
-The selected restore point shows when it was taken and the schedules that keep it: **Frequently**, **Hourly**, **Daily**, **Monthly** or **Yearly**. **Update** marks the snapshot the node takes right before it [updates the app](/management/resources/apps/#updating-an-app). Only the one from the latest update is kept.
+Each restore point shows the schedules that keep it: **Frequently**, **Hourly**, **Daily**, **Monthly** or **Yearly**. **Update** marks the snapshot the node takes right before it [updates the app](/management/resources/apps/#updating-an-app). Only the one from the latest update is kept.
 
 ### Timeline
 
-The timeline runs from **Now** on the left to the oldest restore point on the right. Each schedule gets an equal stretch of it, so the many recent restore points are spread out and the few old ones fit in too. The marks under it show how far back each stretch reaches.
+The timeline lists the restore points from the newest at the top to the oldest at the bottom.
 
-Each dot is a restore point. The bigger the dot, the more space it takes up, which is the data that only this restore point still holds. A hollow dot holds nothing that the others do not. Hover over a dot to see its details.
+Hourly restore points are grouped under their day, **Today**, **Yesterday** or a date, and show only their time. The others show when they were taken: a daily one its day, a monthly or yearly one its month, and an update its day and time.
 
-To choose a restore point, select its dot, drag the slider, or use **Newer** and **Older**. With the slider selected, the arrow keys step from one restore point to the next.
+Under each restore point are how long ago it was taken and how much space it takes up, which is the data that only this restore point still holds. A hollow dot holds nothing that the others do not.
 
-:::tip
-With the slider selected, **Home** jumps to the newest restore point and **End** to the oldest.
-:::
+Next to each restore point are its buttons. Hover over one to see its name:
 
-On a narrow screen, the timeline becomes a set of orbits around the app's icon, one per schedule, going round clockwise from **Now**.
+- **Browse files** opens the restore point's files, for Nextcloud.
+- **Roll back** puts the app back as it was, from the **Update** restore point.
+
+On a narrow screen, the search comes first and the timeline follows under it.
 
 ## Rolling back
 

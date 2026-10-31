@@ -143,9 +143,10 @@ const APP_FILTER = '#apps .dropdown:has(.filter-menu)';
 const APP_FILTER_MENU = '#apps .filter-menu.show';
 const STOPPED_APP = 'wetty';
 const SNAPSHOTS_TAB = '#apps .details [data-app-tab="snapshots"]';
-const ROLLBACK_BUTTON = '#apps .details [data-rollback-snapshot]:not([disabled])';
+const ROLLBACK_BUTTON = `#apps .details [data-rollback-snapshot$="${apps.ROLLBACK_POINT}"]:not([disabled])`;
 const SNAPSHOT_SEARCH = '#apps .details .snapshot-search';
-const SNAPSHOT_RESULTS = '#apps .details .snapshots .card-body:has(.snapshot-search-clear)';
+const SNAPSHOT_SEARCH_PANE = '#apps .details .snapshot-pane:has(.snapshot-search)';
+const SNAPSHOT_RESULTS = '#apps .details .snapshot-pane:has(.snapshot-search-clear) > .table-scroll';
 const SNAPSHOT_DOWNLOADS = `${SNAPSHOT_RESULTS} .menu.show`;
 const SNAPSHOT_RESTORE = '#snapshot-restore';
 const SNAPSHOT_RESTORE_CONFLICT = '#snapshot-restore-conflict';
@@ -210,7 +211,8 @@ const detailsTab = (details) => { return [`${details} .card-image-row`, `${detai
 
 const FOLDER_SNAPSHOTS_TAB = '#folders .details [data-folder-tab="snapshots"]';
 const FOLDER_SNAPSHOT_SEARCH = '#folders .details .snapshot-search';
-const FOLDER_SNAPSHOT_RESULTS = '#folders .details .snapshots .card-body:has(.snapshot-search-clear)';
+const FOLDER_SNAPSHOT_SEARCH_PANE = '#folders .details .snapshot-pane:has(.snapshot-search)';
+const FOLDER_SNAPSHOT_RESULTS = '#folders .details .snapshot-pane:has(.snapshot-search-clear) > .table-scroll';
 
 const foldersNode = (backend) => {
 	const node = appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] });
@@ -426,10 +428,10 @@ const pages = {
 		await page.$eval(SNAPSHOT_SEARCH, (element) => { element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true })); });
 		await page.waitForSelector(SNAPSHOT_RESULTS, { visible: true });
 		await sleep(SETTLE_MS);
-		const resultsBottom = await page.$eval(SNAPSHOT_RESULTS, (element) => { return Math.ceil(element.getBoundingClientRect().bottom); });
-		await page.setViewport({ ...viewport, height: Math.max(viewport.height, resultsBottom + PADDING) });
+		const resultsOverflow = await page.$eval(SNAPSHOT_RESULTS, (element) => { return element.scrollHeight - element.clientHeight; });
+		await page.setViewport({ ...viewport, height: viewport.height + resultsOverflow });
 		await sleep(SETTLE_MS);
-		await capture.region(page, ['#apps .details .snapshots .card-body:has(.snapshot-search)', SNAPSHOT_RESULTS], 'app-snapshots-search', FLUSH_TOP_PADDING);
+		await capture.region(page, [`${SNAPSHOT_SEARCH_PANE} .card-body:has(.snapshot-search)`, `${SNAPSHOT_RESULTS} .tree-rows`], 'app-snapshots-search', FLUSH_TOP_PADDING);
 
 		const folderDownloads = await page.$$(`${SNAPSHOT_RESULTS} .tree-rows [data-bs-toggle="menu"]`);
 		await folderDownloads.at(-1).click();
@@ -537,10 +539,8 @@ const pages = {
 		await waitForImages(page, '#apps .details img');
 		await page.click(SNAPSHOTS_TAB);
 		await page.waitForSelector('#apps .details .snapshots', { visible: true });
-		await page.$$eval(`#apps .details .snapshots [data-snapshot="${apps.ROLLBACK_POINT}"]`, (points) => {
-			points.find((point) => { return point.getBoundingClientRect().width > 0; })?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-		});
 		await page.waitForSelector(ROLLBACK_BUTTON, { visible: true });
+		await page.$eval(ROLLBACK_BUTTON, (element) => { element.scrollIntoView({ block: 'center' }); });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(page, 'app-rollback');
@@ -553,7 +553,7 @@ const pages = {
 		await page.waitForSelector('dialog.dialog[open]', { hidden: true });
 
 		backend.broadcast('/job', 'job', apps.rollingBackJob(title));
-		await page.waitForSelector('#apps .details .snapshot-action[disabled] .icon-spin', { visible: true });
+		await page.waitForSelector('#apps .details .snapshot-points .icon-spin', { visible: true });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(page, 'app-rollback-progress');
@@ -768,10 +768,10 @@ const pages = {
 		await ownPage.$eval(FOLDER_SNAPSHOT_SEARCH, (element) => { element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true })); });
 		await ownPage.waitForSelector(FOLDER_SNAPSHOT_RESULTS, { visible: true });
 		await sleep(SETTLE_MS);
-		const ownResultsBottom = await ownPage.$eval(FOLDER_SNAPSHOT_RESULTS, (element) => { return Math.ceil(element.getBoundingClientRect().bottom); });
-		await ownPage.setViewport({ ...viewport, height: Math.max(viewport.height, ownResultsBottom + PADDING) });
+		const ownResultsOverflow = await ownPage.$eval(FOLDER_SNAPSHOT_RESULTS, (element) => { return element.scrollHeight - element.clientHeight; });
+		await ownPage.setViewport({ ...viewport, height: viewport.height + ownResultsOverflow });
 		await sleep(SETTLE_MS);
-		await capture.region(ownPage, ['#folders .details .snapshots .card-body:has(.snapshot-search)', FOLDER_SNAPSHOT_RESULTS], 'folder-snapshots-search', FLUSH_TOP_PADDING);
+		await capture.region(ownPage, [`${FOLDER_SNAPSHOT_SEARCH_PANE} .card-body:has(.snapshot-search)`, `${FOLDER_SNAPSHOT_RESULTS} .tree-rows`], 'folder-snapshots-search', FLUSH_TOP_PADDING);
 
 		const ownResultsViewport = ownPage.viewport();
 		await ownPage.setViewport({ ...viewport, height: BROWSER_HEIGHT });

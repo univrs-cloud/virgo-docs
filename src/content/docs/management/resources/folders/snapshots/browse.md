@@ -8,8 +8,7 @@ sidebar:
 **Browse files** opens a folder as it was at one restore point.
 
 1. Open the folder's details and select **Snapshots**.
-2. Choose a restore point on the timeline.
-3. Select **Browse files**.
+2. Find the restore point on the timeline and select **Browse files** next to it.
 
 ![Documents as it was on 1 August](../../../../../../assets/management/folder-snapshots-browse.png)
 
