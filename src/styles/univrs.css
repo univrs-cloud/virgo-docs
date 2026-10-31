@@ -264,6 +264,15 @@ body {
 	text-wrap: pretty;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	text-wrap: balance;
+}
+
 .site-toggle {
 	position: fixed;
 	top: calc((var(--sl-nav-height) - 1px - var(--sl-menu-button-size)) / 2);
