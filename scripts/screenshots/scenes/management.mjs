@@ -52,7 +52,7 @@ const NETWORK_PAGE = '#network .container-fluid:not(.d-none)';
 const networkCard = (index) => { return `#network .container-fluid > .row > .col-12:nth-child(${index}) .card`; };
 const TRUSTED_PROXY = '192.168.1.5';
 const FIREWALL_BANS = `${networkCard(4)} dl.row`;
-const BAN_DETAILS = `#network .item[data-address="${BANNED_ADDRESS}"] .icon-circle-info`;
+const BAN_DETAILS = `#network .item[data-address="${BANNED_ADDRESS}"] .icon-info`;
 
 const SERVICES_PAGE = '#system-services .container-fluid:not(.d-none)';
 const SERVICES_FILTER = '#system-services .dropdown:has(.filter-menu)';
@@ -704,8 +704,8 @@ const pages = {
 		await setValue(proxy, '#shortcut-create .title', shortcuts.NEW_PROXY.title);
 		await setValue(proxy, '#shortcut-create .category', shortcuts.NEW_PROXY.category);
 		await proxy.click('#shortcut-create .shortcut-icon-box');
-		await proxy.waitForSelector(`${ICON_POPOVER} .icon-search`, { visible: true });
-		await setValue(proxy, `${ICON_POPOVER} .icon-search`, shortcuts.ICON_SEARCH);
+		await proxy.waitForSelector(`${ICON_POPOVER} .shortcut-icon-search`, { visible: true });
+		await setValue(proxy, `${ICON_POPOVER} .shortcut-icon-search`, shortcuts.ICON_SEARCH);
 		await waitForImages(proxy, `${ICON_POPOVER} .shortcut-icon-results img`);
 		await capture.region(proxy, ['#shortcut-create', ICON_POPOVER], 'shortcut-icon', PADDING);
 		await proxy.click(`${ICON_POPOVER} .shortcut-icon-result-item`);
