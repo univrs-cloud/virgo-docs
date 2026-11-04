@@ -58,12 +58,12 @@ Every action is in the service's menu, the **⋮** at the end of its row.
 
 ## From the details
 
-Select a service to open its details: its state, activity, automatic startup and memory use. **Start**, **Restart** and **Stop** are the buttons at the top right, and the **⋮** next to them holds **Enable**, **Enable & start**, **Disable** and **Disable & stop**. The arrow in the top left goes back to the list.
+Select a service to open its details: its state, activity, automatic startup and memory use, with the service's log next to them. **Start**, **Restart** and **Stop** are the buttons at the top right, and the **⋮** next to them holds **Enable**, **Enable & start**, **Disable** and **Disable & stop**. The arrow in the top left goes back to the list.
 
-![A service's details](../../../../assets/management/services-details.png)
+![A service's details and live log](../../../../assets/management/services-details.png)
 
 ## Logs
 
-Select **Logs** in the details to open the service's log. It starts with the last 200 lines and updates live, adding each new line to the view as the service writes it. If the connection drops, it says **Disconnected**; select **Connect** to pick up again. Close the log with the **×**.
+The log starts with the last 200 lines and updates live, adding each new line to the view as the service writes it. If the connection drops, it says **Disconnected**; select **Connect** to pick up again.
 
-![A service's live log](../../../../assets/management/services-logs.png)
+On a narrow screen the details and the log are two tabs: select **Logs** to see the log and **Overview** to go back.

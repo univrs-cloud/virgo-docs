@@ -30,6 +30,17 @@ const managedNode = (backend, overrides = {}) => {
 	});
 };
 
+const waitForCharts = async (page) => {
+	await page.waitForFunction(() => {
+		const canvases = [...document.querySelectorAll('#resources-monitor .resource-chart canvas')];
+		return canvases.length > 0 && canvases.every((canvas) => {
+			const pixels = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+			return pixels.some((value, index) => { return index % 4 === 3 && value > 0; });
+		});
+	}, { timeout: 15000 });
+	await sleep(SETTLE_MS);
+};
+
 const collapseMenu = async (page) => {
 	await page.click(MENU_TOGGLE);
 	await page.mouse.move(0, 0);
@@ -67,7 +78,8 @@ const searchServices = async (page, value) => {
 
 const STORAGE_PAGE = '#storage .container-fluid:not(.d-none)';
 const STORAGE_POOL = '#storage .details .item';
-const poolCard = (index) => { return `#storage .details .overflow-y-scroll > .list-group > .list-group-item:nth-child(${index})`; };
+const POOL_INTEGRITY = '#storage .details .detail-facts > .list-group > .list-group-item:nth-child(1)';
+const POOL_TOPOLOGY = '#storage .details .detail-main > .overflow-y-scroll > .list-group > .list-group-item';
 const VDEV_DETAILS = '#storage .details [id^="vdev-details-"].show';
 const SNAPSHOT_COUNT = 142;
 const POOL_CARD_PADDING = { top: 0, right: PADDING, bottom: 8, left: 8 };
@@ -315,7 +327,7 @@ const pages = {
 		const dashboard = await newPage(browser, { ...viewport, height: DASHBOARD_HEIGHT });
 		await controlClock(dashboard);
 		await open(dashboard, backend.url, '/', `${VISIBLE_ACCOUNT} a[href^="/login"]`);
-		await dashboard.waitForSelector('#resources-monitor .resource-chart canvas', { visible: true });
+		await waitForCharts(dashboard);
 		await capture.viewport(dashboard, 'local');
 		await closePage(dashboard);
 
@@ -384,6 +396,7 @@ const pages = {
 
 		await installed.click(`${appService(exampleContainer)} a.logs`);
 		await installed.waitForSelector('#apps .details .logs-container:not(.d-none) li', { visible: true });
+		await installed.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(installed, 'app-logs');
 		await installed.click('#apps .details .close-logs');
@@ -575,7 +588,7 @@ const pages = {
 		const page = await signedInPage(browser, backend, viewport, users.owner(), { menuCollapsed: false });
 		await controlClock(page, settings.WEATHER_CLOCK);
 		await open(page, backend.url, '/', '#peer .card');
-		await page.waitForSelector('#resources-monitor .resource-chart canvas', { visible: true });
+		await waitForCharts(page);
 		await waitForImages(page, '#apps-shortcuts img');
 		await capture.region(page, [MENU_TOGGLE, `${VISIBLE_ACCOUNT} .account-toggle`], 'menu-toggle', MENU_PADDING);
 
@@ -1075,7 +1088,7 @@ const pages = {
 		backend.setState(storageNode(backend, { scrub: 'running' }));
 		const scrubbing = await storagePage(browser, backend, viewport);
 		await open(scrubbing, backend.url, '/storage/messier', STORAGE_POOL);
-		await capture.region(scrubbing, [poolCard(1)], 'storage-scrub', POOL_CARD_PADDING);
+		await capture.region(scrubbing, [POOL_INTEGRITY], 'storage-scrub', POOL_CARD_PADDING);
 		await closePage(scrubbing);
 
 		backend.setState(storageNode(backend, { missingDrive: 'nvme0n1' }));
@@ -1087,18 +1100,18 @@ const pages = {
 		await degraded.waitForSelector(VDEV_DETAILS, { visible: true });
 		await degraded.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(degraded, [poolCard(3)], 'storage-degraded-topology', POOL_CARD_PADDING);
+		await capture.region(degraded, [POOL_TOPOLOGY], 'storage-degraded-topology', POOL_CARD_PADDING);
 		await closePage(degraded);
 
 		backend.setState(storageNode(backend, { replacedDrive: 'nvme0n1', scrub: 'resilver' }));
 		const resilvering = await storagePage(browser, backend, viewport);
 		await open(resilvering, backend.url, '/storage/messier', STORAGE_POOL);
-		await capture.region(resilvering, [poolCard(1)], 'storage-resilver', POOL_CARD_PADDING);
+		await capture.region(resilvering, [POOL_INTEGRITY], 'storage-resilver', POOL_CARD_PADDING);
 		await resilvering.click('#storage .details .details-toggle');
 		await resilvering.waitForSelector(VDEV_DETAILS, { visible: true });
 		await resilvering.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.region(resilvering, [poolCard(3)], 'storage-resilver-topology', POOL_CARD_PADDING);
+		await capture.region(resilvering, [POOL_TOPOLOGY], 'storage-resilver-topology', POOL_CARD_PADDING);
 		await closePage(resilvering);
 	},
 	services: async ({ browser, backend, capture, viewport }) => {
@@ -1139,12 +1152,10 @@ const pages = {
 		await sleep(SETTLE_MS);
 
 		await open(page, backend.url, `/system-services/${serviceData.LOG_UNIT}`, '#system-services .details .item');
-		await capture.viewport(page, 'services-details');
-		await page.click('#system-services .details a.logs');
-		await page.waitForSelector('#system-services .details .logs-container:not(.d-none) li', { visible: true });
+		await page.waitForSelector('#system-services .details .logs-container li', { visible: true });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
-		await capture.viewport(page, 'services-logs');
+		await capture.viewport(page, 'services-details');
 		await closePage(page);
 	},
 	about: async ({ browser, backend, capture, viewport }) => {

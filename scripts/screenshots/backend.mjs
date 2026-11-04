@@ -111,6 +111,13 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.emit('host:memory', state.memory);
 		socket.emit('host:arc', state.arc);
 		socket.emit('host:stats:history', state.stats);
+		const statsTimer = setInterval(() => {
+			const latest = state.stats?.at(-1);
+			if (latest) {
+				socket.emit('host:stats', latest);
+			}
+		}, 1000);
+		socket.on('disconnect', () => { clearInterval(statsTimer); });
 		socket.emit('host:time', state.time);
 		socket.emit('host:ups', state.ups);
 		socket.emit('host:setupCompleted', state.setupCompleted);
@@ -124,9 +131,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		});
 		socket.on('host:service:logs:connect', (unit) => {
 			socket.emit('host:service:logs:connected');
-			for (const line of (state.serviceLogs?.[unit] || [])) {
-				socket.emit('host:service:logs:output', line);
-			}
+			socket.emit('host:service:logs:output', state.serviceLogs?.[unit] || []);
 		});
 		socket.on('host:storage:importable:fetch', () => {
 			socket.emit('host:storage:importable', state.importable);
@@ -206,9 +211,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		}
 		socket.on('docker:container:logs:connect', (containerId) => {
 			socket.emit('docker:container:logs:connected');
-			for (const line of (state.containerLogs?.[containerId] || [])) {
-				socket.emit('docker:container:logs:output', line);
-			}
+			socket.emit('docker:container:logs:output', state.containerLogs?.[containerId] || []);
 		});
 		socket.on('docker:container:terminal:connect', (containerId) => {
 			socket.emit('docker:container:terminal:connected');
