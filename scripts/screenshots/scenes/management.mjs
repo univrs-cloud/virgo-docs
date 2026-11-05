@@ -603,6 +603,15 @@ const pages = {
 		await collapseMenu(page);
 		await capture.fullPage(page, 'dashboard');
 
+		const dark = await signedInPage(browser, backend, viewport, users.owner(), { colorMode: 'dark' });
+		await controlClock(dark, settings.WEATHER_CLOCK);
+		await open(dark, backend.url, '/', '#peer .node');
+		await waitForCharts(dark);
+		await waitForImages(dark, '#apps-shortcuts img');
+		await dark.mouse.move(0, 0);
+		await capture.fullPage(dark, 'dashboard-dark');
+		await closePage(dark);
+
 		await capture.region(page, STATUS_BAND, 'dashboard-status', TIGHT_PADDING);
 
 		const cpuChart = await page.$eval(CPU_CHART, (element) => { return element.getBoundingClientRect().toJSON(); });

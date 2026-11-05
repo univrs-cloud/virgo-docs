@@ -9,17 +9,20 @@ const sleep = (delay) => {
 
 const FROZEN_ANIMATIONS = '*, *::before, *::after { animation-delay: -0.35s !important; animation-play-state: paused !important; transition: none !important; caret-color: transparent !important; } .login-logo-orb, .fleet-logo-cube { animation: none !important; }';
 
-const newPage = async (browser, viewport, { menuCollapsed = true } = {}) => {
+const newPage = async (browser, viewport, { menuCollapsed = true, colorMode = null } = {}) => {
 	const context = await browser.createBrowserContext();
 	const page = await context.newPage();
 	await page.setViewport(viewport);
-	await page.evaluateOnNewDocument((menuCollapsed) => {
+	await page.evaluateOnNewDocument((menuCollapsed, colorMode) => {
 		try {
 			if (menuCollapsed) {
 				localStorage.setItem('menu:collapsed', '1');
 			}
+			if (colorMode) {
+				localStorage.setItem('color-mode', colorMode);
+			}
 		} catch (error) {}
-	}, menuCollapsed);
+	}, menuCollapsed, colorMode);
 	await page.evaluateOnNewDocument((css) => {
 		document.addEventListener('DOMContentLoaded', () => {
 			const style = document.createElement('style');
