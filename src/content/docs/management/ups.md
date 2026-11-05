@@ -16,16 +16,16 @@ A USB UPS only helps when the node's power cable is plugged into one of its batt
 
 ## On the Dashboard
 
-The **UPS** row of the **Status** column shows where the node's power comes from and how charged the battery is.
+The **UPS** column of the [status](/management/dashboard/#status) shows how charged the battery is, and at its top, where the node's power comes from.
 
 ![The UPS on grid power](../../../assets/management/ups-grid.png)
 
 - **GRID**, in green: the node runs from the wall socket. The bar shows the battery's charge, and moves while the battery is charging.
-- **BATTERY**, in orange: the power is out and the node runs from the battery. The bar turns orange and shows what is left.
+- **BATTERY**, in orange: the power is out and the node runs from the battery. The column and the bar turn orange, and the bar shows what is left.
 
 ![The UPS on battery](../../../assets/management/ups-battery.png)
 
-- **not found**, in red: the node has no UPS. It works as usual, but a power cut turns it off on the spot.
+- **not found**, in red: the node has no UPS. The column turns red. The node works as usual, but a power cut turns it off on the spot.
 
 ![A node with no UPS](../../../assets/management/ups-missing.png)
 
@@ -33,7 +33,7 @@ The **UPS** row of the **Status** column shows where the node's power comes from
 
 ![The UPS service not answering](../../../assets/management/ups-unreachable.png)
 
-- Any other message, in orange: the UPS answered, but its reading could not be used. The message says why.
+- Any other message, in orange: the UPS answered, but its reading could not be used. The column turns orange, and the message says why.
 
 ![A UPS reading that could not be used](../../../assets/management/ups-failed.png)
 

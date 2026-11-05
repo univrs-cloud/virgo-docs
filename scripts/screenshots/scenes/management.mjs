@@ -97,7 +97,15 @@ const storagePage = async (browser, backend, viewport) => {
 const TIGHT_PADDING = 12;
 const UPS_ROW = '#resources-monitor .ups';
 const UPS_BADGE = `${UPS_ROW} u-badge`;
-const UPS_FAULT = `${UPS_ROW} h5 small`;
+const UPS_FAULT = `${UPS_ROW} > div:first-child > span + span`;
+const PEER_LIST = '#peer > div';
+const STATUS_BAND = ['#resources-monitor .resources-toolbar', '#resources-monitor > .card'];
+const DATA_COLUMN = '#resources-monitor .storage-data';
+const DRIVES_BADGE = `${DATA_COLUMN} a[href="/storage"]`;
+const WARM_DRIVE = 'nvme1n1';
+const WARM_TEMPERATURE = 86;
+const WARNING_DRIVE = 'nvme0n1';
+const WARNING_HEALTH = { status: 'warning', problems: [], message: 'Available spare below threshold' };
 const FLUSH_TOP_PADDING = { top: 0, right: TIGHT_PADDING, bottom: TIGHT_PADDING, left: TIGHT_PADDING };
 const REORDER_GROUP = '#apps-shortcuts .group:nth-child(2)';
 
@@ -587,7 +595,7 @@ const pages = {
 		backend.setState(dashboardNode('adopted'));
 		const page = await signedInPage(browser, backend, viewport, users.owner(), { menuCollapsed: false });
 		await controlClock(page, settings.WEATHER_CLOCK);
-		await open(page, backend.url, '/', '#peer .card');
+		await open(page, backend.url, '/', '#peer .node');
 		await waitForCharts(page);
 		await waitForImages(page, '#apps-shortcuts img');
 		await capture.region(page, [MENU_TOGGLE, `${VISIBLE_ACCOUNT} .account-toggle`], 'menu-toggle', MENU_PADDING);
@@ -595,7 +603,7 @@ const pages = {
 		await collapseMenu(page);
 		await capture.fullPage(page, 'dashboard');
 
-		await capture.region(page, ['#resources-monitor'], 'dashboard-status', TIGHT_PADDING);
+		await capture.region(page, STATUS_BAND, 'dashboard-status', TIGHT_PADDING);
 
 		const cpuChart = await page.$eval(CPU_CHART, (element) => { return element.getBoundingClientRect().toJSON(); });
 		await page.mouse.move(cpuChart.left + (cpuChart.width * STATUS_HOVER.x), cpuChart.top + (cpuChart.height * STATUS_HOVER.y));
@@ -659,14 +667,33 @@ const pages = {
 		await sleep(SETTLE_MS);
 
 		await openMenu(page, '#peer [data-bs-toggle="menu"]', '#peer .menu.show');
-		await capture.region(page, ['#peer .card', '#peer .menu.show'], 'dashboard-nodes', TIGHT_PADDING);
+		await capture.region(page, [PEER_LIST, '#peer .menu.show'], 'dashboard-nodes', TIGHT_PADDING);
 		await closePage(page);
 
 		backend.setState(dashboardNode('available'));
 		const adopting = await signedInPage(browser, backend, viewport, users.owner());
 		await open(adopting, backend.url, '/', '#peer [data-action="adopt"]');
-		await capture.region(adopting, ['#peer .card'], 'dashboard-adopt', TIGHT_PADDING);
+		await capture.region(adopting, [PEER_LIST], 'dashboard-adopt', TIGHT_PADDING);
 		await closePage(adopting);
+
+		const failing = managedNode(backend);
+		backend.setState({
+			...failing,
+			drives: failing.drives.map((drive) => {
+				if (drive.name === WARM_DRIVE) {
+					return { ...drive, temperature: WARM_TEMPERATURE };
+				}
+
+				return (drive.name === WARNING_DRIVE ? { ...drive, health: WARNING_HEALTH } : drive);
+			})
+		});
+		const drives = await signedInPage(browser, backend, viewport, users.owner());
+		await open(drives, backend.url, '/', DRIVES_BADGE);
+		await drives.hover(DRIVES_BADGE);
+		await drives.waitForSelector('.tooltip.show', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(drives, [DATA_COLUMN, '.tooltip.show'], 'dashboard-drives', TIGHT_PADDING);
+		await closePage(drives);
 	},
 	ups: async ({ browser, backend, capture, viewport }) => {
 		const page = await signedInPage(browser, backend, viewport, users.owner());
