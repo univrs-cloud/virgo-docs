@@ -1,11 +1,11 @@
 ---
 title: Dashboard
-description: The node's status, its nodes, apps, shortcuts, folders and time machines at a glance.
+description: The node's status, its nodes, apps, shortcuts, folders and backup disks at a glance.
 sidebar:
   order: 2
 ---
 
-The **Dashboard** is the first page after signing in. It shows how the node is doing, and brings its apps, shortcuts, folders and time machines together in one place. This page describes it as administrators see it.
+The **Dashboard** is the first page after signing in. It shows how the node is doing, and brings its apps, shortcuts, folders and backup disks together in one place. This page describes it as administrators see it.
 
 ![The Dashboard](../../../assets/management/dashboard.png)
 
@@ -134,9 +134,9 @@ Drag and drop the cards into the order you want.
 
 Select the check mark to save the order. It applies to everyone who opens the **Dashboard**.
 
-## Folders and time machines
+## Folders and backup disks
 
-The [folders](/management/resources/folders/) and [time machines](/management/resources/time-machines/) are listed with a bar showing how full each one is.
+The [folders](/management/resources/folders/) and [backup disks](/management/resources/time-capsule/) are listed with a bar showing how full each one is.
 
 ## Weather
 

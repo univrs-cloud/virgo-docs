@@ -30,7 +30,7 @@ Open a user's menu to manage them:
 
 - **Edit:** change the user's name and email address. The owner can also change their role.
 - **Change password:** set a new password for the user.
-- **Lock:** stop the user from signing in and from reaching folders and time machines, without deleting them. **Unlock** gives them access again.
+- **Lock:** stop the user from signing in and from reaching folders and backup disks, without deleting them. **Unlock** gives them access again.
 - **Delete:** remove the user.
 
 Your own account has no menu here; it links to your [profile](/management/system/users/profile/) instead.

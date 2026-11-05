@@ -271,10 +271,10 @@ const fillFolder = async (page, folder) => {
 	}
 };
 
-const TIME_MACHINES_PAGE = '#time-machines .container-fluid:not(.d-none)';
+const TIME_CAPSULE_PAGE = '#time-capsule .container-fluid:not(.d-none)';
 const DASHBOARD_GROUP_PADDING = { top: 12, right: 16, bottom: 16, left: 16 };
-const timeMachineRow = (share) => { return `#time-machines tr[data-id="${share.name}"]`; };
-const TIME_MACHINE_DETAILS = '#time-machines .details .item';
+const backupDiskRow = (share) => { return `#time-capsule tr[data-id="${share.name}"]`; };
+const BACKUP_DISK_DETAILS = '#time-capsule .details .item';
 
 const hoverTooltip = async (page, selector) => {
 	await page.hover(selector);
@@ -313,7 +313,7 @@ const topologyNode = (backend) => {
 		discovery: peered.discovery,
 		peers: peered.peers,
 		configured: [...node.configured, ...shortcuts.shortcuts(DOMAINS.univrs)],
-		shares: [...shares.folders(), ...shares.timeMachines(settings.WEATHER_CLOCK)],
+		shares: [...shares.folders(), ...shares.backupDisks(settings.WEATHER_CLOCK)],
 		shareClients: shares.clients()
 	};
 };
@@ -587,7 +587,7 @@ const pages = {
 				location: settings.location(),
 				weather: settings.weather(),
 				shortcutList: shortcuts.shortcuts(DOMAINS.univrs),
-				shareList: [...shares.folders(), ...shares.timeMachines(settings.WEATHER_CLOCK)],
+				shareList: [...shares.folders(), ...shares.backupDisks(settings.WEATHER_CLOCK)],
 				peer
 			});
 		};
@@ -878,56 +878,56 @@ const pages = {
 		await capture.region(dashboard, ['#shares .folders'], 'folders-dashboard', { ...DASHBOARD_GROUP_PADDING, bottom: 0 });
 		await closePage(dashboard);
 	},
-	'time-machines': async ({ browser, backend, capture, viewport }) => {
-		const timeMachines = shares.timeMachines(settings.WEATHER_CLOCK);
-		const [first, second] = timeMachines;
-		const [, james] = timeMachines;
-		backend.setState(managedNode(backend, { shareList: timeMachines, clientList: shares.clients() }));
+	'time-capsule': async ({ browser, backend, capture, viewport }) => {
+		const backupDisks = shares.backupDisks(settings.WEATHER_CLOCK);
+		const [first, second] = backupDisks;
+		const [, james] = backupDisks;
+		backend.setState(managedNode(backend, { shareList: backupDisks, clientList: shares.clients() }));
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(page, settings.WEATHER_CLOCK);
-		await open(page, backend.url, '/time-machines', TIME_MACHINES_PAGE);
-		await capture.viewport(page, 'time-machines');
+		await open(page, backend.url, '/time-capsule', TIME_CAPSULE_PAGE);
+		await capture.viewport(page, 'time-capsule');
 
-		await hoverTooltip(page, `${timeMachineRow(first)} td:nth-child(7) small`);
-		await capture.region(page, ['#time-machines .search', '#time-machines table', '.tooltip.show'], 'time-machines-backups', PADDING);
+		await hoverTooltip(page, `${backupDiskRow(first)} td:nth-child(7) small`);
+		await capture.region(page, ['#time-capsule .search', '#time-capsule table', '.tooltip.show'], 'time-capsule-backups', PADDING);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 
-		await openMenu(page, `${timeMachineRow(second)} [data-bs-toggle="menu"]`, '#time-machines .menu.show');
-		await capture.region(page, ['#time-machines .search', '#time-machines table', '#time-machines .menu.show'], 'time-machines-menu', PADDING);
+		await openMenu(page, `${backupDiskRow(second)} [data-bs-toggle="menu"]`, '#time-capsule .menu.show');
+		await capture.region(page, ['#time-capsule .search', '#time-capsule table', '#time-capsule .menu.show'], 'time-capsule-menu', PADDING);
 
-		await openModal(page, `${timeMachineRow(second)} a[href="#time-machine-update"]`, '#time-machine-update');
-		await capture.region(page, ['#time-machine-update'], 'time-machine-edit', PADDING);
+		await openModal(page, `${backupDiskRow(second)} a[href="#backup-disk-update"]`, '#backup-disk-update');
+		await capture.region(page, ['#backup-disk-update'], 'backup-disk-edit', PADDING);
 		await closePage(page);
 
 		const details = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(details, settings.WEATHER_CLOCK);
-		await open(details, backend.url, `/time-machines/${james.name}`, TIME_MACHINE_DETAILS);
-		await capture.viewport(details, 'time-machine-details');
+		await open(details, backend.url, `/time-capsule/${james.name}`, BACKUP_DISK_DETAILS);
+		await capture.viewport(details, 'backup-disk-details');
 
-		await hoverTooltip(details, `${TIME_MACHINE_DETAILS} [data-action="copy-to-clipboard"]`);
-		await capture.region(details, [...detailsTab(TIME_MACHINE_DETAILS), '.tooltip.show'], 'time-machines-address', DETAILS_TAB_PADDING);
+		await hoverTooltip(details, `${BACKUP_DISK_DETAILS} [data-action="copy-to-clipboard"]`);
+		await capture.region(details, [...detailsTab(BACKUP_DISK_DETAILS), '.tooltip.show'], 'time-capsule-address', DETAILS_TAB_PADDING);
 		await details.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 
-		await details.click('#time-machines .details [data-time-machine-tab="backups"]');
-		await details.waitForSelector('#time-machines .details [data-time-machine-tab="backups"].active', { visible: true });
+		await details.click('#time-capsule .details [data-backup-disk-tab="backups"]');
+		await details.waitForSelector('#time-capsule .details [data-backup-disk-tab="backups"].active', { visible: true });
 		await sleep(SETTLE_MS);
-		await capture.region(details, detailsTab(TIME_MACHINE_DETAILS), 'time-machine-backups', DETAILS_TAB_PADDING);
+		await capture.region(details, detailsTab(BACKUP_DISK_DETAILS), 'backup-disk-backups', DETAILS_TAB_PADDING);
 		await closePage(details);
 
 		const creating = await signedInPage(browser, backend, viewport, users.owner());
-		await open(creating, backend.url, '/time-machines', TIME_MACHINES_PAGE);
-		await openModal(creating, '#time-machines a[href="#time-machine-create"]', '#time-machine-create');
-		await setValue(creating, '#time-machine-create .comment', shares.NEW_TIME_MACHINE.comment);
-		await setValue(creating, '#time-machine-create .valid-users', shares.NEW_TIME_MACHINE.user);
-		await setValue(creating, '#time-machine-create .refquota', shares.NEW_TIME_MACHINE.capacity);
-		await capture.region(creating, ['#time-machine-create'], 'time-machine-create', PADDING);
+		await open(creating, backend.url, '/time-capsule', TIME_CAPSULE_PAGE);
+		await openModal(creating, '#time-capsule a[href="#backup-disk-create"]', '#backup-disk-create');
+		await setValue(creating, '#backup-disk-create .comment', shares.NEW_BACKUP_DISK.comment);
+		await setValue(creating, '#backup-disk-create .valid-users', shares.NEW_BACKUP_DISK.user);
+		await setValue(creating, '#backup-disk-create .refquota', shares.NEW_BACKUP_DISK.capacity);
+		await capture.region(creating, ['#backup-disk-create'], 'backup-disk-create', PADDING);
 		await closePage(creating);
 
 		const dashboard = await signedInPage(browser, backend, viewport, users.owner());
-		await open(dashboard, backend.url, '/', '#shares .time-machines .card');
-		await capture.region(dashboard, ['#shares .time-machines'], 'time-machines-dashboard', DASHBOARD_GROUP_PADDING);
+		await open(dashboard, backend.url, '/', '#shares .time-capsule .card');
+		await capture.region(dashboard, ['#shares .time-capsule'], 'time-capsule-dashboard', DASHBOARD_GROUP_PADDING);
 		await closePage(dashboard);
 	},
 	users: async ({ browser, backend, capture, viewport }) => {

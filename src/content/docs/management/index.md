@@ -40,7 +40,7 @@ The choice is remembered in this browser. A node opened [through your fleet](/ma
 ## Topics
 
 - [Authentication](/management/authentication/): signing in and out, and what is gated by an account.
-- [Dashboard](/management/dashboard/): the node's status, its nodes, apps, shortcuts, folders and time machines at a glance.
+- [Dashboard](/management/dashboard/): the node's status, its nodes, apps, shortcuts, folders and backup disks at a glance.
 - [UPS](/management/ups/): what the node does during a power cut, and when it shuts itself down.
 - Resources
   - [Apps](/management/resources/apps/): installing apps from the App center and managing them.
@@ -50,7 +50,7 @@ The choice is remembered in this browser. A node opened [through your fleet](/ma
       - [Restoring files](/management/resources/apps/snapshots/restore/): putting one file or a whole selection back into Nextcloud.
   - [Shortcuts](/management/resources/shortcuts/): links on the Dashboard to devices and websites, optionally reached through the node.
   - [Folders](/management/resources/folders/): shared folders for the computers on your local network.
-  - [Time machines](/management/resources/time-machines/): backup destinations for the Time Machine app on Macs.
+  - [Time capsule](/management/resources/time-capsule/): backup disks for the Time Machine app on Macs.
 - System
   - [Storage](/management/system/storage/): the storage pool, its health, data integrity, usage and drives.
   - [Users](/management/system/users/): the people who can sign in and their roles.
