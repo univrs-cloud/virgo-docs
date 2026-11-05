@@ -66,7 +66,7 @@ Each point on a chart is the average reading over a few seconds. Seconds the nod
 
 ## Nodes
 
-When there are other nodes on your network, they are listed at the top of the **Dashboard** together with this one, marked **this node**. Each node shows its address, and the node holding the [virtual IP](/management/system/network/#interface) shows that address too, next to a ghost icon.
+The top of the **Dashboard** lists this node, marked **this node**, together with the other nodes on your network. Each node shows its address, and the node holding the [virtual IP](/management/system/network/#interface) shows that address too, next to a ghost icon.
 
 ### Adopting a node
 

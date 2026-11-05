@@ -26,6 +26,17 @@ Collapsed, the menu shows only icons. Hover over one to see its name. Select the
 
 The menu stays the way you left it in this browser. When it is longer than the screen, scroll it: a shadow at its top or bottom edge shows there is more in that direction.
 
+## Theme
+
+Open the account menu with your name to choose how the interface looks:
+
+- **Auto:** follows your device's light or dark setting, and changes along with it.
+- **Light** or **Dark:** stays the same whatever your device uses.
+
+![The account menu](../../../assets/management/account-menu.png)
+
+The choice is remembered in this browser. A node opened [through your fleet](/management/authentication/#through-your-fleet) keeps its own choice, apart from the fleet's.
+
 ## Topics
 
 - [Authentication](/management/authentication/): signing in and out, and what is gated by an account.
