@@ -98,7 +98,7 @@ const TIGHT_PADDING = 12;
 const UPS_ROW = '#resources-monitor .ups';
 const UPS_BADGE = `${UPS_ROW} u-badge`;
 const UPS_FAULT = `${UPS_ROW} > div:first-child > span + span`;
-const PEER_LIST = '#peer > div';
+const PEER_LIST = '#peer .node-list';
 const STATUS_BAND = ['#resources-monitor .resources-toolbar', '#resources-monitor > .card'];
 const DATA_COLUMN = '#resources-monitor .storage-data';
 const DRIVES_BADGE = `${DATA_COLUMN} a[href="/storage"]`;
