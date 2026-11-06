@@ -94,7 +94,8 @@ const APP_USAGE = {
 	'wg-easy': { cpu: 0.1, memory: 40, rx: 0.8, tx: 0.9, data: 0.01, snapshots: 0.002 },
 	plausible: { cpu: 0.9, memory: 640, rx: 0.3, tx: 0.2, data: 2.4, snapshots: 0.6 },
 	gitea: { cpu: 0.4, memory: 210, rx: 0.2, tx: 0.4, data: 6.2, snapshots: 1.1 },
-	'gitea-runner': { cpu: 0.2, memory: 120, rx: 0.1, tx: 0.1, data: 1.5, snapshots: 0.3 }
+	'gitea-runner': { cpu: 0.2, memory: 120, rx: 0.1, tx: 0.1, data: 1.5, snapshots: 0.3 },
+	mailserver: { cpu: 0.6, memory: 420, rx: 0.3, tx: 0.2, data: 4.8, snapshots: 0.9 }
 };
 
 const SNAPSHOT_CLOCK = Date.UTC(2026, 8, 29, 17, 40);
