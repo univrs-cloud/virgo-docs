@@ -45,7 +45,7 @@ When the update succeeds, select **Continue** to go back to the **Dashboard**.
 
 ![Update succeeded](../../../../assets/management/update-finished.png)
 
-If the update needs a restart to take effect, **Reboot** appears instead of **Continue**, and the node restarts to finish the update.
+If the update needs a restart to take effect, **Reboot now** and **Later** appear instead of **Continue**. **Reboot now** restarts the node right away. **Later** goes back to the **Dashboard**, and until the node restarts, a notification with its own **Reboot now** reminds you each time you open the node.
 
 ## If the update fails
 
