@@ -8,7 +8,7 @@ import { OWNER_PASSWORD } from '../data/users.mjs';
 const PADDING = 50;
 const CERTIFICATE_GRACE_MS = 60000;
 const FRESH_POOL_USED_PERCENT = 1;
-const HARD_DRIVE_EXAMPLES = [2, 4, 6, 8];
+const HARD_DRIVE_EXAMPLES = [2, 3, 4, 5, 6, 8];
 const LIST_PADDING = 12;
 const UNCLIPPED_TOPOLOGIES = '#storage > .col-12 { height: auto !important; max-height: none !important; } #storage .card-body, #storage .vdev-tree { overflow: visible !important; }';
 
