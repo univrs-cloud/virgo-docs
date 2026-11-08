@@ -21,7 +21,7 @@ const managedNode = (backend, overrides = {}) => {
 		setupCompleted: true,
 		poolUsedPercent: IN_USE_POOL_PERCENT,
 		isRegistered: true,
-		certificateIssued: true,
+		certificateStatus: 'issued',
 		runningApps: apps.CORE_APP_NAMES,
 		userList: users.USERS,
 		sessionList: users.sessions(),

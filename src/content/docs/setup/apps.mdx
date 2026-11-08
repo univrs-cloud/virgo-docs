@@ -50,11 +50,48 @@ When the certificate is issued, the waiting line disappears and **Continue** bec
 
 ### Not ready after a minute
 
-If the certificate is still missing after a minute, setup explains why and lets you continue anyway:
+If the certificate is still missing after a minute, setup explains why and unlocks **Back**. The line under the warning shows that setup is still checking, and both disappear once the certificate is issued.
 
-- **The name does not resolve yet.** DNS may still be propagating, or the record was not created.
-- **The name resolves but no certificate was issued.** With your own domain, check the port forwarding. On `univrs.cloud`, see [No certificate on univrs.cloud](/troubleshooting/certificate/). The node's logs show the reason.
+<Tabs syncKey="domain">
+<TabItem label="Your own domain">
 
-![The certificate is not ready yet](../../../assets/setup/apps-certificate-failed.png)
+**Continue** unlocks too, so setup can finish without the certificate.
+
+**The name does not resolve yet.** DNS may still be propagating, or the A record was not created.
+
+![The name does not resolve yet](../../../assets/setup/apps-certificate-unresolved.png)
+
+**No certificate yet.** Let's Encrypt has to reach the node on TCP 80: check the port forwarding, that the A record points to your public IP, and that your connection is not behind CGNAT.
+
+![No certificate yet on your own domain](../../../assets/setup/apps-certificate-failed-custom.png)
+
+</TabItem>
+<TabItem label="univrs.cloud">
+
+**Continue** stays locked until the certificate is issued.
+
+**No certificate yet.** The check runs through fleet: the node has to reach fleet, and the router must not intercept DNS. See [No certificate on univrs.cloud](/troubleshooting/certificate/).
+
+![No certificate yet on univrs.cloud](../../../assets/setup/apps-certificate-failed.png)
+
+</TabItem>
+</Tabs>
+
+### Let's Encrypt error
+
+When Let's Encrypt returned an error, setup shows it, followed by the same checks as under **No certificate yet**.
+
+<Tabs syncKey="domain">
+<TabItem label="Your own domain">
+
+![Let's Encrypt error on your own domain](../../../assets/setup/apps-certificate-error-custom.png)
+
+</TabItem>
+<TabItem label="univrs.cloud">
+
+![Let's Encrypt error on univrs.cloud](../../../assets/setup/apps-certificate-error.png)
+
+</TabItem>
+</Tabs>
 
 If an app fails to install, setup cannot continue until it is installed and running.

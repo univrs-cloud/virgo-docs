@@ -520,8 +520,32 @@ const containerTerminal = (name = EXAMPLE_APP) => {
 	return { [`${name}-${name}`]: `${TERMINAL_PROMPT}occ status\r\n  - installed: true\r\n  - version: 31.0.8.1\r\n  - versionstring: 31.0.8\r\n  - edition: \r\n  - maintenance: false\r\n  - needsDbUpgrade: false\r\n${TERMINAL_PROMPT}` };
 };
 
-const certificate = (fqdn, isIssued) => {
-	return { required: true, hasCertificate: isIssued, resolves: true, fqdn };
+const certificateReason = (fqdn, status, acmeError) => {
+	if (status === 'issued') {
+		return null;
+	}
+
+	if (status === 'unresolved') {
+		return `${fqdn} does not resolve yet. DNS may still be propagating, or the record was not created.`;
+	}
+
+	const cause = (acmeError
+		? `Let's Encrypt could not issue a certificate for ${fqdn}: ${acmeError}.`
+		: `Let's Encrypt has not issued a certificate for ${fqdn} yet.`);
+	if (fqdn.toLowerCase().endsWith('.univrs.cloud')) {
+		return `${cause} The check runs through fleet: make sure this node can reach fleet and that the router does not intercept DNS on port 53.`;
+	}
+
+	return `${cause} Let's Encrypt has to reach this node on TCP 80: make sure port 80 is forwarded to this node, that the A record points to your public IP, and that the connection is not behind CGNAT.`;
+};
+
+const certificate = (fqdn, status, acmeError = null) => {
+	return {
+		fqdn,
+		status,
+		reason: certificateReason(fqdn, status, acmeError),
+		canSkip: !fqdn.toLowerCase().endsWith('.univrs.cloud')
+	};
 };
 
 export {

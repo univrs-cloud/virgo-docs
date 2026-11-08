@@ -25,8 +25,40 @@ const waitForContinue = async (page) => {
 	await sleep(SETTLE_MS);
 };
 
+const CERTIFICATE_FAILURES = [
+	{ name: 'apps-certificate-unresolved', state: { domain: 'custom', certificateStatus: 'unresolved' } },
+	{ name: 'apps-certificate-failed-custom', state: { domain: 'custom', certificateStatus: 'pending' } },
+	{ name: 'apps-certificate-error-custom', state: { domain: 'custom', certificateStatus: 'pending', acmeError: '203.0.113.5: Timeout during connect (likely firewall problem)' } },
+	{ name: 'apps-certificate-failed', state: { domain: 'univrs', certificateStatus: 'pending' } },
+	{ name: 'apps-certificate-error', state: { domain: 'univrs', certificateStatus: 'pending', acmeError: 'propagation: time limit exceeded' } }
+];
+
+const openExpiredStep = async (browser, viewport, url) => {
+	const page = await newPage(browser, viewport);
+	await page.evaluateOnNewDocument((graceMs) => {
+		const now = Date.now;
+		const setTimer = window.setTimeout;
+		let offset = 0;
+		Date.now = () => { return now() + offset; };
+		window.setTimeout = (callback, delay, ...args) => {
+			if (delay > graceMs - 1000 && delay <= graceMs) {
+				return setTimer(() => {
+					offset += delay;
+					callback(...args);
+				}, 0);
+			}
+
+			return setTimer(callback, delay, ...args);
+		};
+	}, CERTIFICATE_GRACE_MS);
+	await openStep(page, url, '/apps', 'apps');
+	await page.waitForSelector('#apps .certificate-warning:not(.d-none)', { visible: true });
+	await sleep(SETTLE_MS);
+	return page;
+};
+
 const readyForSignIn = (domain) => {
-	return { domain, poolUsedPercent: FRESH_POOL_USED_PERCENT, isRegistered: true, runningApps: apps.CORE_APP_NAMES, certificateIssued: true };
+	return { domain, poolUsedPercent: FRESH_POOL_USED_PERCENT, isRegistered: true, runningApps: apps.CORE_APP_NAMES, certificateStatus: 'issued' };
 };
 
 const openFinish = async (page, url) => {
@@ -138,33 +170,17 @@ const pages = {
 		await openStep(page, backend.url, '/apps', 'apps');
 		await capture.step(page, 'apps', 'apps-traefik', PADDING);
 
-		backend.setState(nodeState(backend.getTopologies, { ...installing, runningApps: apps.CORE_APP_NAMES, certificateIssued: false }));
+		backend.setState(nodeState(backend.getTopologies, { ...installing, runningApps: apps.CORE_APP_NAMES, certificateStatus: 'pending' }));
 		await openStep(page, backend.url, '/apps', 'apps');
 		await page.waitForSelector('#apps .certificate-checking:not(.d-none)', { visible: true });
 		await capture.step(page, 'apps', 'apps-certificate', PADDING);
 
-		const expiredPage = await newPage(browser, viewport);
-		await expiredPage.evaluateOnNewDocument((graceMs) => {
-			const now = Date.now;
-			const setTimer = window.setTimeout;
-			let offset = 0;
-			Date.now = () => { return now() + offset; };
-			window.setTimeout = (callback, delay, ...args) => {
-				if (delay > graceMs - 1000 && delay <= graceMs) {
-					return setTimer(() => {
-						offset += delay;
-						callback(...args);
-					}, 0);
-				}
-
-				return setTimer(callback, delay, ...args);
-			};
-		}, CERTIFICATE_GRACE_MS);
-		await openStep(expiredPage, backend.url, '/apps', 'apps');
-		await expiredPage.waitForSelector('#apps .certificate-warning:not(.d-none)', { visible: true });
-		await sleep(SETTLE_MS);
-		await capture.step(expiredPage, 'apps', 'apps-certificate-failed', PADDING);
-		await closePage(expiredPage);
+		for (const failure of CERTIFICATE_FAILURES) {
+			backend.setState(nodeState(backend.getTopologies, { ...installing, runningApps: apps.CORE_APP_NAMES, ...failure.state }));
+			const expiredPage = await openExpiredStep(browser, viewport, backend.url);
+			await capture.step(expiredPage, 'apps', failure.name, PADDING);
+			await closePage(expiredPage);
+		}
 
 		backend.setState(nodeState(backend.getTopologies, readyForSignIn('univrs')));
 		await openStep(page, backend.url, '/apps', 'apps');
