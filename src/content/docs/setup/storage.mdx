@@ -1,0 +1,64 @@
+---
+title: Storage
+description: Create or import the storage pool.
+sidebar:
+  order: 5
+---
+
+![Choosing a pool layout](../../../assets/setup/storage.png)
+
+virgoOS keeps your apps and data on a redundant storage pool built from the node's drives. The drive the system runs from is never part of the pool.
+
+The pool needs:
+
+- **At least 2 data drives.** The drive the system runs from does not count.
+- **Drives of the same type.** Hard drives, SATA SSDs and NVMe drives never share a pool. When the node has more than one type, Setup offers layouts for each type separately, and the pool is built from one of them.
+- **Drives of the same size.** The smallest drive may be at most 10% smaller than the largest. Capacity is calculated from the smallest drive.
+
+Setup offers the layouts your drives support. The recommended one is listed first and already selected.
+
+| Layout | Survives |
+| --- | --- |
+| Low latency (Mirror) | 1 drive failure |
+| Basic protection (RAID-Z1) | 1 drive failure |
+| Advanced protection (RAID-Z2) | 2 drive failures |
+| Ultimate protection (RAID-Z3) | 3 drive failures |
+
+Mirror is offered for a pair of drives. With more drives, the RAID-Z layouts give more space or more protection.
+
+Some layouts can be built two ways. **More space** puts all the drives in one group. **Faster** splits them into smaller groups, and each group survives that many failures. When the drives do not split evenly, the faster layout leaves one drive out of the pool.
+
+These examples show the layouts Setup offers for hard drives of the same size.
+
+<Tabs>
+<TabItem label="2 drives">
+
+![Layouts offered for 2 hard drives](../../../assets/setup/storage-hdd-2.png)
+
+</TabItem>
+<TabItem label="4 drives">
+
+![Layouts offered for 4 hard drives](../../../assets/setup/storage-hdd-4.png)
+
+</TabItem>
+<TabItem label="6 drives">
+
+![Layouts offered for 6 hard drives](../../../assets/setup/storage-hdd-6.png)
+
+</TabItem>
+<TabItem label="8 drives">
+
+![Layouts offered for 8 hard drives](../../../assets/setup/storage-hdd-8.png)
+
+</TabItem>
+</Tabs>
+
+Each option shows the usable capacity and how many drives go to protection. Pick one and select **Create pool**.
+
+![Confirming the pool](../../../assets/setup/storage-confirm.png)
+
+Creating the pool erases everything on the drives, and the layout cannot be changed after setup. Tick **I understand and want to proceed**, then select **Format and proceed**.
+
+![The finished pool](../../../assets/setup/storage-pool.png)
+
+If the drives already hold this node's pool, for example after reinstalling, setup offers **Import pool** instead. Importing keeps everything the pool holds. If the drives hold a pool from another system, setup warns you that creating a new pool destroys it. Use **Scan again** after attaching or removing drives.

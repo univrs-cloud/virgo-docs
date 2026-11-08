@@ -1,11 +1,27 @@
 const DRIVE_SIZE = 2048408248320;
 const DRIVE_MODEL = 'KINGSTON SKC3000D2048G';
 const SYSTEM_DRIVE_SIZE = 15523119104;
+const HARD_DRIVE_SIZE = 8001563222016;
+const HARD_DRIVE_MODEL = 'WDC WD80EFPX-68C4ZN0';
 
 const REPLACEMENT_SERIAL = 3;
 
 const driveId = (serial) => {
 	return `nvme-eui.0000000000000000000000000000000${serial}`;
+};
+
+const systemDrive = () => {
+	return {
+		name: 'mmcblk0',
+		path: '/dev/mmcblk0',
+		type: 'ssd',
+		system: true,
+		model: null,
+		serialNumber: '0x00000000',
+		size: SYSTEM_DRIVE_SIZE,
+		capacity: { bytes: SYSTEM_DRIVE_SIZE },
+		health: { status: 'unsupported', problems: [], message: null }
+	};
 };
 
 const drives = ({ isReplaced = false } = {}) => {
@@ -16,6 +32,7 @@ const drives = ({ isReplaced = false } = {}) => {
 		return {
 			name,
 			path: `/dev/${name}`,
+			type: 'nvme',
 			id: eui,
 			ids: [`nvme-${DRIVE_MODEL.replace(' ', '_')}_${serialNumber}`, eui],
 			model: DRIVE_MODEL,
@@ -28,16 +45,31 @@ const drives = ({ isReplaced = false } = {}) => {
 			health: { status: 'ok', problems: [], message: null }
 		};
 	});
-	return [...data, {
-		name: 'mmcblk0',
-		path: '/dev/mmcblk0',
-		system: true,
-		model: null,
-		serialNumber: '0x00000000',
-		size: SYSTEM_DRIVE_SIZE,
-		capacity: { bytes: SYSTEM_DRIVE_SIZE },
-		health: { status: 'unsupported', problems: [], message: null }
-	}];
+	return [...data, systemDrive()];
+};
+
+const hardDrives = (count) => {
+	const data = Array.from({ length: count }, (_, index) => {
+		const name = `sd${String.fromCharCode(97 + index)}`;
+		const serialNumber = `WD-EXAMPLE${String(index + 1).padStart(4, '0')}`;
+		const id = `ata-${HARD_DRIVE_MODEL}_${serialNumber}`;
+		return {
+			name,
+			path: `/dev/${name}`,
+			type: 'hdd',
+			id,
+			ids: [id],
+			model: HARD_DRIVE_MODEL,
+			serialNumber,
+			size: HARD_DRIVE_SIZE,
+			capacity: { bytes: HARD_DRIVE_SIZE },
+			temperature: 33 + (index % 3),
+			temperatureWarningThreshold: 60,
+			temperatureCriticalThreshold: 70,
+			health: { status: 'ok', problems: [], message: null }
+		};
+	});
+	return [...data, systemDrive()];
 };
 
 const SNAPSHOTS_SHARE = 0.18;
@@ -136,6 +168,7 @@ const dataPool = (members, topology, usedPercent, { now = null, scan = null, mis
 
 export {
 	drives,
+	hardDrives,
 	systemPool,
 	dataPool,
 	snapshots

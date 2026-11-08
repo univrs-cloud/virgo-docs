@@ -2,11 +2,15 @@ import { SETTLE_MS, sleep, newPage, closePage, setValue, followLink } from '../c
 import * as apps from '../data/apps.mjs';
 import * as fleet from '../data/fleet.mjs';
 import { nodeState } from '../data/node.mjs';
+import * as storage from '../data/storage.mjs';
 import { OWNER_PASSWORD } from '../data/users.mjs';
 
 const PADDING = 50;
 const CERTIFICATE_GRACE_MS = 60000;
 const FRESH_POOL_USED_PERCENT = 1;
+const HARD_DRIVE_EXAMPLES = [2, 4, 6, 8];
+const LIST_PADDING = 12;
+const UNCLIPPED_TOPOLOGIES = '#storage > .col-12 { height: auto !important; max-height: none !important; } #storage .card-body, #storage .vdev-tree { overflow: visible !important; }';
 
 const openStep = async (page, url, pathname, step) => {
 	await page.goto(`${url}${pathname}`, { waitUntil: 'load' });
@@ -87,6 +91,15 @@ const pages = {
 		await openStep(page, backend.url, '/storage', 'storage');
 		await page.waitForSelector('#storage [data-action="continue"]:not(.d-none)');
 		await capture.step(page, 'storage', 'storage-pool', PADDING);
+
+		for (const count of HARD_DRIVE_EXAMPLES) {
+			backend.setState(nodeState(backend.getTopologies, { driveList: storage.hardDrives(count) }));
+			await openStep(page, backend.url, '/storage', 'storage');
+			await page.waitForSelector('#storage .summary:not(.d-none)');
+			await page.addStyleTag({ content: UNCLIPPED_TOPOLOGIES });
+			await sleep(SETTLE_MS);
+			await capture.region(page, ['#storage .summary dl'], `storage-hdd-${count}`, LIST_PADDING);
+		}
 		await closePage(page);
 	},
 	fleet: async ({ browser, backend, capture, viewport }) => {
