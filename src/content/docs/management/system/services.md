@@ -16,7 +16,7 @@ Each row shows:
 - **Automatic startup:** whether it starts when the node starts. **enabled** starts it, **disabled** does not, **static** means it only starts when something else needs it, and **masked** means it is blocked and cannot be started at all.
 - **State:** what it is doing right now, such as **running**, **exited**, **waiting**, **listening** or **failed**.
 
-The list is not live. It is read when the node starts and again after each action you take on this page, so a service that stops, fails or changes its memory use on its own is not shown until you select the reload button in the top right corner.
+The list is not live. It is read when the node starts and again after each action you take on this page, so a service that stops, fails or changes its memory use on its own is not shown until you select the reload button next to the page title, or the one in a service's details.
 
 ## Finding a service
 
@@ -58,7 +58,7 @@ Every action is in the service's menu, the **⋮** at the end of its row.
 
 ## From the details
 
-Select a service to open its details: its state, activity, automatic startup and memory use, with the service's log next to them. **Start**, **Restart** and **Stop** are the buttons at the top right, and the **⋮** next to them holds **Enable**, **Enable & start**, **Disable** and **Disable & stop**. The arrow in the top left goes back to the list.
+Select a service to open its details: its state, activity, automatic startup and memory use, with the service's log next to them. **Start** and **Restart** are the buttons at the top right, and the **⋮** next to them holds **Stop**, **Enable**, **Enable & start**, **Disable** and **Disable & stop**. The arrow in the top left goes back to the list.
 
 ![A service's details and live log](../../../../assets/management/services-details.png)
 
