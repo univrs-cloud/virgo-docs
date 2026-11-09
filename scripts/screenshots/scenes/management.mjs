@@ -81,6 +81,7 @@ const STORAGE_POOL = '#storage .details .item';
 const POOL_INTEGRITY = '#storage .details .detail-facts > .list-group > .list-group-item:nth-child(1)';
 const POOL_TOPOLOGY = '#storage .details .detail-main > .overflow-y-scroll > .list-group > .list-group-item';
 const VDEV_DETAILS = '#storage .details [id^="vdev-details-"].show';
+const EXPAND_BUTTON = '#storage .details u-button[data-bs-target="#pool-expand"]';
 const SNAPSHOT_COUNT = 142;
 const POOL_CARD_PADDING = { top: 0, right: PADDING, bottom: 8, left: 8 };
 
@@ -1120,6 +1121,17 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.fullPage(page, 'storage-pool');
 		await closePage(page);
+
+		backend.setState(storageNode(backend, { spareCount: 2 }));
+		const expanding = await storagePage(browser, backend, viewport);
+		await open(expanding, backend.url, '/storage/messier', STORAGE_POOL);
+		await expanding.hover(EXPAND_BUTTON);
+		await expanding.waitForSelector('.tooltip.show', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(expanding, [EXPAND_BUTTON, '.tooltip.show'], 'storage-expand-button', PADDING);
+		await openModal(expanding, EXPAND_BUTTON, '#pool-expand');
+		await capture.region(expanding, ['#pool-expand'], 'storage-expand', PADDING);
+		await closePage(expanding);
 
 		backend.setState(storageNode(backend, { scrub: 'running' }));
 		const scrubbing = await storagePage(browser, backend, viewport);

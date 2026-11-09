@@ -2,7 +2,7 @@
 title: Settings
 description: Fleet, notifications, location, RAM cache and power, from the Settings page.
 sidebar:
-  order: 14
+  order: 15
 ---
 
 **Settings** holds the node's fleet registration, its email notifications, its location, its RAM cache and the power buttons. On a fresh install, **Fleet** shows the registration made during setup, **Notifications** and **Location** are not configured yet, **RAM cache** is limited to 1.5 GiB, and **Power** lets you reboot or shut down the node.

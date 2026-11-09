@@ -48,6 +48,30 @@ const drives = ({ isReplaced = false } = {}) => {
 	return [...data, systemDrive()];
 };
 
+const spareDrives = (count) => {
+	return Array.from({ length: count }, (_, index) => {
+		const name = `nvme${index + 2}n1`;
+		const serial = index + 4;
+		const serialNumber = `EXAMPLE000000${serial}`;
+		const eui = driveId(serial);
+		return {
+			name,
+			path: `/dev/${name}`,
+			type: 'nvme',
+			id: eui,
+			ids: [`nvme-${DRIVE_MODEL.replace(' ', '_')}_${serialNumber}`, eui],
+			model: DRIVE_MODEL,
+			serialNumber,
+			size: DRIVE_SIZE,
+			capacity: { bytes: DRIVE_SIZE },
+			temperature: 27 + index,
+			temperatureWarningThreshold: 84,
+			temperatureCriticalThreshold: 89,
+			health: { status: 'ok', problems: [], message: null }
+		};
+	});
+};
+
 const hardDrives = (count) => {
 	const data = Array.from({ length: count }, (_, index) => {
 		const name = `sd${String.fromCharCode(97 + index)}`;
@@ -126,7 +150,30 @@ const disk = (drive, state, extra = {}) => {
 
 const NEXT_SCRUB = new Date(2026, 6, 12, 0, 24);
 
-const dataPool = (members, topology, usedPercent, { now = null, scan = null, missingDrive = null, replacedDrive = null } = {}) => {
+const expansion = (topology, spares, isDegraded) => {
+	if (isDegraded) {
+		return { reason: 'health' };
+	}
+
+	const groupCount = Math.floor(spares.length / topology.width);
+	const groups = Array.from({ length: groupCount }, (_, index) => {
+		const groupDrives = spares.slice(index * topology.width, (index + 1) * topology.width);
+		return { drives: groupDrives.map((drive) => { return drive.id; }), capacityBytes: (topology.type === 'mirror' ? 1 : topology.width) * DRIVE_SIZE };
+	});
+	return {
+		type: topology.type,
+		width: topology.width,
+		parity: topology.parity,
+		media: 'nvme',
+		minSize: DRIVE_SIZE,
+		available: spares.length,
+		groups,
+		unused: spares.slice(groupCount * topology.width).map((drive) => { return drive.id; }),
+		reason: (groupCount > 0 ? null : 'drives')
+	};
+};
+
+const dataPool = (members, topology, usedPercent, { now = null, scan = null, missingDrive = null, replacedDrive = null, spares = [] } = {}) => {
 	const disks = members.filter((drive) => { return !drive.system; });
 	const isDegraded = Boolean(missingDrive || replacedDrive);
 	const groups = {};
@@ -162,12 +209,14 @@ const dataPool = (members, topology, usedPercent, { now = null, scan = null, mis
 			messier: { name: 'messier', vdevType: 'root', state: (isDegraded ? 'DEGRADED' : 'ONLINE'), vdevs: groups }
 		},
 		...(scanStats ? { scanStats, nextScrub: NEXT_SCRUB.toISOString() } : {}),
-		errorCount: 0
+		errorCount: 0,
+		expansion: expansion(topology, spares, isDegraded)
 	};
 };
 
 export {
 	drives,
+	spareDrives,
 	hardDrives,
 	systemPool,
 	dataPool,

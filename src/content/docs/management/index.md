@@ -53,6 +53,7 @@ The choice is remembered in this browser. A node opened [through your fleet](/ma
   - [Time capsule](/management/resources/time-capsule/): backup disks for the Time Machine app on Macs.
 - System
   - [Storage](/management/system/storage/): the storage pool, its health, data integrity, usage and drives.
+    - [Expanding the pool](/management/system/storage/expand/): growing the pool onto drives that are not part of it yet.
   - [Users](/management/system/users/): the people who can sign in and their roles.
     - [Your profile](/management/system/users/profile/): your own name, email address and password.
   - [Services](/management/system/services/): the system services on the node, their logs, and starting or stopping them.

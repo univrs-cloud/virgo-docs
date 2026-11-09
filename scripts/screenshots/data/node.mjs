@@ -20,8 +20,9 @@ const withAbout = (system, apiVersion) => {
 	return { ...system, ...details, osInfo: { ...system.osInfo, kernel: about.SOFTWARE.kernel } };
 };
 
-const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateStatus = null, acmeError = null, userList = [users.FACTORY_OWNER], sessionList = [], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, clientList = null, shortcutList = [], peer = null, appEntries = null, apiVersion = null, hasBans = false, driveList = null } = {}) => {
+const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, poolUsedPercent = null, isRegistered = false, runningApps = [], jobs = [], certificateStatus = null, acmeError = null, userList = [users.FACTORY_OWNER], sessionList = [], withStatus = false, smtp = null, location = null, weather = null, trustedProxies = [], isStandby = false, now = null, scrub = null, missingDrive = null, replacedDrive = null, snapshotCount = 0, shareList = null, clientList = null, shortcutList = [], peer = null, appEntries = null, apiVersion = null, hasBans = false, driveList = null, spareCount = 0 } = {}) => {
 	const drives = (driveList || storage.drives({ isReplaced: Boolean(replacedDrive) }));
+	const spares = storage.spareDrives(spareCount);
 	const topologies = getTopologies(drives);
 	const hasPool = (poolUsedPercent !== null);
 	return {
@@ -30,9 +31,9 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 		discovery: (isStandby ? network.holdingPeer(domain) : (peer ? network.discoveredPeers(domain, peer === 'adopted') : [])),
 		peers: (peer === 'adopted' ? network.adoptedPeers() : []),
 		firewall: network.firewall(hasBans ? now : null),
-		drives: (missingDrive ? drives.filter((drive) => { return drive.name !== missingDrive; }) : drives),
+		drives: [...(missingDrive ? drives.filter((drive) => { return drive.name !== missingDrive; }) : drives), ...spares],
 		topologies,
-		storage: [storage.systemPool(), ...(hasPool ? [storage.dataPool(drives, topologies[0], poolUsedPercent, { now, scan: scrub, missingDrive, replacedDrive })] : [])],
+		storage: [storage.systemPool(), ...(hasPool ? [storage.dataPool(drives, topologies[0], poolUsedPercent, { now, scan: scrub, missingDrive, replacedDrive, spares })] : [])],
 		snapshots: storage.snapshots(snapshotCount),
 		importable: [],
 		certificate: (certificateStatus === null ? null : apps.certificate(network.fqdn(domain), certificateStatus, acmeError)),
