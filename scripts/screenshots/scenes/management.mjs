@@ -403,7 +403,7 @@ const pages = {
 		await installed.mouse.move(0, 0);
 		await capture.viewport(installed, 'app-details');
 
-		await installed.click(`${appService(exampleContainer)} a.logs`);
+		await installed.click(`${appService(exampleContainer)} .open-logs`);
 		await installed.waitForSelector('#apps .details .logs-container:not(.d-none) li', { visible: true });
 		await installed.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
@@ -411,7 +411,7 @@ const pages = {
 		await installed.click('#apps .details .close-logs');
 		await sleep(SETTLE_MS);
 
-		await installed.click(`${appService(exampleContainer)} a.terminal`);
+		await installed.click(`${appService(exampleContainer)} .open-terminal`);
 		await installed.waitForSelector('#apps .details .terminal-container:not(.d-none) .xterm', { visible: true });
 		await sleep(SETTLE_MS * 2);
 		await capture.viewport(installed, 'app-terminal');
