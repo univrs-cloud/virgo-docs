@@ -321,6 +321,7 @@ const topologyNode = (backend) => {
 };
 
 const UPDATES_PAGE = '#system-updates .container-fluid:not(.d-none)';
+const UPDATES_EMPTY = '#system-updates .empty-list:not(.d-none)';
 const MENU_PADDING = { top: 4, right: 16, bottom: 8, left: 16 };
 
 const pages = {
@@ -1235,19 +1236,19 @@ const pages = {
 	updates: async ({ browser, backend, capture, viewport }) => {
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		backend.setState({ ...managedNode(backend), updates: [] });
-		await open(page, backend.url, '/system-updates', UPDATES_PAGE);
+		await open(page, backend.url, '/system-updates', UPDATES_EMPTY);
 		await capture.viewport(page, 'updates-none');
 
 		backend.setState({ ...managedNode(backend), updates: [], checkUpdates: true });
-		await open(page, backend.url, '/system-updates', UPDATES_PAGE);
-		await capture.region(page, ['#system-updates .card'], 'updates-checking', CARD_PADDING);
+		await open(page, backend.url, '/system-updates', UPDATES_EMPTY);
+		await capture.region(page, [`${UPDATES_EMPTY} .no-content-image`, `${UPDATES_EMPTY} p`, `${UPDATES_EMPTY} .check-updates`], 'updates-checking', PADDING);
 
 		backend.setState({ ...managedNode(backend), updates: updates.available() });
 		await open(page, backend.url, '/system-updates', UPDATES_PAGE);
 		await capture.viewport(page, 'updates-available');
 
 		await open(page, backend.url, '/', 'header a[href="/system-updates"] u-badge');
-		await capture.region(page, ['header a[href="/settings"]', 'header a[href="/about"]'], 'updates-menu', MENU_PADDING);
+		await capture.region(page, ['header .nav-title:has(+ a[href="/system-updates"])', 'header a[href="/about"]'], 'updates-menu', MENU_PADDING);
 
 		backend.setState({ ...managedNode(backend), updates: updates.available(), update: updates.running() });
 		await open(page, backend.url, '/', '#update .steps');

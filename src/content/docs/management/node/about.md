@@ -16,7 +16,7 @@ sidebar:
 - **ZFS version:** the version of ZFS, which runs the [storage pool](/management/system/storage/).
 - **Kernel version:** the version of the Linux kernel.
 
-The UI and API versions change with [updates](/management/system/updates/).
+The UI and API versions change with [updates](/management/node/updates/).
 
 ## Hardware
 

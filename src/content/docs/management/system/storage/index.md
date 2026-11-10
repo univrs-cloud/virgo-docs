@@ -67,7 +67,7 @@ You do not have to open **Storage** to find out that the pool or a drive needs a
 
 ## Email reports
 
-When [notifications](/management/system/settings/#notifications) are set up, the node emails the recipients:
+When [notifications](/management/node/settings/#notifications) are set up, the node emails the recipients:
 
 - when a scrub finishes, with the pool's full status, even when everything is fine;
 - when a resilver finishes;

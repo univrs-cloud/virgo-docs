@@ -41,7 +41,7 @@ The badge takes the color of the worst one. Hover over it to see each drive and 
 The RAM chart splits the node's memory in two parts that add up:
 
 - **In use:** memory that apps, system services and the node itself hold. The percentage at the top of the column counts only this part.
-- **Cache:** recently used files and folders kept in memory, so opening them again does not need the drives. Its limit is the most memory it may use, which you set in [RAM cache](/management/system/settings/#ram-cache).
+- **Cache:** recently used files and folders kept in memory, so opening them again does not need the drives. Its limit is the most memory it may use, which you set in [RAM cache](/management/node/settings/#ram-cache).
 
 The cache is the ZFS ARC, the memory cache of the storage pool. It fills up as files are read and keeps the ones that are read again. It gives memory back when apps need it, so it is not counted as in use. A cache well below its limit is normal: it only grows as far as the files you use need.
 
@@ -140,4 +140,4 @@ The [folders](/management/resources/folders/) and [backup disks](/management/res
 
 ## Weather
 
-When a [location](/management/system/settings/#location) is set, the **Weather** card shows the current weather there. Select it for the forecast.
+When a [location](/management/node/settings/#location) is set, the **Weather** card shows the current weather there. Select it for the forecast.
