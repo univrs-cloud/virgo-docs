@@ -51,6 +51,20 @@ The bar splits the used space into your **Data** and the **Snapshots**. Snapshot
 
 The topology shows how the drives are grouped, here two drives mirroring each other. Select **Details** to list every group and drive with its size, temperature and state. A drive's temperature turns yellow or red when it gets too warm, errors appear next to it in red, and the **ⓘ** shows its model, serial number and ID.
 
+## Knowing something is wrong
+
+You do not have to open **Storage** to find out that the pool or a drive needs attention:
+
+- **Storage** in the menu gets a badge with a warning sign: red when the pool is not **ONLINE**, has data errors, or one of its drives reports errors or a problem in its health check; orange when the pool is 90% full or more.
+
+![The warning on Storage in the menu](../../../../../assets/management/storage-menu-warning.png)
+
+- On the [Dashboard](/management/dashboard/), the **Data** column turns yellow, orange or red, with the pool's health at the top and a badge counting the drives that need attention. Hover over that badge to see which drives and why.
+
+![A degraded pool on the Dashboard](../../../../../assets/management/storage-dashboard-degraded.png)
+
+- When notifications are set up, the node also emails you, as described below.
+
 ## Email reports
 
 When [notifications](/management/system/settings/#notifications) are set up, the node emails the recipients:
@@ -69,26 +83,4 @@ In the topology, the missing drive is shown in red, under its ID instead of its 
 
 ![The missing drive in the topology](../../../../../assets/management/storage-degraded-topology.png)
 
-The pool keeps working from the remaining drive, but until the missing one is back or replaced, another failure would lose data.
-
-## Replacing a drive
-
-Replacing a drive from the **Storage** page is coming soon. Until then, it is standard ZFS. Fit a new drive at least as large as the one it replaces, then replace the old drive's ID with the new drive's in the pool. For the missing drive shown above:
-
-```sh
-zpool replace messier nvme-eui.00000000000000000000000000000002 nvme-eui.00000000000000000000000000000003
-```
-
-The first ID is the missing drive's, as shown in the topology, and the second is the new drive's.
-
-## Resilvering
-
-As soon as the new drive is in the pool, ZFS copies the pool's data onto it. This is a **resilver**. It shows in **Data integrity** with its progress and how long it has left, and the pool stays **DEGRADED** until it finishes.
-
-![A resilver in progress](../../../../../assets/management/storage-resilver.png)
-
-In the topology, the old drive and the new one appear side by side, with an arrow from the old one to the new one, and the new one shows a spinning icon while it is being filled.
-
-![The drive being replaced in the topology](../../../../../assets/management/storage-resilver-topology.png)
-
-Only the data actually stored is copied, so a resilver takes as long as it takes to copy what the pool holds, not the whole drive. When it finishes, the old drive disappears from the topology and the pool is **ONLINE** again.
+The pool keeps working from the remaining drive, but until the missing one is back or [replaced](/management/system/storage/drive-replace/), another failure would lose data.

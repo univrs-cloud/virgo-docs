@@ -173,6 +173,31 @@ const expansion = (topology, spares, isDegraded) => {
 	};
 };
 
+const replacements = (disks, spares, { missingDrive, replacedDrive, isScrubbing }) => {
+	return disks.flatMap((drive) => {
+		const base = { size: DRIVE_SIZE, media: 'nvme', candidates: [] };
+		if (drive.name === replacedDrive) {
+			return [
+				{ ...base, name: driveId(2), kind: 'failed', reason: 'replacing' },
+				{ ...base, name: drive.id, kind: 'healthy', reason: 'replacing' }
+			];
+		}
+
+		const isFailed = (drive.name === missingDrive);
+		let reason = null;
+		if (replacedDrive) {
+			reason = 'replacing-other';
+		} else if (!isFailed && missingDrive) {
+			reason = 'degraded';
+		} else if (!isFailed && isScrubbing) {
+			reason = 'scrubbing';
+		}
+
+		const candidates = (reason ? [] : spares.filter((spare) => { return spare.size >= DRIVE_SIZE; }).map((spare) => { return spare.id; }));
+		return [{ ...base, name: drive.id, kind: (isFailed ? 'failed' : 'healthy'), candidates, reason: (reason || (candidates.length > 0 ? null : 'drives')) }];
+	});
+};
+
 const dataPool = (members, topology, usedPercent, { now = null, scan = null, missingDrive = null, replacedDrive = null, spares = [] } = {}) => {
 	const disks = members.filter((drive) => { return !drive.system; });
 	const isDegraded = Boolean(missingDrive || replacedDrive);
@@ -210,7 +235,8 @@ const dataPool = (members, topology, usedPercent, { now = null, scan = null, mis
 		},
 		...(scanStats ? { scanStats, nextScrub: NEXT_SCRUB.toISOString() } : {}),
 		errorCount: 0,
-		expansion: expansion(topology, spares, isDegraded)
+		expansion: expansion(topology, spares, isDegraded),
+		replacements: replacements(disks, spares, { missingDrive, replacedDrive, isScrubbing: (scan === 'running') })
 	};
 };
 

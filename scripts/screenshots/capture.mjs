@@ -142,6 +142,7 @@ const createCapture = (outDir) => {
 	fs.mkdirSync(outDir, { recursive: true });
 
 	const save = async (page, name, options) => {
+		await page.evaluate(() => { return document.fonts.ready; });
 		await page.screenshot({ path: path.join(outDir, `${name}.png`), ...options });
 		written.add(`${name}.png`);
 		console.log(`  ${path.basename(outDir)}/${name}.png`);

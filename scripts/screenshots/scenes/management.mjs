@@ -82,6 +82,7 @@ const POOL_INTEGRITY = '#storage .details .detail-facts > .list-group > .list-gr
 const POOL_TOPOLOGY = '#storage .details .detail-main > .overflow-y-scroll > .list-group > .list-group-item';
 const VDEV_DETAILS = '#storage .details [id^="vdev-details-"].show';
 const EXPAND_BUTTON = '#storage .details u-button[data-bs-target="#pool-expand"]';
+const REPLACE_BUTTON = '#storage .details [data-bs-target="#pool-drive-replace"]';
 const SNAPSHOT_COUNT = 142;
 const POOL_CARD_PADDING = { top: 0, right: PADDING, bottom: 8, left: 8 };
 
@@ -1150,6 +1151,24 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(degraded, [POOL_TOPOLOGY], 'storage-degraded-topology', POOL_CARD_PADDING);
 		await closePage(degraded);
+
+		backend.setState(storageNode(backend, { missingDrive: 'nvme0n1' }));
+		const noticing = await storagePage(browser, backend, viewport);
+		await open(noticing, backend.url, '/', DRIVES_BADGE);
+		await noticing.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(noticing, [MENU_ITEM], 'storage-menu-warning', PADDING);
+		await capture.region(noticing, [DATA_COLUMN], 'storage-dashboard-degraded', TIGHT_PADDING);
+		await closePage(noticing);
+
+		backend.setState(storageNode(backend, { missingDrive: 'nvme0n1', spareCount: 2 }));
+		const replacing = await storagePage(browser, backend, viewport);
+		await open(replacing, backend.url, '/storage/messier', STORAGE_POOL);
+		await replacing.click('#storage .details [data-pool-tab="topology"]');
+		await sleep(SETTLE_MS);
+		await openModal(replacing, REPLACE_BUTTON, '#pool-drive-replace');
+		await capture.region(replacing, ['#pool-drive-replace'], 'storage-drive-replace', PADDING);
+		await closePage(replacing);
 
 		backend.setState(storageNode(backend, { replacedDrive: 'nvme0n1', scrub: 'resilver' }));
 		const resilvering = await storagePage(browser, backend, viewport);

@@ -2,7 +2,7 @@
 title: Topology
 description: A map of how the node is reached, which apps need a login, what it shares, which other nodes are around and how much traffic flows, from the Topology page.
 sidebar:
-  order: 14
+  order: 15
 ---
 
 **Topology** draws what can reach what on the node, on one page: how traffic gets in, which apps need a login and which are open, what is shared on your local network, which other nodes are around and whether each app is running. The other pages each show one part of this. Here it comes together, so you can check what is exposed at a glance or show it to someone else, such as an auditor.

@@ -13,4 +13,4 @@ When drives that are not part of the [storage pool](/management/system/storage/)
 
 The new drives are added in groups laid out like the pool's own, here a mirror of two drives. The pool's current groups are at the top and the new ones below them. A drive that does not fill a whole group is shown under **Unused** and stays out of the pool. The bar shows the capacity now, what the new groups add, and the capacity after.
 
-Everything on the new drives is erased. Select **Expand** to add them; a notification shows when the pool has grown.
+Select **Expand**. A confirmation names the drives that will be erased; tick **I understand and want to proceed** and select **Expand** again. A notification shows when the pool has grown.
