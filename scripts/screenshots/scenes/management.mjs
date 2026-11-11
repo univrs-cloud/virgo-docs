@@ -1245,6 +1245,10 @@ const pages = {
 
 		backend.setState({ ...managedNode(backend), updates: updates.available() });
 		await open(page, backend.url, '/system-updates', UPDATES_PAGE);
+		await page.click('#system-updates [data-bs-target="#changelog-virgo-api"]');
+		await page.waitForSelector('#changelog-virgo-api.show', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
 		await capture.viewport(page, 'updates-available');
 
 		await open(page, backend.url, '/', 'header a[href="/system-updates"] u-badge');

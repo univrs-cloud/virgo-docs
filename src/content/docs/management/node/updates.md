@@ -27,6 +27,8 @@ The Updates page lists each update with the version installed now and the versio
 
 ![4 updates available](../../../../assets/management/updates-available.png)
 
+Select an update to read its changelog, the list of changes since the version installed now. **Show changelogs** opens every changelog at once.
+
 Select **Install** to install all of them. **Install** is not available while the node is checking for updates or while an app is being updated.
 
 ## While an update runs
