@@ -21,7 +21,11 @@ Setup shows its progress, and any errors, as notifications. If a step fails, you
 
 ## Steps
 
-1. [Licence agreement](/setup/licence/)
+![The welcome screen](../../../assets/setup/welcome.png)
+
+Setup opens on a welcome screen. Select **Start** to begin with the first step.
+
+1. [End user license agreement](/setup/licence/)
 2. [Network interface](/setup/interface/)
 3. [Network host](/setup/host/)
 4. [Port forwarding](/setup/ports/)

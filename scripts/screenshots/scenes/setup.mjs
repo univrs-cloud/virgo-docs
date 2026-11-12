@@ -70,11 +70,19 @@ const openFinish = async (page, url) => {
 };
 
 const pages = {
+	welcome: async ({ browser, backend, capture, viewport }) => {
+		backend.setState(nodeState(backend.getTopologies));
+		const page = await newPage(browser, viewport);
+		await openStep(page, backend.url, '/', 'welcome');
+		await page.waitForSelector('#welcome [data-action="start"]:not(.invisible)');
+		await capture.step(page, 'welcome', 'welcome', PADDING);
+		await closePage(page);
+	},
 	licence: async ({ browser, backend, capture, viewport }) => {
 		backend.setState(nodeState(backend.getTopologies));
 		const page = await newPage(browser, { ...viewport, height: 960 });
-		await openStep(page, backend.url, '/', 'welcome');
-		await capture.step(page, 'welcome', 'welcome', PADDING);
+		await openStep(page, backend.url, '/eula', 'eula');
+		await capture.step(page, 'eula', 'eula', PADDING);
 		await closePage(page);
 	},
 	interface: async ({ browser, backend, capture, viewport }) => {
