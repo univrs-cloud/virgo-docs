@@ -109,7 +109,7 @@ const WARM_TEMPERATURE = 86;
 const WARNING_DRIVE = 'nvme0n1';
 const WARNING_HEALTH = { status: 'warning', problems: [], message: 'Available spare below threshold' };
 const FLUSH_TOP_PADDING = { top: 0, right: TIGHT_PADDING, bottom: TIGHT_PADDING, left: TIGHT_PADDING };
-const REORDER_GROUP = '#apps-shortcuts .group:nth-child(2)';
+const REORDER_GROUP = '#apps-shortcuts .group:nth-child(4)';
 
 const DRAG_IMAGE_OFFSET = { x: 90, y: 34 };
 const windowToggle = (label) => { return `#apps-shortcuts .open-window[data-label="${label}"]`; };
