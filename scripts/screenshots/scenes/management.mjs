@@ -232,6 +232,7 @@ const DETAILS_TAB_PADDING = { top: 16, right: PADDING, bottom: PADDING, left: PA
 const detailsTab = (details) => { return [`${details} .card-image-row`, `${details} .nav`, `${details} .table-scroll > div:not(.d-none) .list-group-item`]; };
 
 const FOLDER_SNAPSHOTS_TAB = '#folders .details [data-folder-tab="snapshots"]';
+const FOLDER_ROLLBACK_BUTTON = '#folders .details [data-rollback-snapshot]';
 const FOLDER_SNAPSHOT_SEARCH = '#folders .details .snapshot-search';
 const FOLDER_SNAPSHOT_SEARCH_PANE = '#folders .details .snapshot-pane:has(.snapshot-search)';
 const FOLDER_SNAPSHOT_RESULTS = '#folders .details .snapshot-pane:has(.snapshot-search-clear) > .table-scroll';
@@ -573,6 +574,7 @@ const pages = {
 		await page.waitForSelector('dialog.dialog[open]:not(.hiding)', { visible: true });
 		await sleep(SETTLE_MS);
 		await capture.region(page, ['dialog.dialog[open]'], 'app-rollback-confirm', PADDING);
+		await page.click('dialog.dialog[open] .dialog-body .check');
 		await page.click('dialog.dialog[open] .dialog-footer button[data-index="0"]');
 		await page.waitForSelector('dialog.dialog[open]', { hidden: true });
 
@@ -843,6 +845,26 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(ownPage, [SNAPSHOT_RESTORE], 'folder-snapshots-restore', PADDING);
 		await closePage(ownPage);
+
+		const rollbackPage = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(rollbackPage, apps.SNAPSHOT_CLOCK);
+		await open(rollbackPage, backend.url, `/folders/${documents.name}`, FOLDER_DETAILS);
+		await rollbackPage.click(FOLDER_SNAPSHOTS_TAB);
+		await rollbackPage.waitForSelector(FOLDER_ROLLBACK_BUTTON, { visible: true });
+		await rollbackPage.click(FOLDER_ROLLBACK_BUTTON);
+		await rollbackPage.waitForSelector('dialog.dialog[open]:not(.hiding)', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(rollbackPage, ['dialog.dialog[open]'], 'folder-rollback-confirm', PADDING);
+		await rollbackPage.click('dialog.dialog[open] .dialog-body .check');
+		await rollbackPage.click('dialog.dialog[open] .dialog-footer button[data-index="0"]');
+		await rollbackPage.waitForSelector('dialog.dialog[open]', { hidden: true });
+
+		backend.broadcast('/job', 'job', shares.rollingBackJob(documents));
+		await rollbackPage.waitForSelector('#folders .details .snapshot-points .icon-spin', { visible: true });
+		await rollbackPage.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(rollbackPage, 'folder-rollback-progress');
+		await closePage(rollbackPage);
 
 		const share = folders.find((folder) => { return folder.path.endsWith(shares.NEXTCLOUD_SHARE_ROOT); });
 		const sharePage = await signedInPage(browser, backend, viewport, users.owner());

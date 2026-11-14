@@ -58,4 +58,4 @@ The files in a folder's restore points can be searched, browsed and restored, an
 
 The node catalogues the files in the folders' snapshots by itself, every hour at ten past. Searching, and what **Browse files** says about changes, both rely on that catalogue, so a new share shows them after its first run, and the newest changes show up after the next one.
 
-A folder does not roll back. To put all of Nextcloud back, see [Rolling back](/management/resources/apps/snapshots/rollback/).
+To put a whole folder back as it was at a restore point, see [Rolling back](/management/resources/folders/snapshots/rollback/).

@@ -207,6 +207,10 @@ const folderRestoreFolders = () => {
 	return { '': ['Contracts', 'Invoices', 'Templates'].map((name) => { return { name, path: `/${name}` }; }) };
 };
 
+const rollingBackJob = (folder) => {
+	return { id: `job-rollback-${folder.name}`, name: 'share:rollback', opts: {}, data: { config: { name: folder.name } }, progress: { state: 'active', message: `Rolling back folder ${folder.comment}...`, progress: {} } };
+};
+
 const clients = () => {
 	return CLIENTS.map(({ username, address, shares, activeShares, rx, tx }, index) => {
 		return { id: String(index + 1), username, address, shares, activeShares, rx: rx * MIB, tx: tx * MIB };
@@ -230,5 +234,6 @@ export {
 	customPaths,
 	backupDisks,
 	folderSnapshots,
+	rollingBackJob,
 	clients
 };
