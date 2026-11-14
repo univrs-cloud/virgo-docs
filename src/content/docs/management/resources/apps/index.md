@@ -77,7 +77,7 @@ Select an app to open its details. **Services** shows the app's containers, and 
 
 ![Nextcloud's details](../../../../../assets/management/app-details.png)
 
-Each container is listed with its image, the folders it mounts, its network addresses and ports, and how much CPU, RAM and network it uses. The dot on its icon is green while it runs. Hover over a badge for more, such as where each folder is mounted from. Each container can be started, restarted, stopped or killed on its own, with the buttons at the end of its row.
+Each container is listed with its image, the folders it mounts, its network addresses and ports, and how much CPU, RAM and network it uses. The dot on its icon is green while it runs, and its name shows how long it has been up since it last started. Hover over a badge for more, such as where each folder is mounted from. Each container can be started, restarted, stopped or killed on its own, with the buttons at the end of its row.
 
 ### Logs
 

@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import * as settings from './settings.mjs';
 
 const CORE_APPS = {
 	wetty: { title: 'Terminal', category: 'Networking', icon: 'terminal.svg', router: 'wetty', host: 'terminal', embed: true },
@@ -99,6 +100,7 @@ const APP_USAGE = {
 };
 
 const SNAPSHOT_CLOCK = Date.UTC(2026, 8, 29, 17, 40);
+const CONTAINER_UPTIME = (((4 * 24 + 6) * 60 + 17) * 60 + 42) * 1000;
 
 const SNAPSHOT_HISTORY = [
 	['2025-11-19_17:30:01_monthly', 724123648],
@@ -307,6 +309,7 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 				names: [`/${name}-${serviceName}-1`],
 				image: expandVariables(service.image),
 				state: 'running',
+				startedAt: new Date(settings.WEATHER_CLOCK - CONTAINER_UPTIME).toISOString(),
 				labels: {
 					comDockerComposeProject: name,
 					comDockerComposeService: serviceName,
