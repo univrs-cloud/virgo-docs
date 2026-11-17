@@ -107,7 +107,7 @@ const folder = ({ comment, users, capacity = APPS_DATASET_SIZE, used, snapshots 
 		comment,
 		path: (path ?? `/messier/folders/${slug(comment)}`),
 		dataset: (path ? null : `messier/folders/${slug(comment)}`),
-		snapshotPolicy: (path ? null : { mode: 'enabled', retention: SNAPSHOT_RETENTION }),
+		snapshotPolicy: (path ? null : { mode: 'enabled', retention: SNAPSHOT_RETENTION, rule: 'production' }),
 		...(users ? { validUsers: users } : {}),
 		size,
 		free: size - alloc,

@@ -6,7 +6,7 @@ sidebar:
   order: 5
 ---
 
-A snapshot is a read-only copy of an app's data as it was at one moment. The node takes them by itself and removes old ones, following the pool's [snapshot schedule](/management/system/storage/#usage). A snapshot only takes up space for what has changed since it was taken, so keeping many of them costs little.
+A snapshot is a read-only copy of an app's data as it was at one moment. The node takes them by itself and removes old ones, following the app's [snapshot rule](/management/resources/snapshot-rules/). A snapshot only takes up space for what has changed since it was taken, so keeping many of them costs little.
 
 In an app's details, **Protection** says how its snapshots are taken and **Recovery** holds its restore points.
 
@@ -18,7 +18,7 @@ In an app's details, **Protection** says how its snapshots are taken and **Recov
 
 - **Pause:** stop taking new snapshots. The ones already taken are kept.
 - **Disable:** stop taking snapshots and delete the ones already taken, after you confirm.
-- **Resume** or **Enable:** take snapshots again.
+- **Resume** or **Enable:** take snapshots again. When there is more than one [snapshot rule](/management/resources/snapshot-rules/), **Enable** first asks which one to follow.
 
 :::caution
 Disabling snapshots permanently deletes every snapshot of the app. Without them, its data cannot be recovered after an accidental deletion, a corruption or a failed update. To keep the existing snapshots, pause them instead.
@@ -27,6 +27,12 @@ Disabling snapshots permanently deletes every snapshot of the app. Without them,
 The dot on the **Protection** tab shows the same state: green for enabled, orange for paused and grey for disabled.
 
 For some apps the buttons are greyed out, and the line under the state says why. Nextcloud's snapshots, for example, cannot be paused or disabled, because searching and restoring its files relies on them.
+
+## Rule
+
+Under **Rule**, **Protection** shows the [snapshot rule](/management/resources/snapshot-rules/) the app follows: when its snapshots are taken and how many of each kind are kept. Select the rule's name to choose another one, or **Manage rules** to open **Snapshot rules**. An app without a rule of its own follows the default rule.
+
+A paused app keeps its rule, and follows it again when resumed. A disabled app has no rule.
 
 ## Restore points
 

@@ -52,7 +52,7 @@ Select **New folder**, then enter:
 - **Name:** what the folder is called.
 - **Authorized users:** the users who can reach it. Leave them all unchecked for **Guest**, open access for anyone on your local network.
 - **Capacity:** how much space the folder can take up, in GiB. Only for a new share.
-- **Take snapshots:** keep [snapshots](/management/resources/folders/snapshots/) of the folder's files. Only for a new share.
+- **Take snapshots:** keep [snapshots](/management/resources/folders/snapshots/) of the folder's files, following the [snapshot rule](/management/resources/snapshot-rules/) chosen under **Rule**. Only for a new share.
 
 ![Adding a folder](../../../../../assets/management/folder-create.png)
 

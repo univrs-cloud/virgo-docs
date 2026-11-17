@@ -105,6 +105,7 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.emit('host:storage', state.storage);
 		socket.emit('host:storage:importable', state.importable);
 		socket.emit('host:storage:snapshots', state.snapshots ?? {});
+		socket.emit('host:snapshotRules', state.snapshotRules ?? []);
 		socket.emit('host:certificate', state.certificate);
 		socket.emit('host:updates', state.updates);
 		socket.emit('host:cpu:sensors', state.cpuSensors);

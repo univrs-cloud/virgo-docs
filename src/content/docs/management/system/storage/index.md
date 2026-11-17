@@ -45,7 +45,7 @@ The node scrubs the pool by itself on the second Sunday of every month, shortly 
 
 **Capacity**, **Used** and **Free** are the pool's space. **Space saved** shows how much space compression saves, and how much smaller the data is on disk than it really is.
 
-The bar splits the used space into your **Data** and the **Snapshots**. Snapshots are the pool's automatic history of apps, their data and folders. The node keeps one for each of the last 36 hours, 30 days, 60 months and 5 years, and removes older ones by itself. They take space only for what has changed since they were made.
+The bar splits the used space into your **Data** and the **Snapshots**. Snapshots are the pool's automatic history of apps, their data and folders. How often the node takes them and how many it keeps is set by the [snapshot rules](/management/resources/snapshot-rules/), and it removes older ones by itself. They take space only for what has changed since they were made.
 
 ### Topology
 

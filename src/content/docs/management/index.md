@@ -50,6 +50,7 @@ The choice is remembered in this browser. A node opened [through your fleet](/ma
       - [Restoring files](/management/resources/apps/snapshots/restore/): putting one file or a whole selection back into Nextcloud.
   - [Shortcuts](/management/resources/shortcuts/): links on the Dashboard to devices and websites, optionally reached through the node.
   - [Folders](/management/resources/folders/): shared folders for the computers on your local network.
+  - [Snapshot rules](/management/resources/snapshot-rules/): how often apps and folders are snapshotted, how many snapshots are kept, and on which days and hours.
   - [Time capsule](/management/resources/time-capsule/): backup disks for the Time Machine app on Macs.
 - System
   - [Storage](/management/system/storage/): the storage pool, its health, data integrity, usage and drives.

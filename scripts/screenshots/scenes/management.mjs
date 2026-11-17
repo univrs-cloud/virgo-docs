@@ -7,6 +7,7 @@ import * as serviceData from '../data/services.mjs';
 import * as settings from '../data/settings.mjs';
 import * as shares from '../data/shares.mjs';
 import * as shortcuts from '../data/shortcuts.mjs';
+import * as snapshotRules from '../data/snapshot_rules.mjs';
 import * as updates from '../data/updates.mjs';
 import * as users from '../data/users.mjs';
 
@@ -223,6 +224,9 @@ const openShortcutCreate = async (browser, backend, viewport) => {
 	await openModal(page, '#shortcuts a[href="#shortcut-create"]', '#shortcut-create');
 	return page;
 };
+
+const SNAPSHOT_RULES_PAGE = '#snapshot-rules .container-fluid:not(.d-none)';
+const snapshotRuleRow = (name) => { return `#snapshot-rules tr[data-name="${name}"]`; };
 
 const FOLDERS_PAGE = '#folders .container-fluid:not(.d-none)';
 const FOLDER_CREATE_READY = '#folder-create .content:not(.d-none)';
@@ -782,6 +786,21 @@ const pages = {
 		await capture.region(dashboard, ['#apps-shortcuts'], 'shortcuts-dashboard', { ...DASHBOARD_GROUP_PADDING, bottom: 0 });
 		await closePage(dashboard);
 	},
+	'snapshot-rules': async ({ browser, backend, capture, viewport }) => {
+		backend.setState(managedNode(backend));
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await open(page, backend.url, '/snapshot-rules', SNAPSHOT_RULES_PAGE);
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'snapshot-rules');
+
+		await openMenu(page, `${snapshotRuleRow(snapshotRules.OFFICE_RULE)} [data-bs-toggle="menu"]`, '#snapshot-rules .menu.show');
+		await openModal(page, '#snapshot-rules .menu.show a[href="#snapshot-rule-update"]', '#snapshot-rule-update');
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['#snapshot-rule-update'], 'snapshot-rule-update', PADDING);
+		await closePage(page);
+	},
 	folders: async ({ browser, backend, capture, viewport }) => {
 		const folders = shares.folders();
 		const [documents] = folders;
@@ -819,6 +838,10 @@ const pages = {
 		await ownPage.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(ownPage, 'folder-snapshots');
+
+		await openMenu(ownPage, `${FOLDER_PROTECTION_PANE} .dropdown [data-bs-toggle="menu"]`, `${FOLDER_PROTECTION_PANE} .menu.show`);
+		await capture.region(ownPage, [FOLDER_PROTECTION_PANE, `${FOLDER_PROTECTION_PANE} .menu.show`], 'folder-snapshot-rule', PADDING);
+		await ownPage.keyboard.press('Escape');
 
 		await ownPage.click(FOLDER_RECOVERY_TAB);
 		await ownPage.waitForSelector('#folders .details .snapshot-timeline', { visible: true });

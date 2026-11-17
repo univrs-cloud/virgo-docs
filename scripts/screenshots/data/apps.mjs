@@ -299,7 +299,7 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 		const host = (prefix ? `${prefix}${(Object.hasOwn(CORE_APPS, name) ? fqdn : domainName)}` : null);
 		const usage = (APP_USAGE[name] ?? APP_USAGE[template.name]);
 		const services = Object.entries(compose.services).filter(([, service]) => { return !isOneShot(service); });
-		configured.push({ id: appIndex + 1, type: 'app', name, title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}`, snapshotPolicy: { mode: 'enabled', retention: SNAPSHOT_RETENTION } });
+		configured.push({ id: appIndex + 1, type: 'app', name, title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}`, snapshotPolicy: { mode: 'enabled', retention: SNAPSHOT_RETENTION, rule: 'production' } });
 		const routed = services.find(([, service]) => { return serviceHasRoute(service); })?.[0];
 		const containerMetrics = services.map(([serviceName, service], serviceIndex) => {
 			const id = `${name}-${serviceName}`;

@@ -6,7 +6,7 @@ sidebar:
   order: 5
 ---
 
-A snapshot is a read-only copy of a folder's files as they were at one moment. The node takes them by itself and removes old ones, following the pool's [snapshot schedule](/management/system/storage/#usage). A snapshot only takes up space for what has changed since it was taken, so keeping many of them costs little.
+A snapshot is a read-only copy of a folder's files as they were at one moment. The node takes them by itself and removes old ones, following the folder's [snapshot rule](/management/resources/snapshot-rules/). A snapshot only takes up space for what has changed since it was taken, so keeping many of them costs little.
 
 In a folder's details, **Protection** says how its snapshots are taken and **Recovery** holds its restore points.
 
@@ -22,13 +22,21 @@ A folder added as a new share has snapshots of its own. The buttons next to the 
 
 - **Pause:** stop taking new snapshots. The ones already taken are kept.
 - **Disable:** stop taking snapshots and delete the ones already taken, after you confirm.
-- **Resume** or **Enable:** take snapshots again.
+- **Resume** or **Enable:** take snapshots again. When there is more than one [snapshot rule](/management/resources/snapshot-rules/), **Enable** first asks which one to follow.
 
 ![The Documents folder's snapshots](../../../../../../assets/management/folder-snapshots.png)
 
 :::caution
 Disabling snapshots permanently deletes every snapshot of the folder. Without them, files that are deleted, overwritten or encrypted by mistake cannot be recovered. To keep the existing snapshots, pause them instead.
 :::
+
+#### Rule
+
+Under **Rule**, **Protection** shows the [snapshot rule](/management/resources/snapshot-rules/) the folder follows: when its snapshots are taken and how many of each kind are kept. Select the rule's name to choose another one, or **Manage rules** to open **Snapshot rules**. A folder without a rule of its own follows the default rule.
+
+![Choosing the Documents folder's rule](../../../../../../assets/management/folder-snapshot-rule.png)
+
+A paused folder keeps its rule, and follows it again when resumed. A disabled folder has no rule.
 
 ### A Nextcloud user's folder
 
