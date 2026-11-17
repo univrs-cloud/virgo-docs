@@ -164,7 +164,7 @@ const appService = (id) => { return `#apps .details .service[data-id="${id}"]`; 
 const APP_FILTER = '#apps .dropdown:has(.filter-menu)';
 const APP_FILTER_MENU = '#apps .filter-menu.show';
 const STOPPED_APP = 'wetty';
-const SNAPSHOTS_TAB = '#apps .details [data-app-tab="snapshots"]';
+const RECOVERY_TAB = '#apps .details [data-app-tab="recovery"]';
 const ROLLBACK_BUTTON = `#apps .details [data-rollback-snapshot$="${apps.ROLLBACK_POINT}"]:not([disabled])`;
 const SNAPSHOT_SEARCH = '#apps .details .snapshot-search';
 const SNAPSHOT_SEARCH_PANE = '#apps .details .snapshot-pane:has(.snapshot-search)';
@@ -231,7 +231,9 @@ const FOLDER_DETAILS = '#folders .details .item';
 const DETAILS_TAB_PADDING = { top: 16, right: PADDING, bottom: PADDING, left: PADDING };
 const detailsTab = (details) => { return [`${details} .card-image-row`, `${details} .nav`, `${details} .table-scroll > div:not(.d-none) .list-group-item`]; };
 
-const FOLDER_SNAPSHOTS_TAB = '#folders .details [data-folder-tab="snapshots"]';
+const FOLDER_PROTECTION_TAB = '#folders .details [data-folder-tab="protection"]';
+const FOLDER_RECOVERY_TAB = '#folders .details [data-folder-tab="recovery"]';
+const FOLDER_PROTECTION_PANE = '#folders .details .detail-main > .table-scroll:not(.detail-pane-off) .list-group-item';
 const FOLDER_ROLLBACK_BUTTON = '#folders .details [data-rollback-snapshot]';
 const FOLDER_SNAPSHOT_SEARCH = '#folders .details .snapshot-search';
 const FOLDER_SNAPSHOT_SEARCH_PANE = '#folders .details .snapshot-pane:has(.snapshot-search)';
@@ -443,7 +445,7 @@ const pages = {
 		await controlClock(page, apps.SNAPSHOT_CLOCK);
 		await open(page, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
 		await waitForImages(page, '#apps .details img');
-		await page.click(SNAPSHOTS_TAB);
+		await page.click(RECOVERY_TAB);
 		await page.waitForSelector('#apps .details .snapshots', { visible: true });
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
@@ -562,7 +564,7 @@ const pages = {
 		await controlClock(page, apps.SNAPSHOT_CLOCK);
 		await open(page, backend.url, `/apps/${apps.ROLLBACK_APP}`, '#apps .details .item');
 		await waitForImages(page, '#apps .details img');
-		await page.click(SNAPSHOTS_TAB);
+		await page.click(RECOVERY_TAB);
 		await page.waitForSelector('#apps .details .snapshots', { visible: true });
 		await page.waitForSelector(ROLLBACK_BUTTON, { visible: true });
 		await page.$eval(ROLLBACK_BUTTON, (element) => { element.scrollIntoView({ block: 'center' }); });
@@ -812,11 +814,14 @@ const pages = {
 		const ownPage = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(ownPage, apps.SNAPSHOT_CLOCK);
 		await open(ownPage, backend.url, `/folders/${documents.name}`, FOLDER_DETAILS);
-		await ownPage.click(FOLDER_SNAPSHOTS_TAB);
-		await ownPage.waitForSelector('#folders .details .snapshot-timeline', { visible: true });
+		await ownPage.click(FOLDER_PROTECTION_TAB);
+		await ownPage.waitForSelector(FOLDER_PROTECTION_PANE, { visible: true });
 		await ownPage.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(ownPage, 'folder-snapshots');
+
+		await ownPage.click(FOLDER_RECOVERY_TAB);
+		await ownPage.waitForSelector('#folders .details .snapshot-timeline', { visible: true });
 
 		await setValue(ownPage, FOLDER_SNAPSHOT_SEARCH, shares.FOLDER_SEARCH_TERM);
 		await ownPage.$eval(FOLDER_SNAPSHOT_SEARCH, (element) => { element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true })); });
@@ -849,7 +854,7 @@ const pages = {
 		const rollbackPage = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(rollbackPage, apps.SNAPSHOT_CLOCK);
 		await open(rollbackPage, backend.url, `/folders/${documents.name}`, FOLDER_DETAILS);
-		await rollbackPage.click(FOLDER_SNAPSHOTS_TAB);
+		await rollbackPage.click(FOLDER_RECOVERY_TAB);
 		await rollbackPage.waitForSelector(FOLDER_ROLLBACK_BUTTON, { visible: true });
 		await rollbackPage.click(FOLDER_ROLLBACK_BUTTON);
 		await rollbackPage.waitForSelector('dialog.dialog[open]:not(.hiding)', { visible: true });
@@ -870,11 +875,14 @@ const pages = {
 		const sharePage = await signedInPage(browser, backend, viewport, users.owner());
 		await controlClock(sharePage, apps.SNAPSHOT_CLOCK);
 		await open(sharePage, backend.url, `/folders/${share.name}`, FOLDER_DETAILS);
-		await sharePage.click(FOLDER_SNAPSHOTS_TAB);
-		await sharePage.waitForSelector('#folders .details .snapshot-timeline', { visible: true });
+		await sharePage.click(FOLDER_PROTECTION_TAB);
+		await sharePage.waitForSelector(FOLDER_PROTECTION_PANE, { visible: true });
 		await sharePage.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(sharePage, 'folder-share-snapshots');
+
+		await sharePage.click(FOLDER_RECOVERY_TAB);
+		await sharePage.waitForSelector('#folders .details .snapshot-timeline', { visible: true });
 
 		await setValue(sharePage, FOLDER_SNAPSHOT_SEARCH, apps.SNAPSHOT_SEARCH_TERM);
 		await sharePage.$eval(FOLDER_SNAPSHOT_SEARCH, (element) => { element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true })); });

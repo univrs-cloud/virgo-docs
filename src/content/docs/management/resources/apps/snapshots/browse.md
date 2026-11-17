@@ -11,7 +11,7 @@ It is the place to start when you know roughly when things were still right: bef
 
 ## Opening a restore point
 
-1. Open Nextcloud's details and select **Snapshots**.
+1. Open Nextcloud's details and select **Recovery**.
 2. Find the restore point on the [timeline](/management/resources/apps/snapshots/#timeline) and select **Browse files** next to it.
 
 The title shows the date you are looking at.

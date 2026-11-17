@@ -8,11 +8,11 @@ sidebar:
 
 A snapshot is a read-only copy of a folder's files as they were at one moment. The node takes them by itself and removes old ones, following the pool's [snapshot schedule](/management/system/storage/#usage). A snapshot only takes up space for what has changed since it was taken, so keeping many of them costs little.
 
-Open a folder's details and select **Snapshots**.
+In a folder's details, **Protection** says how its snapshots are taken and **Recovery** holds its restore points.
 
 ## Snapshotting
 
-The top of the tab says whether the node takes snapshots of the folder, and how many of each kind it keeps. The dot on the **Snapshots** tab and the icon in the list show the same state: green for enabled, orange for paused and grey for disabled.
+**Protection** says whether the node takes snapshots of the folder, and how many of each kind it keeps. The dot on the **Protection** tab and the icon in the list show the same state: green for enabled, orange for paused and grey for disabled.
 
 Where the snapshots come from depends on the folder.
 
@@ -32,7 +32,7 @@ Disabling snapshots permanently deletes every snapshot of the folder. Without th
 
 ### A Nextcloud user's folder
 
-A folder that shares a Nextcloud user's files has Nextcloud's snapshots. The tab shows Nextcloud's state, says it follows Nextcloud, and has no buttons: change it in [Nextcloud's snapshots](/management/resources/apps/snapshots/#snapshotting).
+A folder that shares a Nextcloud user's files has Nextcloud's snapshots. **Protection** shows Nextcloud's state, says it follows Nextcloud, and has no buttons: change it in [Nextcloud's snapshots](/management/resources/apps/snapshots/#snapshotting).
 
 ![The snapshots of Olivia's Nextcloud folder](../../../../../../assets/management/folder-share-snapshots.png)
 
@@ -44,7 +44,7 @@ A folder that shares Downloads has no snapshots.
 
 ## Restore points
 
-Below the state are the folder's restore points, on the same [timeline](/management/resources/apps/snapshots/#timeline) as an app's.
+**Recovery** lists the folder's restore points, on the same [timeline](/management/resources/apps/snapshots/#timeline) as an app's.
 
 ## Getting files back
 

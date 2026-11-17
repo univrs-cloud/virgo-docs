@@ -74,7 +74,7 @@ Select a folder in the list to see it in detail.
 - **Authorized users:** the users who can reach the folder, each with the icons that copy the folder's address for Windows, Apple or Linux. The Apple and Linux addresses include the user's name.
 - **Clients:** the computers that have the folder open right now, with the user, the computer's address and how much data the folder receives from it and sends to it per second.
 
-The **Snapshots** tab shows the folder's [snapshots](/management/resources/folders/snapshots/) and how many it has. Select the arrow in the top left corner to go back to the list.
+**Protection** says how the folder's [snapshots](/management/resources/folders/snapshots/#snapshotting) are taken, and **Recovery** lists its [restore points](/management/resources/folders/snapshots/#restore-points) with how many it has. Select the arrow in the top left corner to go back to the list.
 
 ## Editing or deleting a folder
 

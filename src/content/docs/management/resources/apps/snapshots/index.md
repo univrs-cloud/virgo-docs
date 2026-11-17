@@ -8,13 +8,13 @@ sidebar:
 
 A snapshot is a read-only copy of an app's data as it was at one moment. The node takes them by itself and removes old ones, following the pool's [snapshot schedule](/management/system/storage/#usage). A snapshot only takes up space for what has changed since it was taken, so keeping many of them costs little.
 
-Open an app's details and select **Snapshots**.
+In an app's details, **Protection** says how its snapshots are taken and **Recovery** holds its restore points.
 
 ![Nextcloud's snapshots](../../../../../../assets/management/app-snapshots.png)
 
 ## Snapshotting
 
-The top of the tab says whether the node takes snapshots of this app, and how many of each kind it keeps. The buttons next to it change that:
+**Protection** says whether the node takes snapshots of this app, and how many of each kind it keeps. The buttons next to it change that:
 
 - **Pause:** stop taking new snapshots. The ones already taken are kept.
 - **Disable:** stop taking snapshots and delete the ones already taken, after you confirm.
@@ -24,13 +24,13 @@ The top of the tab says whether the node takes snapshots of this app, and how ma
 Disabling snapshots permanently deletes every snapshot of the app. Without them, its data cannot be recovered after an accidental deletion, a corruption or a failed update. To keep the existing snapshots, pause them instead.
 :::
 
-The dot on the **Snapshots** tab shows the same state: green for enabled, orange for paused and grey for disabled.
+The dot on the **Protection** tab shows the same state: green for enabled, orange for paused and grey for disabled.
 
 For some apps the buttons are greyed out, and the line under the state says why. Nextcloud's snapshots, for example, cannot be paused or disabled, because searching and restoring its files relies on them.
 
 ## Restore points
 
-Snapshots taken at the same moment by different schedules, such as the daily and the monthly one at midnight on the first of the month, are shown together as one restore point.
+**Recovery** lists the app's restore points. Snapshots taken at the same moment by different schedules, such as the daily and the monthly one at midnight on the first of the month, are shown together as one restore point.
 
 Each restore point shows the schedules that keep it: **Frequently**, **Hourly**, **Daily**, **Monthly** or **Yearly**. **Update** marks the snapshot the node takes right before it [updates the app](/management/resources/apps/#updating-an-app). Only the one from the latest update is kept.
 

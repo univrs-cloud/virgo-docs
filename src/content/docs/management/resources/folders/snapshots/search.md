@@ -7,10 +7,10 @@ sidebar:
 
 Search looks through every restore point at once, for earlier and deleted versions of the files in a folder.
 
-Type part of a file's name, or of a folder it is in, into **Search in snapshots** on the folder's **Snapshots** tab and press Enter.
+Type part of a file's name, or of a folder it is in, into **Search in snapshots** on the folder's **Recovery** tab and press Enter.
 
 ![Searching Documents for "budget"](../../../../../../assets/management/folder-snapshots-search.png)
 
-Only the files inside the folder are searched. In a Nextcloud user's folder, the files the user has in their Nextcloud trash, other users' files and the group folders are left out; search Nextcloud's own **Snapshots** to find those.
+Only the files inside the folder are searched. In a Nextcloud user's folder, the files the user has in their Nextcloud trash, other users' files and the group folders are left out; search Nextcloud's own **Recovery** tab to find those.
 
 The results, the filters, **Load more** and **Clear** work as in [Nextcloud's search](/management/resources/apps/snapshots/search/). Each version can be [opened in Browse files](/management/resources/apps/snapshots/search/#opening-a-result-in-browse-files), [downloaded](/management/resources/apps/snapshots/search/#downloading-files-and-folders) or [restored](/management/resources/folders/snapshots/restore/#restoring-one-file).

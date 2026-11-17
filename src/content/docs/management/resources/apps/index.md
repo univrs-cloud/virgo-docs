@@ -73,7 +73,7 @@ Before updating, the node takes a snapshot of the app. If the new version does n
 
 ## An app's details
 
-Select an app to open its details. **Services** shows the app's containers, and **Snapshots** its [snapshots](/management/resources/apps/snapshots/), with how many of each there are.
+Select an app to open its details. **Services** shows the app's containers and **Recovery** its [restore points](/management/resources/apps/snapshots/#restore-points), each with how many there are. **Protection** says how its [snapshots](/management/resources/apps/snapshots/#snapshotting) are taken.
 
 ![Nextcloud's details](../../../../../assets/management/app-details.png)
 

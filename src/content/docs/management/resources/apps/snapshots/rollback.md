@@ -17,7 +17,7 @@ You can roll back to the **Update** restore point, taken right before the app's 
 
 ## Rolling an app back
 
-Open the app's **Snapshots** and select **Roll back** next to the **Update** restore point. Tick **I understand this permanently erases data and this cannot be undone**, then select **Roll back** again.
+Open the app's **Recovery** tab and select **Roll back** next to the **Update** restore point. Tick **I understand this permanently erases data and this cannot be undone**, then select **Roll back** again.
 
 ![Confirming the rollback](../../../../../../assets/management/app-rollback-confirm.png)
 

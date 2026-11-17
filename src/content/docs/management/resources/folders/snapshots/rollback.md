@@ -15,7 +15,7 @@ Only a folder added as a new share can be rolled back. A folder that shares a Ne
 
 ## Rolling a folder back
 
-Open the folder's **Snapshots** and select **Roll back** next to a restore point. Tick **I understand this permanently erases data and this cannot be undone**, then select **Roll back** again.
+Open the folder's **Recovery** tab and select **Roll back** next to a restore point. Tick **I understand this permanently erases data and this cannot be undone**, then select **Roll back** again.
 
 ![Confirming the rollback](../../../../../../assets/management/folder-rollback-confirm.png)
 
