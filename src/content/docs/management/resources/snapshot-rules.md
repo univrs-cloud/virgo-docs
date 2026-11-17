@@ -11,6 +11,12 @@ A snapshot rule decides when the node takes snapshots of an app or a folder and 
 
 The list shows each rule with how long it keeps each kind of snapshot. **Keeps** adds them up: how many snapshots the rule keeps at most, and how far back they reach. **When** shows the days and hours it takes them. Sort the list by name with the arrows in the column header, and use **Search** to find a rule by its name.
 
+## A rule's details
+
+Select a rule to open its details. **Overview** shows what the rule keeps, the days and hours it takes snapshots, and how many of the apps and folders that follow it are active or paused, with their snapshots in total. **Used by** lists each app and folder that follows the rule, whether its snapshots are enabled or paused, how many snapshots it has and when the latest was taken. Select one to open it. Select the arrow in the top left corner to go back to the list.
+
+![A rule's details](../../../../assets/management/snapshot-rule-details.png)
+
 ## Adding a rule
 
 Select **New rule**, give it a **Name**, then check the kinds of snapshots it takes and set how long each is kept, for example hourly ones for 36 hours and daily ones for 30 days. A kind that is not checked is not taken at all, and the snapshots of that kind already taken are removed. The line at the bottom adds them up: how many snapshots the rule keeps at most, and how far back they reach.

@@ -21,7 +21,7 @@ const APPS_DATASET_SIZE = 1260;
 const FOLDERS = [
 	{ comment: 'Documents', users: ['james', 'olivia'], capacity: 500, used: 128, snapshots: 9.6, compression: 1.41 },
 	{ comment: 'Photos', users: ['olivia', 'voyager'], capacity: 300, used: 174, snapshots: 4.2, compression: 1.02 },
-	{ comment: 'Public', users: null, capacity: 100, used: 12, snapshots: 0.8, compression: 1.67 },
+	{ comment: 'Public', users: null, capacity: 100, used: 12, snapshots: 0.8, compression: 1.67, rule: 'Office hours' },
 	{ comment: 'Olivia Nextcloud', users: ['olivia'], path: `${NEXTCLOUD_DATA}/olivia/files`, used: 38 }
 ];
 
@@ -99,7 +99,7 @@ const backupDisk = (now, { comment, user, machine, capacity, used, weeks, days, 
 	};
 };
 
-const folder = ({ comment, users, capacity = APPS_DATASET_SIZE, used, snapshots = 0, compression = 0, path = null }) => {
+const folder = ({ comment, users, capacity = APPS_DATASET_SIZE, used, snapshots = 0, compression = 0, path = null, rule = 'production' }) => {
 	const size = capacity * GIB;
 	const alloc = used * GIB;
 	return {
@@ -107,7 +107,7 @@ const folder = ({ comment, users, capacity = APPS_DATASET_SIZE, used, snapshots 
 		comment,
 		path: (path ?? `/messier/folders/${slug(comment)}`),
 		dataset: (path ? null : `messier/folders/${slug(comment)}`),
-		snapshotPolicy: (path ? null : { mode: 'enabled', retention: SNAPSHOT_RETENTION, rule: 'production' }),
+		snapshotPolicy: (path ? null : { mode: 'enabled', retention: SNAPSHOT_RETENTION, rule }),
 		...(users ? { validUsers: users } : {}),
 		size,
 		free: size - alloc,

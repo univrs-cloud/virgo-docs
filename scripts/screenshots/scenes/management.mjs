@@ -787,12 +787,20 @@ const pages = {
 		await closePage(dashboard);
 	},
 	'snapshot-rules': async ({ browser, backend, capture, viewport }) => {
-		backend.setState(managedNode(backend));
+		backend.setState(managedNode(backend, { shareList: shares.folders() }));
 		const page = await signedInPage(browser, backend, viewport, users.owner());
 		await open(page, backend.url, '/snapshot-rules', SNAPSHOT_RULES_PAGE);
 		await page.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(page, 'snapshot-rules');
+
+		await page.click(snapshotRuleRow(snapshotRules.OFFICE_RULE));
+		await page.waitForSelector('#snapshot-rules .details .item', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'snapshot-rule-details');
+		await page.click('#snapshot-rules .details .compress');
+		await page.waitForSelector('#snapshot-rules .details .item', { hidden: true });
 
 		await openMenu(page, `${snapshotRuleRow(snapshotRules.OFFICE_RULE)} [data-bs-toggle="menu"]`, '#snapshot-rules .menu.show');
 		await openModal(page, '#snapshot-rules .menu.show a[href="#snapshot-rule-update"]', '#snapshot-rule-update');
