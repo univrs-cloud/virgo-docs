@@ -442,6 +442,30 @@ const pages = {
 		await capture.viewport(nextcloudApps, 'app-nextcloud-apps');
 		await closePage(nextcloudApps);
 
+		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] }), nextcloudAccounts: apps.nextcloudAccounts(settings.WEATHER_CLOCK) });
+		const nextcloudAccounts = await appsPage(browser, backend, viewport);
+		await open(nextcloudAccounts, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
+		await waitForImages(nextcloudAccounts, '#apps .details img');
+		await nextcloudAccounts.click('#apps .details [data-app-tab="nextcloud-accounts"]');
+		await nextcloudAccounts.waitForSelector('#apps .details .icon-users-three', { visible: true });
+		await nextcloudAccounts.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(nextcloudAccounts, 'app-nextcloud-accounts');
+		await openModal(nextcloudAccounts, '#apps .details [href="#nextcloud-account-create"]', '#nextcloud-account-create');
+		await capture.region(nextcloudAccounts, ['#nextcloud-account-create'], 'app-nextcloud-account-create', PADDING);
+		await closeModal(nextcloudAccounts, '#nextcloud-account-create');
+		await nextcloudAccounts.evaluate(() => { document.querySelector('#apps .details [href="#nextcloud-account-delete"][data-user="mihai"]').click(); });
+		await nextcloudAccounts.waitForSelector('#nextcloud-account-delete[open]:not(.hiding)', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(nextcloudAccounts, ['#nextcloud-account-delete'], 'app-nextcloud-account-delete', PADDING);
+		await closeModal(nextcloudAccounts, '#nextcloud-account-delete');
+		await nextcloudAccounts.evaluate(() => { document.querySelector('#apps .details [href="#nextcloud-account-update"][data-user="mihai"]').click(); });
+		await nextcloudAccounts.waitForSelector('#nextcloud-account-update[open]:not(.hiding)', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(nextcloudAccounts, ['#nextcloud-account-update'], 'app-nextcloud-account-update', PADDING);
+		await closeModal(nextcloudAccounts, '#nextcloud-account-update');
+		await closePage(nextcloudAccounts);
+
 		const title = 'Nextcloud';
 		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP], updatable: apps.EXAMPLE_APP, jobs: [apps.updatingJob(title)] }));
 		const updating = await appsPage(browser, backend, viewport);

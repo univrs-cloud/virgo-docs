@@ -511,6 +511,25 @@ const updatedJob = (title, name = EXAMPLE_APP) => {
 	return updateJob({ state: 'completed', message: `${title} updated.`, progress: {} }, name);
 };
 
+const nextcloudAccounts = (now) => {
+	const hour = 60 * 60 * 1000;
+	return {
+		isRunning: true,
+		isReadable: true,
+		defaultLimit: 50 * GIB,
+		users: [
+			{ id: 'ana', displayName: 'Ana Popescu', email: 'ana@example.com', enabled: true, groups: ['admin', 'office'], isDefaultLimit: true, limit: 50 * GIB, used: 18.4 * GIB, lastSeen: now - 2 * hour },
+			{ id: 'mihai', displayName: 'Mihai Ionescu', email: 'mihai@example.com', enabled: true, groups: ['office'], isDefaultLimit: false, limit: 100 * GIB, used: 71.2 * GIB, lastSeen: now - 26 * hour },
+			{ id: 'office', displayName: 'Office', email: 'office@example.com', enabled: true, groups: ['office'], isDefaultLimit: false, limit: null, used: 6.3 * GIB, lastSeen: now - 5 * 24 * hour },
+			{ id: 'radu', displayName: 'Radu Dumitru', email: null, enabled: false, groups: [], isDefaultLimit: true, limit: 50 * GIB, used: 0.2 * GIB, lastSeen: null }
+		],
+		groups: [
+			{ id: 'admin', displayName: 'admin', users: ['ana'] },
+			{ id: 'office', displayName: 'Office', users: ['ana', 'mihai', 'office'] }
+		]
+	};
+};
+
 const MAIL_APP = 'mailserver';
 const DKIM_RECORD = 'v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu3Rk8vN2yQe5Lx1mPz7cW4hJ0aT9bF6sK2dG8nR1vXqYpE5oU3iL7wC4zM9tB0jH6eA2kS8fD1gN5rV3xQ7yP4lT9uO0iW6cE2bZ1mK8nJ5hG3aF7dS9qR4tY0vX2wU6pL1oI8kM3jH5gB7cN9zE0rT4yQ6sA2dF8hW1vK3mP5nL7xJ9bG0cR2tY4uI6oE8aS1dF3gH5jK7lZ9xC0vB2nM4qW6eR8tY1uI3oP5aS7dF9gH0jK2lZ4xC6vB8nM1qW3eR5tY7uI9oP0aS2dF4gH6jK8lZ1xC3vB5nM7qW9eR0tY2uI4oP6aS8dF1gH3jK5lZ7xC9vB0nM2qW4eR6tY8uI1oP3aS5dF7gH9jQIDAQAB';
 
@@ -603,6 +622,7 @@ export {
 	windowPage,
 	appSnapshots,
 	nextcloudAppUpdates,
+	nextcloudAccounts,
 	MAIL_APP,
 	mailserver,
 	ROLLBACK_APP,

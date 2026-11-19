@@ -216,6 +216,11 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		if (state.mailserver) {
 			socket.emit('app:mailserver', state.mailserver);
 		}
+		socket.on('app:nextcloud:accounts:fetch', () => {
+			if (state.nextcloudAccounts) {
+				socket.emit('app:nextcloud:accounts', state.nextcloudAccounts);
+			}
+		});
 		socket.on('app:mailserver:fetch', () => {
 			if (state.mailserver) {
 				socket.emit('app:mailserver', state.mailserver);

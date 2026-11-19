@@ -81,9 +81,23 @@ The node checks for them every day at midnight. When one is available, the same 
 
 While Nextcloud itself has an update, the buttons in **Apps** are turned off: select **Update** at the top instead. Its apps are updated first, while Nextcloud is still running, and Nextcloud is updated right after. The spinning gear stays until both are done.
 
+### Nextcloud accounts
+
+Nextcloud keeps its own accounts, separate from the node's users. Open Nextcloud's details and select **Accounts** to see them: each user with their username, email, groups, last login and the space their files take up against their storage limit, marked **(default)** when they use Nextcloud's default limit. Disabled users are marked as such. Select **New account** to add one: give it a username, a name, an email address, any groups, a password and a storage limit, which starts at Nextcloud's default.
+
+![Adding a Nextcloud account](../../../../../assets/management/app-nextcloud-account-create.png)
+
+An account's menu edits its name, email address and storage limit. It also disables the account, so it can no longer log in or sync while its files are kept, and enables it again. To delete an account, select **Delete** in its menu. Under **Transfer ownership to**, pick another account to receive its files, or keep **Do not transfer**. Files that are not transferred are deleted with the account and can then only be recovered from a snapshot, so the dialog asks you to confirm that before **Delete** works. The receiving account needs enough free space under its storage limit. Nextcloud's last administrator can't be disabled or deleted.
+
+![Deleting a Nextcloud account](../../../../../assets/management/app-nextcloud-account-delete.png)
+
+ Select the cross on one of a user's groups to take them out of it, or the plus to add them to another group. The last member of the `admin` group can't be taken out, because Nextcloud needs an administrator. Below the users, **Groups** lists each group with how many members it has. Select **New group** to add one, giving it just a name. A group's menu deletes it: its members keep their accounts and files, but lose what was shared with the group. The `admin` group can't be deleted, and groups are renamed in Nextcloud itself.
+
+![Nextcloud's accounts](../../../../../assets/management/app-nextcloud-accounts.png)
+
 ## An app's details
 
-Select an app to open its details. **Services** shows the app's containers and **Recovery** its [restore points](/management/resources/apps/snapshots/#restore-points), each with how many there are. **Protection** says how its [snapshots](/management/resources/apps/snapshots/#snapshotting) are taken. Nextcloud also has **Apps**, for [its own apps' updates](#updating-nextcloud-apps). MailServer also has **Domains**, **Accounts** and **Blocked IPs**, for [managing its mail](#managing-mailserver).
+Select an app to open its details. **Services** shows the app's containers and **Recovery** its [restore points](/management/resources/apps/snapshots/#restore-points), each with how many there are. **Protection** says how its [snapshots](/management/resources/apps/snapshots/#snapshotting) are taken. Nextcloud also has **Apps**, for [its own apps' updates](#updating-nextcloud-apps), and **Accounts**, for [its users and groups](#nextcloud-accounts). MailServer also has **Domains**, **Accounts** and **Blocked IPs**, for [managing its mail](#managing-mailserver). These extra tabs only appear while the app is running.
 
 ![Nextcloud's details](../../../../../assets/management/app-details.png)
 
@@ -107,7 +121,7 @@ Press **Ctrl+F**, or **⌘F** on a Mac, to find text in the terminal. **Enter** 
 
 ## Managing MailServer
 
-Open MailServer's details to manage the mail it handles. Changes need MailServer to be running; while it is stopped, the tabs only show what is there.
+Open MailServer's details to manage the mail it handles.
 
 ### Domains
 
@@ -125,11 +139,11 @@ Select **DNS records** under a domain to see every record to add to that domain'
 
 ![MailServer's accounts](../../../../../assets/management/app-mail-accounts.png)
 
-Select **New account** to create a mailbox: pick its domain, which starts on MailServer's own domain, then its name, and set its password. The storage limit starts at MailServer's default; keep it, or change it to give the account a limit of its own. Accounts on the default are marked **(default)** in the list. Check **No storage limit** to let it grow without a limit.
+Select **New account** to create a mailbox: pick its domain, which starts on MailServer's own domain, then its name, and set its password. The storage limit starts at MailServer's default; keep it, or change it to give the account a limit of its own. Accounts on the default are marked **(default)** in the list.
 
 ![Adding a mail account](../../../../../assets/management/app-mail-account-create.png)
 
-An account's menu changes its password or storage limit, adds an alias that delivers to it, or removes it. Removing an account permanently deletes all of its mail and its aliases. Select the cross next to an alias to remove it.
+An account's menu changes its password or storage limit, or removes it. Removing an account permanently deletes all of its mail and its aliases. Select **Alias** after an account's aliases to add one that delivers to it, or the cross on an alias to remove it.
 
 ### Blocked IPs
 
