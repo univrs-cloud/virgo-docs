@@ -429,6 +429,19 @@ const pages = {
 
 		await closePage(installed);
 
+		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] }), nextcloudAppUpdates: apps.nextcloudAppUpdates() });
+		const nextcloudApps = await appsPage(browser, backend, viewport);
+		await open(nextcloudApps, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
+		await waitForImages(nextcloudApps, '#apps .details img');
+		await nextcloudApps.click('#apps .details [data-app-tab="nextcloud-apps"]');
+		await nextcloudApps.waitForSelector('#apps .details [data-nextcloud-action="check"]', { visible: true });
+		await nextcloudApps.click('#apps .details [data-nextcloud-changelog="calendar"]');
+		await sleep(SETTLE_MS);
+		await nextcloudApps.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(nextcloudApps, 'app-nextcloud-apps');
+		await closePage(nextcloudApps);
+
 		const title = 'Nextcloud';
 		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP], updatable: apps.EXAMPLE_APP, jobs: [apps.updatingJob(title)] }));
 		const updating = await appsPage(browser, backend, viewport);

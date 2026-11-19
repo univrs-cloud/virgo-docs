@@ -71,9 +71,19 @@ Before updating, the node takes a snapshot of the app. If the new version does n
 
 ![Nextcloud updated](../../../../../assets/management/app-updated.png)
 
+### Updating Nextcloud apps
+
+The apps added inside Nextcloud, such as Calendar or Contacts, have updates of their own. Open Nextcloud's details and select **Apps**: it lists each app with a newer version, from the version it runs to the new one, and the tab counts them. Select **What's new** under an app to read what changed in the new version.
+
+![Nextcloud's app updates](../../../../../assets/management/app-nextcloud-apps.png)
+
+The node checks for them every day at midnight. When one is available, the same green download badge appears next to Nextcloud's name. Select the circular arrows to check now. Select **Update** on an app to update only that one, or **Update all**. A notification follows the update while a spinning gear takes the place of the buttons, and the app leaves the list once it is up to date.
+
+While Nextcloud itself has an update, the buttons in **Apps** are turned off: select **Update** at the top instead. Its apps are updated first, while Nextcloud is still running, and Nextcloud is updated right after. The spinning gear stays until both are done.
+
 ## An app's details
 
-Select an app to open its details. **Services** shows the app's containers and **Recovery** its [restore points](/management/resources/apps/snapshots/#restore-points), each with how many there are. **Protection** says how its [snapshots](/management/resources/apps/snapshots/#snapshotting) are taken.
+Select an app to open its details. **Services** shows the app's containers and **Recovery** its [restore points](/management/resources/apps/snapshots/#restore-points), each with how many there are. **Protection** says how its [snapshots](/management/resources/apps/snapshots/#snapshotting) are taken. Nextcloud also has **Apps**, for [its own apps' updates](#updating-nextcloud-apps).
 
 ![Nextcloud's details](../../../../../assets/management/app-details.png)
 

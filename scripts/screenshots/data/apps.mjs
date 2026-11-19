@@ -511,6 +511,14 @@ const updatedJob = (title, name = EXAMPLE_APP) => {
 	return updateJob({ state: 'completed', message: `${title} updated.`, progress: {} }, name);
 };
 
+const nextcloudAppUpdates = () => {
+	return [
+		{ id: 'calendar', version: '5.0.7', currentVersion: '5.0.6', changelog: '### Bug Fixes\n\n* **attachments:** share picked files by their real path\n* **editor:** keep the time zone when an event is moved\n* **l10n:** update translations' },
+		{ id: 'contacts', version: '7.0.5', currentVersion: '7.0.4', changelog: '### Fixed\n\n* Birthdays of contacts without a year are shown again' },
+		{ id: 'richdocuments', version: '8.6.4', currentVersion: '8.6.3', changelog: null }
+	];
+};
+
 const containerLogs = (now, name = EXAMPLE_APP) => {
 	const id = `${name}-${name}`;
 	const start = now - APP_LOG.length * 7000;
@@ -564,6 +572,7 @@ export {
 	WINDOW_APP,
 	windowPage,
 	appSnapshots,
+	nextcloudAppUpdates,
 	ROLLBACK_APP,
 	ROLLBACK_POINT,
 	rollbackSnapshots,

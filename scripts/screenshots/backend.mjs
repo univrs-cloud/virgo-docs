@@ -210,6 +210,9 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		if (state.imageUpdates) {
 			socket.emit('app:updates', state.imageUpdates);
 		}
+		if (state.nextcloudAppUpdates) {
+			socket.emit('app:nextcloud:updates', state.nextcloudAppUpdates);
+		}
 		socket.on('docker:container:logs:connect', (containerId) => {
 			socket.emit('docker:container:logs:connected');
 			socket.emit('docker:container:logs:output', state.containerLogs?.[containerId] || []);
