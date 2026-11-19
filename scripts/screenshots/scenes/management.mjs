@@ -454,12 +454,12 @@ const pages = {
 		await openModal(nextcloudAccounts, '#apps .details [href="#nextcloud-account-create"]', '#nextcloud-account-create');
 		await capture.region(nextcloudAccounts, ['#nextcloud-account-create'], 'app-nextcloud-account-create', PADDING);
 		await closeModal(nextcloudAccounts, '#nextcloud-account-create');
-		await nextcloudAccounts.evaluate(() => { document.querySelector('#apps .details [href="#nextcloud-account-delete"][data-user="mihai"]').click(); });
+		await nextcloudAccounts.evaluate(() => { document.querySelector('#apps .details [href="#nextcloud-account-delete"][data-user="james"]').click(); });
 		await nextcloudAccounts.waitForSelector('#nextcloud-account-delete[open]:not(.hiding)', { visible: true });
 		await sleep(SETTLE_MS);
 		await capture.region(nextcloudAccounts, ['#nextcloud-account-delete'], 'app-nextcloud-account-delete', PADDING);
 		await closeModal(nextcloudAccounts, '#nextcloud-account-delete');
-		await nextcloudAccounts.evaluate(() => { document.querySelector('#apps .details [data-bs-target="#nextcloud-account-update"][data-user="mihai"]').click(); });
+		await nextcloudAccounts.evaluate(() => { document.querySelector('#apps .details [data-bs-target="#nextcloud-account-update"][data-user="james"]').click(); });
 		await nextcloudAccounts.waitForSelector('#nextcloud-account-update[open]:not(.hiding)', { visible: true });
 		await sleep(SETTLE_MS);
 		await capture.region(nextcloudAccounts, ['#nextcloud-account-update'], 'app-nextcloud-account-update', PADDING);

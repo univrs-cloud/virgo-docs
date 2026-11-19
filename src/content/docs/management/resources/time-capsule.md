@@ -2,7 +2,7 @@
 title: Time capsule
 description: Backup disks on the node for the Time Machine app on Macs.
 sidebar:
-  order: 7
+  order: 6
 ---
 
 On a Mac, the node shows up as a **time capsule**. It holds **backup disks**, the destinations the Time Machine app backs up to. Each backup disk has its own space in the storage pool, with a capacity of its own, and one user who can reach it with their node username and password.

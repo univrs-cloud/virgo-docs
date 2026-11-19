@@ -518,14 +518,14 @@ const nextcloudAccounts = (now) => {
 		isReadable: true,
 		defaultLimit: 50 * GIB,
 		users: [
-			{ id: 'ana', displayName: 'Ana Popescu', email: 'ana@example.com', enabled: true, groups: ['admin', 'office'], isDefaultLimit: true, limit: 50 * GIB, used: 18.4 * GIB, lastSeen: now - 2 * hour },
-			{ id: 'mihai', displayName: 'Mihai Ionescu', email: 'mihai@example.com', enabled: true, groups: ['office'], isDefaultLimit: false, limit: 100 * GIB, used: 71.2 * GIB, lastSeen: now - 26 * hour },
+			{ id: 'olivia', displayName: 'Olivia Bennett', email: 'olivia@example.com', enabled: true, groups: ['admin', 'office'], isDefaultLimit: true, limit: 50 * GIB, used: 18.4 * GIB, lastSeen: now - 2 * hour },
+			{ id: 'james', displayName: 'James Carter', email: 'james@example.com', enabled: true, groups: ['office'], isDefaultLimit: false, limit: 100 * GIB, used: 71.2 * GIB, lastSeen: now - 26 * hour },
 			{ id: 'office', displayName: 'Office', email: 'office@example.com', enabled: true, groups: ['office'], isDefaultLimit: false, limit: null, used: 6.3 * GIB, lastSeen: now - 5 * 24 * hour },
-			{ id: 'radu', displayName: 'Radu Dumitru', email: null, enabled: false, groups: [], isDefaultLimit: true, limit: 50 * GIB, used: 0.2 * GIB, lastSeen: null }
+			{ id: 'lucas', displayName: 'Lucas Meyer', email: null, enabled: false, groups: [], isDefaultLimit: true, limit: 50 * GIB, used: 0.2 * GIB, lastSeen: null }
 		],
 		groups: [
-			{ id: 'admin', displayName: 'admin', users: ['ana'] },
-			{ id: 'office', displayName: 'Office', users: ['ana', 'mihai', 'office'] }
+			{ id: 'admin', displayName: 'admin', users: ['olivia'] },
+			{ id: 'office', displayName: 'Office', users: ['olivia', 'james', 'office'] }
 		]
 	};
 };
@@ -543,14 +543,14 @@ const mailserver = () => {
 			{ name: 'example.org', dkim: null, accounts: 1, aliases: 0 }
 		],
 		accounts: [
-			{ email: 'ana@example.com', quota: 10 * GIB, limit: 10 * GIB, used: 6.2 * GIB },
 			{ email: 'contact@example.org', quota: null, limit: 30 * GIB, used: 0.4 * GIB },
-			{ email: 'mihai@example.com', quota: null, limit: 30 * GIB, used: 1.8 * GIB },
-			{ email: 'office@example.com', quota: 20 * GIB, limit: 20 * GIB, used: 14.6 * GIB }
+			{ email: 'james@example.com', quota: null, limit: 30 * GIB, used: 1.8 * GIB },
+			{ email: 'office@example.com', quota: 20 * GIB, limit: 20 * GIB, used: 14.6 * GIB },
+			{ email: 'olivia@example.com', quota: 10 * GIB, limit: 10 * GIB, used: 6.2 * GIB }
 		],
 		aliases: [
 			{ address: 'billing@example.com', recipients: ['office@example.com'] },
-			{ address: 'hello@example.com', recipients: ['ana@example.com', 'mihai@example.com'] },
+			{ address: 'hello@example.com', recipients: ['olivia@example.com', 'james@example.com'] },
 			{ address: 'support@example.com', recipients: ['helpdesk@example.net'] }
 		],
 		bans: [

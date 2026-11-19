@@ -2,7 +2,7 @@
 title: Snapshot rules
 description: How often the node takes snapshots of apps and folders, how many it keeps, and on which days and hours.
 sidebar:
-  order: 6
+  order: 7
 ---
 
 A snapshot rule decides when the node takes snapshots of an app or a folder and how many of each kind it keeps. You can make as many rules as you need and give each app and folder the one that fits it, in its **Protection** tab.

@@ -129,10 +129,10 @@ const sides = (padding) => {
 	return padding;
 };
 
-const clipAround = (box, padding, viewport, minTop = 0) => {
+const clipAround = (box, padding, viewport) => {
 	const { top, right, bottom, left } = sides(padding);
 	const x = Math.max(0, box.x - left);
-	const y = Math.max(minTop, box.y - top);
+	const y = Math.max(0, box.y - top);
 	const edge = Math.min(viewport.width, box.x + box.width + right);
 	return { x, y, width: edge - x, height: box.y + box.height + bottom - y };
 };
@@ -149,11 +149,6 @@ const createCapture = (outDir) => {
 	};
 
 	return {
-		step: async (page, step, name, padding) => {
-			const box = await unionBox(page, ['main .stepper', `#${step} > div`]);
-			const top = await page.$eval('main', (element) => { return element.getBoundingClientRect().top + parseFloat(getComputedStyle(element).getPropertyValue('--border-width')); });
-			await save(page, name, { clip: clipAround(box, padding, page.viewport(), top), captureBeyondViewport: true });
-		},
 		region: async (page, selectors, name, padding) => {
 			const box = await unionBox(page, selectors);
 			const clip = clipAround(box, padding, page.viewport());

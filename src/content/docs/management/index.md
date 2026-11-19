@@ -44,14 +44,16 @@ The choice is remembered in this browser. A node opened [through your fleet](/ma
 - [UPS](/management/ups/): what the node does during a power cut, and when it shuts itself down.
 - Resources
   - [Apps](/management/resources/apps/): installing apps from the App center and managing them.
+    - [Nextcloud](/management/resources/apps/nextcloud/): updating the apps added inside Nextcloud and managing its accounts and groups.
+    - [MailServer](/management/resources/apps/mailserver/): managing MailServer's domains, mail accounts, aliases and blocked IPs.
     - [Snapshots](/management/resources/apps/snapshots/): an app's restore points, and the ways to get files back from them.
       - [Browsing files](/management/resources/apps/snapshots/browse/): looking inside a restore point, seeing what changed since, and selecting what to get back.
       - [Searching files](/management/resources/apps/snapshots/search/): finding earlier and deleted files across every restore point.
       - [Restoring files](/management/resources/apps/snapshots/restore/): putting one file or a whole selection back into Nextcloud.
   - [Shortcuts](/management/resources/shortcuts/): links on the Dashboard to devices and websites, optionally reached through the node.
   - [Folders](/management/resources/folders/): shared folders for the computers on your local network.
-  - [Snapshot rules](/management/resources/snapshot-rules/): how often apps and folders are snapshotted, how many snapshots are kept, and on which days and hours.
   - [Time capsule](/management/resources/time-capsule/): backup disks for the Time Machine app on Macs.
+  - [Snapshot rules](/management/resources/snapshot-rules/): how often apps and folders are snapshotted, how many snapshots are kept, and on which days and hours.
 - System
   - [Storage](/management/system/storage/): the storage pool, its health, data integrity, usage and drives.
     - [Expanding the pool](/management/system/storage/expand/): growing the pool onto drives that are not part of it yet.

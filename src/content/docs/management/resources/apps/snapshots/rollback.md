@@ -2,7 +2,7 @@
 title: Rolling back
 description: Putting an app back as it was before its latest update, with its data, settings and versions.
 sidebar:
-  order: 9
+  order: 11
 ---
 
 :::danger

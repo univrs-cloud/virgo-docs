@@ -156,6 +156,10 @@ header.header::after {
 	text-transform: capitalize;
 }
 
+.sidebar-content [aria-current='page'] {
+	font-weight: 400;
+}
+
 .expressive-code pre:is([data-language='sh'], [data-language='bash'], [data-language='shell']) .ec-line .code::before {
 	content: '$ ';
 	color: var(--sl-color-gray-3);
@@ -168,7 +172,7 @@ header.header::after {
 	width: 1.1em;
 	height: 1.1em;
 	margin-inline-start: calc(0.5px - 0.55em);
-	margin-inline-end: calc(0.55rem + 0.55em);
+	margin-inline-end: calc(1rem + 0.5px - 0.55em);
 	vertical-align: -0.2em;
 	background: currentColor;
 	mask: var(--univrs-group-icon) center / contain no-repeat;

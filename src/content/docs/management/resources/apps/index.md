@@ -71,33 +71,9 @@ Before updating, the node takes a snapshot of the app. If the new version does n
 
 ![Nextcloud updated](../../../../../assets/management/app-updated.png)
 
-### Updating Nextcloud apps
-
-The apps added inside Nextcloud, such as Calendar or Contacts, have updates of their own. Open Nextcloud's details and select **Apps**: it lists each app with a newer version, from the version it runs to the new one, and the tab counts them. Select **What's new** under an app to read what changed in the new version.
-
-![Nextcloud's app updates](../../../../../assets/management/app-nextcloud-apps.png)
-
-The node checks for them every day at midnight. When one is available, the same green download badge appears next to Nextcloud's name. Select the circular arrows to check now. Select **Update** on an app to update only that one, or **Update all**. A notification follows the update while a spinning gear takes the place of the buttons, and the app leaves the list once it is up to date.
-
-While Nextcloud itself has an update, the buttons in **Apps** are turned off: select **Update** at the top instead. Its apps are updated first, while Nextcloud is still running, and Nextcloud is updated right after. The spinning gear stays until both are done.
-
-### Nextcloud accounts
-
-Nextcloud keeps its own accounts, separate from the node's users. Open Nextcloud's details and select **Accounts** to see them: each user with their username, email, groups, last login and the space their files take up against their storage limit, marked **(default)** when they use Nextcloud's default limit. Locked users are marked as such. Select **New account** to add one: give it a username, a name, an email address, any groups, a password and a storage limit, which starts at Nextcloud's default.
-
-![Adding a Nextcloud account](../../../../../assets/management/app-nextcloud-account-create.png)
-
-The pencil next to an account edits its name, email address and storage limit. Its menu changes its password. It also locks the account, so it can no longer log in or sync while its files are kept, and unlocks it again. To delete an account, select **Delete** in its menu. Under **Transfer ownership to**, pick another account to receive its files, or keep **Do not transfer**. Files that are not transferred are deleted with the account and can then only be recovered from a snapshot, so the dialog asks you to confirm that before **Delete** works. The receiving account needs enough free space under its storage limit. Nextcloud's last administrator can't be locked or deleted.
-
-![Deleting a Nextcloud account](../../../../../assets/management/app-nextcloud-account-delete.png)
-
- Select the cross on one of a user's groups to take them out of it, or the plus to add them to another group. The last member of the `admin` group can't be taken out, because Nextcloud needs an administrator. Below the users, **Groups** lists each group with how many members it has. Select **New group** to add one, giving it just a name. A group's menu deletes it: its members keep their accounts and files, but lose what was shared with the group. The `admin` group can't be deleted, and groups are renamed in Nextcloud itself.
-
-![Nextcloud's accounts](../../../../../assets/management/app-nextcloud-accounts.png)
-
 ## An app's details
 
-Select an app to open its details. **Services** shows the app's containers and **Recovery** its [restore points](/management/resources/apps/snapshots/#restore-points), each with how many there are. **Protection** says how its [snapshots](/management/resources/apps/snapshots/#snapshotting) are taken. Nextcloud also has **Apps**, for [its own apps' updates](#updating-nextcloud-apps), and **Accounts**, for [its users and groups](#nextcloud-accounts). MailServer also has **Domains**, **Accounts** and **Blocked IPs**, for [managing its mail](#managing-mailserver). These extra tabs only appear while the app is running.
+Select an app to open its details. **Services** shows the app's containers and **Recovery** its [restore points](/management/resources/apps/snapshots/#restore-points), each with how many there are. **Protection** says how its [snapshots](/management/resources/apps/snapshots/#snapshotting) are taken. [Nextcloud](/management/resources/apps/nextcloud/) also has **Apps** and **Accounts**, and [MailServer](/management/resources/apps/mailserver/) has **Domains**, **Accounts** and **Blocked IPs**. These extra tabs only appear while the app is running.
 
 ![Nextcloud's details](../../../../../assets/management/app-details.png)
 
@@ -118,35 +94,3 @@ Select **Terminal** on a running container to open a command line inside it. Any
 :::tip
 Press **Ctrl+F**, or **⌘F** on a Mac, to find text in the terminal. **Enter** goes to the next match, **Shift+Enter** to the previous one, and **Esc** closes the search.
 :::
-
-## Managing MailServer
-
-Open MailServer's details to manage the mail it handles.
-
-### Domains
-
-**Domains** lists the domains MailServer receives mail for, with how many accounts and aliases each has. Select **New domain** to add one. Adding a domain creates its DKIM key, which signs the mail sent from it so receiving servers can trust it. Once it is added, a notification stays open until you close it, because mail for the domain only works after its DNS records are in place and the mail ports are forwarded on your router. Select **Show me how** in it for both steps.
-
-![Setting up a new domain](../../../../../assets/management/app-mail-domain-setup.png)
-
-![MailServer's domains](../../../../../assets/management/app-mail-domains.png)
-
-Select **DNS records** under a domain to see every record to add to that domain's DNS, with its type, name and value: where its mail is delivered, which servers may send it, its DKIM key, what to do with mail that fails those checks, and how mail apps find their settings. The domain MailServer runs on also needs its mail host pointed at your public IP address, and your internet provider has to point that address back to the mail host. A domain without a key is marked in orange: select **Create DKIM key** in its menu. **New DKIM key** replaces the key; the old record stops working, so update the DNS right away. **Remove** deletes the domain and its key, once it has no accounts or aliases left.
-
-### Accounts
-
-**Accounts** lists the mailboxes, each with the space its mail takes up and its storage limit, and under each one the aliases that deliver to it. Aliases that forward to addresses outside MailServer are grouped at the end, under **Forwarded elsewhere**.
-
-![MailServer's accounts](../../../../../assets/management/app-mail-accounts.png)
-
-Select **New account** to create a mailbox: pick its domain, which starts on MailServer's own domain, then its name, and set its password. The storage limit starts at MailServer's default; keep it, or change it to give the account a limit of its own. Accounts on the default are marked **(default)** in the list.
-
-![Adding a mail account](../../../../../assets/management/app-mail-account-create.png)
-
-An account's menu changes its password or storage limit, or removes it. Removing an account permanently deletes all of its mail and its aliases. Select **Alias** after an account's aliases to add one that delivers to it, or the cross on an alias to remove it.
-
-### Blocked IPs
-
-MailServer blocks addresses that keep failing to log in. **Blocked IPs** lists them, with why each one was blocked, since when, and until when. Select **Unblock** to let an address back in, or **New blocked IP** to block one yourself.
-
-![MailServer's blocked IPs](../../../../../assets/management/app-mail-blocked.png)
