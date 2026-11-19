@@ -28,12 +28,12 @@ Open a user's menu to manage them:
 
 ![A user's menu](../../../../../assets/management/users-menu.png)
 
-- **Edit:** change the user's name and email address. The owner can also change their role.
+- **Edit:** change the user's name and email address. The owner can also change their role. In a user's details, Edit is the pencil next to the menu.
 - **Change password:** set a new password for the user.
 - **Lock:** stop the user from signing in and from reaching folders and backup disks, without deleting them. **Unlock** gives them access again.
 - **Delete:** remove the user.
 
-Your own account has no menu here; it links to your [profile](/management/system/users/profile/) instead.
+Your own account has no menu here; its details link to your [profile](/management/system/users/profile/) instead.
 
 ## Sessions
 

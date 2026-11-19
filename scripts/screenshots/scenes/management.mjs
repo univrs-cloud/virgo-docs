@@ -459,7 +459,7 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.region(nextcloudAccounts, ['#nextcloud-account-delete'], 'app-nextcloud-account-delete', PADDING);
 		await closeModal(nextcloudAccounts, '#nextcloud-account-delete');
-		await nextcloudAccounts.evaluate(() => { document.querySelector('#apps .details [href="#nextcloud-account-update"][data-user="mihai"]').click(); });
+		await nextcloudAccounts.evaluate(() => { document.querySelector('#apps .details [data-bs-target="#nextcloud-account-update"][data-user="mihai"]').click(); });
 		await nextcloudAccounts.waitForSelector('#nextcloud-account-update[open]:not(.hiding)', { visible: true });
 		await sleep(SETTLE_MS);
 		await capture.region(nextcloudAccounts, ['#nextcloud-account-update'], 'app-nextcloud-account-update', PADDING);

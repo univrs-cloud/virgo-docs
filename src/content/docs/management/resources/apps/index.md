@@ -83,11 +83,11 @@ While Nextcloud itself has an update, the buttons in **Apps** are turned off: se
 
 ### Nextcloud accounts
 
-Nextcloud keeps its own accounts, separate from the node's users. Open Nextcloud's details and select **Accounts** to see them: each user with their username, email, groups, last login and the space their files take up against their storage limit, marked **(default)** when they use Nextcloud's default limit. Disabled users are marked as such. Select **New account** to add one: give it a username, a name, an email address, any groups, a password and a storage limit, which starts at Nextcloud's default.
+Nextcloud keeps its own accounts, separate from the node's users. Open Nextcloud's details and select **Accounts** to see them: each user with their username, email, groups, last login and the space their files take up against their storage limit, marked **(default)** when they use Nextcloud's default limit. Locked users are marked as such. Select **New account** to add one: give it a username, a name, an email address, any groups, a password and a storage limit, which starts at Nextcloud's default.
 
 ![Adding a Nextcloud account](../../../../../assets/management/app-nextcloud-account-create.png)
 
-An account's menu edits its name, email address and storage limit. It also disables the account, so it can no longer log in or sync while its files are kept, and enables it again. To delete an account, select **Delete** in its menu. Under **Transfer ownership to**, pick another account to receive its files, or keep **Do not transfer**. Files that are not transferred are deleted with the account and can then only be recovered from a snapshot, so the dialog asks you to confirm that before **Delete** works. The receiving account needs enough free space under its storage limit. Nextcloud's last administrator can't be disabled or deleted.
+The pencil next to an account edits its name, email address and storage limit. Its menu changes its password. It also locks the account, so it can no longer log in or sync while its files are kept, and unlocks it again. To delete an account, select **Delete** in its menu. Under **Transfer ownership to**, pick another account to receive its files, or keep **Do not transfer**. Files that are not transferred are deleted with the account and can then only be recovered from a snapshot, so the dialog asks you to confirm that before **Delete** works. The receiving account needs enough free space under its storage limit. Nextcloud's last administrator can't be locked or deleted.
 
 ![Deleting a Nextcloud account](../../../../../assets/management/app-nextcloud-account-delete.png)
 

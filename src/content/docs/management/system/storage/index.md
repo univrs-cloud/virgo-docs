@@ -15,7 +15,7 @@ sidebar:
 
 For each, the list shows the capacity, how much of it is used, the result of the last data integrity check, and the health. For the pool, the used bar is split into your data and its snapshots; hover over the percentage to see both.
 
-The node reads its drives and the pool again every minute. To see a change right away, such as a drive you have just fitted, select the reload button next to the page title, or the one in the pool's details.
+The node reads its drives and the pool again every minute. To see a change right away, such as a drive you have just fitted, select **Refresh** next to the page title, or the one in the pool's details.
 
 ## The pool
 

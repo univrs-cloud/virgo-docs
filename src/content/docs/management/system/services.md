@@ -16,7 +16,7 @@ Each row shows:
 - **Automatic startup:** whether it starts when the node starts. **enabled** starts it, **disabled** does not, **static** means it only starts when something else needs it, and **masked** means it is blocked and cannot be started at all.
 - **State:** what it is doing right now, such as **running**, **exited**, **waiting**, **listening** or **failed**.
 
-The list is not live. It is read when the node starts and again after each action you take on this page, so a service that stops, fails or changes its memory use on its own is not shown until you select the reload button next to the page title, or the one in a service's details.
+The list is not live. It is read when the node starts and again after each action you take on this page, so a service that stops, fails or changes its memory use on its own is not shown until you select **Refresh** next to the page title, or the one in a service's details.
 
 ## Finding a service
 

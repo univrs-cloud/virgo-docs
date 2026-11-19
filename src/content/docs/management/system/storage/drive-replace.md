@@ -24,7 +24,7 @@ When the new drive is bigger, the window says when the pool grows: a group only 
 
 ## With no free bay
 
-If every bay is taken, take the old drive out and put the new one in its place. The pool then shows the old drive as missing, as in [When a drive is missing](/management/system/storage/#when-a-drive-is-missing), and the new drive shows up as unused within a minute, or right away with the reload button. Replace the missing drive with it.
+If every bay is taken, take the old drive out and put the new one in its place. The pool then shows the old drive as missing, as in [When a drive is missing](/management/system/storage/#when-a-drive-is-missing), and the new drive shows up as unused within a minute, or right away with **Refresh**. Replace the missing drive with it.
 
 Until the new drive is filled, that group has no redundancy left. With a free bay, the old drive keeps working until the new one is filled, so that is the safer way when you have one.
 
