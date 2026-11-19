@@ -511,6 +511,36 @@ const updatedJob = (title, name = EXAMPLE_APP) => {
 	return updateJob({ state: 'completed', message: `${title} updated.`, progress: {} }, name);
 };
 
+const MAIL_APP = 'mailserver';
+const DKIM_RECORD = 'v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu3Rk8vN2yQe5Lx1mPz7cW4hJ0aT9bF6sK2dG8nR1vXqYpE5oU3iL7wC4zM9tB0jH6eA2kS8fD1gN5rV3xQ7yP4lT9uO0iW6cE2bZ1mK8nJ5hG3aF7dS9qR4tY0vX2wU6pL1oI8kM3jH5gB7cN9zE0rT4yQ6sA2dF8hW1vK3mP5nL7xJ9bG0cR2tY4uI6oE8aS1dF3gH5jK7lZ9xC0vB2nM4qW6eR8tY1uI3oP5aS7dF9gH0jK2lZ4xC6vB8nM1qW3eR5tY7uI9oP0aS2dF4gH6jK8lZ1xC3vB5nM7qW9eR0tY2uI4oP6aS8dF1gH3jK5lZ7xC9vB0nM2qW4eR6tY8uI1oP3aS5dF7gH9jQIDAQAB';
+
+const mailserver = () => {
+	return {
+		isRunning: true,
+		defaultDomain: 'example.com',
+		defaultLimit: 32212 * 1024 * 1024,
+		domains: [
+			{ name: 'example.com', dkim: { selector: 'dms', record: DKIM_RECORD }, accounts: 3, aliases: 3 },
+			{ name: 'example.org', dkim: null, accounts: 1, aliases: 0 }
+		],
+		accounts: [
+			{ email: 'ana@example.com', quota: 10 * GIB, limit: 10 * GIB, used: 6.2 * GIB },
+			{ email: 'contact@example.org', quota: null, limit: 30 * GIB, used: 0.4 * GIB },
+			{ email: 'mihai@example.com', quota: null, limit: 30 * GIB, used: 1.8 * GIB },
+			{ email: 'office@example.com', quota: 20 * GIB, limit: 20 * GIB, used: 14.6 * GIB }
+		],
+		aliases: [
+			{ address: 'billing@example.com', recipients: ['office@example.com'] },
+			{ address: 'hello@example.com', recipients: ['ana@example.com', 'mihai@example.com'] },
+			{ address: 'support@example.com', recipients: ['helpdesk@example.net'] }
+		],
+		bans: [
+			{ ip: '185.220.101.34', jails: ['postfix-sasl'], since: Date.UTC(2026, 8, 29, 16, 12), until: Date.UTC(2026, 9, 6, 16, 12) },
+			{ ip: '45.148.10.92', jails: ['custom'], since: Date.UTC(2026, 8, 27, 9, 30), until: null }
+		]
+	};
+};
+
 const nextcloudAppUpdates = () => {
 	return [
 		{ id: 'calendar', version: '5.0.7', currentVersion: '5.0.6', changelog: '### Bug Fixes\n\n* **attachments:** share picked files by their real path\n* **editor:** keep the time zone when an event is moved\n* **l10n:** update translations' },
@@ -573,6 +603,8 @@ export {
 	windowPage,
 	appSnapshots,
 	nextcloudAppUpdates,
+	MAIL_APP,
+	mailserver,
 	ROLLBACK_APP,
 	ROLLBACK_POINT,
 	rollbackSnapshots,

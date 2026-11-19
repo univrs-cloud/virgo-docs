@@ -573,6 +573,57 @@ const pages = {
 		await capture.region(page, [`${SNAPSHOT_RESTORE}`], 'app-snapshots-restore-folder-new', PADDING);
 		await closePage(page);
 	},
+	mail: async ({ browser, backend, capture, viewport }) => {
+		const mailTab = (tab) => { return `#apps .details [data-app-tab="${tab}"]`; };
+		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.MAIL_APP] }), mailserver: apps.mailserver() });
+		const page = await signedInPage(browser, backend, viewport, users.owner());
+		await controlClock(page, settings.WEATHER_CLOCK);
+		await open(page, backend.url, `/apps/${apps.MAIL_APP}`, '#apps .details .item');
+		await waitForImages(page, '#apps .details img');
+
+		await page.click(mailTab('mail-domains'));
+		await page.waitForSelector('#apps .details [data-mail-dns="example.com"]', { visible: true });
+		await page.click('#apps .details [data-mail-dns="example.com"]');
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'app-mail-domains');
+
+		await openModal(page, '#apps .details [href="#mail-domain-create"]', '#mail-domain-create');
+		await setValue(page, '#mail-domain-create u-input.domain', 'example.net');
+		await page.click('#mail-domain-create .dialog-footer u-button[type="submit"]');
+		await page.waitForSelector('#mail-domain-create[open]', { hidden: true });
+		const withNewDomain = apps.mailserver();
+		withNewDomain.domains.push({ name: 'example.net', dkim: withNewDomain.domains[0].dkim, accounts: 0, aliases: 0 });
+		backend.broadcast('/docker', 'app:mailserver', withNewDomain);
+		backend.broadcast('/job', 'job', { id: 'job-mail-domain', name: 'app:mailserver:domain:add', opts: {}, data: { config: { name: apps.MAIL_APP, domain: 'example.net' } }, progress: { state: 'completed', message: 'example.net added.', progress: {} } });
+		await page.waitForSelector('pierce/u-button[click="setup"]', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'app-mail-domain-added');
+		await page.click('pierce/u-button[click="setup"]');
+		await page.waitForSelector('#mail-domain-setup[open]:not(.hiding)', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(page, ['#mail-domain-setup'], 'app-mail-domain-setup', PADDING);
+		await closeModal(page, '#mail-domain-setup');
+		backend.broadcast('/docker', 'app:mailserver', apps.mailserver());
+
+		await page.click(mailTab('mail-accounts'));
+		await page.waitForSelector('#apps .details [href="#mail-account-create"]', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'app-mail-accounts');
+
+		await openModal(page, '#apps .details [href="#mail-account-create"]', '#mail-account-create');
+		await capture.region(page, ['#mail-account-create'], 'app-mail-account-create', PADDING);
+		await closeModal(page, '#mail-account-create');
+
+		await page.click(mailTab('mail-blocked'));
+		await page.waitForSelector('#apps .details [href="#mail-ban-create"]', { visible: true });
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.viewport(page, 'app-mail-blocked');
+		await closePage(page);
+	},
 	rollback: async ({ browser, backend, capture, viewport }) => {
 		const title = 'Gitea';
 		const node = appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.ROLLBACK_APP] });

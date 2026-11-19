@@ -213,6 +213,14 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		if (state.nextcloudAppUpdates) {
 			socket.emit('app:nextcloud:updates', state.nextcloudAppUpdates);
 		}
+		if (state.mailserver) {
+			socket.emit('app:mailserver', state.mailserver);
+		}
+		socket.on('app:mailserver:fetch', () => {
+			if (state.mailserver) {
+				socket.emit('app:mailserver', state.mailserver);
+			}
+		});
 		socket.on('docker:container:logs:connect', (containerId) => {
 			socket.emit('docker:container:logs:connected');
 			socket.emit('docker:container:logs:output', state.containerLogs?.[containerId] || []);
