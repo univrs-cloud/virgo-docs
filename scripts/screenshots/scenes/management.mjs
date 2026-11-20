@@ -447,7 +447,7 @@ const pages = {
 		await open(nextcloudAccounts, backend.url, `/apps/${apps.EXAMPLE_APP}`, '#apps .details .item');
 		await waitForImages(nextcloudAccounts, '#apps .details img');
 		await nextcloudAccounts.click('#apps .details [data-app-tab="nextcloud-accounts"]');
-		await nextcloudAccounts.waitForSelector('#apps .details .icon-users-three', { visible: true });
+		await nextcloudAccounts.waitForSelector('#apps .details .icon-users', { visible: true });
 		await nextcloudAccounts.mouse.move(0, 0);
 		await sleep(SETTLE_MS);
 		await capture.viewport(nextcloudAccounts, 'app-nextcloud-accounts');
@@ -469,7 +469,7 @@ const pages = {
 		const title = 'Nextcloud';
 		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP], updatable: apps.EXAMPLE_APP, jobs: [apps.updatingJob(title)] }));
 		const updating = await appsPage(browser, backend, viewport);
-		await updating.waitForSelector(`${appRow(apps.EXAMPLE_APP)} .icon-gear`, { visible: true });
+		await updating.waitForSelector(`${appRow(apps.EXAMPLE_APP)} .icon-settings.icon-spin`, { visible: true });
 		await sleep(SETTLE_MS);
 		await capture.viewport(updating, 'app-updating');
 
