@@ -51,7 +51,8 @@ export default defineConfig({
 		starlight({
 			title: 'univrs',
 			logo: {
-				src: './src/assets/univrs.svg'
+				light: './src/assets/univrs-light.svg',
+				dark: './src/assets/univrs-dark.svg'
 			},
 			favicon: '/favicon.ico',
 			customCss: ['./src/styles/univrs.css'],

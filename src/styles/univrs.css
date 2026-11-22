@@ -2,45 +2,45 @@
 ::backdrop {
 	--sl-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, 'Cascadia Mono', 'Roboto Mono', Consolas, monospace;
 
-	--univrs-spectrum: linear-gradient(90deg, #C05C9E, #7A4BA6 45%, #3B4FD4);
+	--univrs-spectrum: linear-gradient(90deg, #C05C9E, #7A4BA6 45%, #4E70C8);
 
-	--sl-color-white: #FFFFFF;
-	--sl-color-gray-1: #E7E7F2;
-	--sl-color-gray-2: #C3C3D8;
-	--sl-color-gray-3: #8C8CA8;
-	--sl-color-gray-4: #5C5C7C;
-	--sl-color-gray-5: #33345C;
-	--sl-color-gray-6: #17183A;
-	--sl-color-black: #0D0E24;
+	--sl-color-white: #F1F2F3;
+	--sl-color-gray-1: #D0D5D9;
+	--sl-color-gray-2: #B1B8BF;
+	--sl-color-gray-3: #909AA2;
+	--sl-color-gray-4: #5D666E;
+	--sl-color-gray-5: #2E2E2E;
+	--sl-color-gray-6: #1E1E1E;
+	--sl-color-black: #111111;
 
-	--sl-color-accent-low: #1E2466;
-	--sl-color-accent: #6E7FF0;
-	--sl-color-accent-high: #C5CCFB;
+	--sl-color-accent-low: #182A5A;
+	--sl-color-accent: #82A7FF;
+	--sl-color-accent-high: #C5D7FF;
 
-	--sl-color-hairline-light: rgba(231, 231, 242, 0.14);
-	--sl-color-hairline: rgba(231, 231, 242, 0.1);
-	--sl-color-hairline-shade: rgba(231, 231, 242, 0.1);
+	--sl-color-hairline-light: rgba(255, 255, 255, 0.1);
+	--sl-color-hairline: rgba(255, 255, 255, 0.071);
+	--sl-color-hairline-shade: rgba(255, 255, 255, 0.071);
 }
 
 :root[data-theme='light'],
 [data-theme='light'] ::backdrop {
-	--sl-color-white: #13131E;
-	--sl-color-gray-1: #26263A;
-	--sl-color-gray-2: #43435A;
-	--sl-color-gray-3: #75758E;
-	--sl-color-gray-4: #9A9AB0;
-	--sl-color-gray-5: #CDCDDA;
-	--sl-color-gray-6: #EFEFF5;
-	--sl-color-gray-7: #F6F6FA;
-	--sl-color-black: #F6F6FA;
+	--sl-color-white: #171A1D;
+	--sl-color-gray-1: #2D3136;
+	--sl-color-gray-2: #444B51;
+	--sl-color-gray-3: #77828C;
+	--sl-color-gray-4: #909AA2;
+	--sl-color-gray-5: #D6D6D6;
+	--sl-color-gray-6: #EAEAEA;
+	--sl-color-gray-7: #F6F6F6;
+	--sl-color-black: #F6F6F6;
 
-	--sl-color-accent-low: #E3E6FA;
-	--sl-color-accent: #3B4FD4;
-	--sl-color-accent-high: #2A3AA8;
+	--sl-color-accent-low: #E2EBFF;
+	--sl-color-accent: #4E70C8;
+	--sl-color-accent-high: #3855A3;
 
-	--sl-color-hairline-light: rgba(19, 19, 30, 0.13);
-	--sl-color-hairline: rgba(19, 19, 30, 0.13);
-	--sl-color-hairline-shade: rgba(19, 19, 30, 0.13);
+	--sl-color-hairline-light: rgba(0, 0, 0, 0.1);
+	--sl-color-hairline: rgba(0, 0, 0, 0.1);
+	--sl-color-hairline-shade: rgba(0, 0, 0, 0.1);
 }
 
 ::selection {
@@ -125,12 +125,12 @@ header.header::after {
 
 .sl-link-button.secondary {
 	background: transparent;
-	border-color: rgba(19, 19, 30, 0.26);
+	border-color: rgba(0, 0, 0, 0.153);
 	color: var(--sl-color-white);
 }
 
 :root:not([data-theme='light']) .sl-link-button.secondary {
-	border-color: rgba(231, 231, 242, 0.26);
+	border-color: rgba(255, 255, 255, 0.172);
 }
 
 .sl-link-button.secondary:hover {
