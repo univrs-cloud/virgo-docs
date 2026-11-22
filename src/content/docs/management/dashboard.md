@@ -74,7 +74,7 @@ A node found on your network that is not part of the cluster has a dashed outlin
 
 ![A node ready to be adopted](../../../assets/management/dashboard-adopt.png)
 
-Adopting it joins it to this node's cluster, where it shares the virtual IP. Each node in the cluster is then reachable at its own name, for example `porrima.virgo.univrs.cloud`, through the same port forwarding.
+Adopting it joins it to this node's cluster, where it shares the virtual IP. Each node in the cluster is then reachable at its own name, for example `porrima.virgo.univrs.cloud`, through the same port forwarding. The cluster's own address, for example `virgo.univrs.cloud`, opens the node that holds the virtual IP.
 
 Only the node holding the virtual IP can adopt another. When **Adopt** is unavailable, hover over it to see why.
 
