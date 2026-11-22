@@ -20,9 +20,11 @@ Narrow the list down with the filter button next to **Search**: **Status** for w
 
 Select **App center**. **Explore** lists the apps you can install, and **Installed** the ones already on the node.
 
+Some apps run on each node, the rest serve the whole cluster. In a cluster, apps that serve the whole cluster are installed on the node that holds the virtual IP; on any other node their **Install** button is disabled, and hovering it says why.
+
 ![The App center](../../../../../assets/management/app-center.png)
 
-Select **Install** on an app. The form describes the app, shows any note that comes with it, such as a port to forward on your router, and asks for the settings it needs. **Domain** is filled in with the node's domain, and the app is reached at its own name under it, for example `nextcloud.virgo.univrs.cloud`.
+Select **Install** on an app. The form describes the app, shows any note that comes with it, such as a port to forward on your router, and asks for the settings it needs. **Domain** is filled in with the node's domain, or with the node's full name for an app that runs on each node, and the app is reached at its own name under it, for example `nextcloud.virgo.univrs.cloud`.
 
 ![Installing Nextcloud](../../../../../assets/management/app-install.png)
 
