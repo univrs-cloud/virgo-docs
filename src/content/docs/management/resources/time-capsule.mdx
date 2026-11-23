@@ -27,13 +27,36 @@ Select **New backup disk**, then enter:
 
 ## Backing up a Mac
 
-1. On the **Time capsule** page, open the backup disk and select the Apple icon next to its authorized user. This copies its address, for example `smb://olivia@192.168.1.10/backup_disk_olivia_macbook_pro`. The address is the [virtual IP](/setup/interface/), the address the node shares with its cluster.
-2. On the Mac, in Finder, press **⌘K**, paste the address and select **Connect**. When asked, enter the authorized user's node username and password.
-3. Open **System Settings**, select **General**, then **Time Machine**. Select **Add Backup Disk**, choose the backup disk and follow the steps.
+Backup disks can only be reached from your local network, never directly from the internet. Away from it, a Mac needs the node's VPN both to back up and to reach its existing backups.
 
-![Copying the address](../../../../assets/management/time-capsule-address.png)
+How you add the backup disk decides where it works. macOS saves a backup disk added in System Settings under its local network name, which does not work over the VPN, and the node cannot change that.
 
-The Mac reaches the node over your local network only, so it backs up while it is on the same network as the node.
+<Tabs>
+<TabItem label="Local only">
+
+For a Mac that stays on the same network as the node.
+
+On the Mac, open **System Settings**, select **General**, then **Time Machine**. Select **Add Backup Disk**, choose the backup disk and enter the authorized user's node username and password.
+
+</TabItem>
+<TabItem label="Local and remote">
+
+For a Mac that also needs its backups away from your network. Adding the backup disk by its address, in Terminal, makes it work both on your network and over the VPN.
+
+1. On the **Time capsule** page, open the backup disk and select the Apple icon next to its authorized user. This copies its address.
+
+   ![Copying the address](../../../../assets/management/time-capsule-address.png)
+
+2. Open **System Settings**, select **Privacy & Security**, then **Full Disk Access**, and turn on **Terminal**.
+3. If the backup disk is already in the Time Machine settings, remove it there. Its backups stay on the node.
+4. On your network or connected to the VPN, run this command with the address you copied, then enter the Mac's password and the authorized user's node password:
+
+   ```sh
+   sudo tmutil setdestination -ap smb://olivia@192.168.1.10/backup_disk_olivia_macbook_pro
+   ```
+
+</TabItem>
+</Tabs>
 
 Locking the authorized user stops the Mac from backing up, because it can no longer connect. Unlocking them lets it back up again.
 
