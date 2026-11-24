@@ -90,7 +90,7 @@ An adopted node has a green dot while it can be seen on your network, and a red 
 
 ### External backup nodes
 
-A node at another location, reached through a VPN, can keep the backups of this node. It never joins the cluster and never takes over the virtual IP. Both nodes have to run the same version, and a node on the same network cannot be added this way: adopt it as a node instead.
+A node at another location, reached through a VPN, can keep the backups of this node. It never joins the cluster and never takes over the virtual IP. Both nodes have to run the same version, and the VPN has to let each node reach the other: the other node takes the backups by connecting to this one. A node on the same network cannot be added this way: adopt it as a node instead.
 
 On this node, select **Adopt** on **External backup node** and enter the other node's IP address.
 
