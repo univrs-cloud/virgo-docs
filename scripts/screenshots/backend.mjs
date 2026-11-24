@@ -100,6 +100,8 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		socket.emit('host:system', state.system);
 		socket.emit('host:discovery', state.discovery);
 		socket.emit('host:peers', state.peers ?? []);
+		socket.emit('host:peers:external', state.externalPeers ?? []);
+		socket.emit('host:peer:requests', state.peerRequests ?? []);
 		socket.emit('host:drives', state.drives);
 		socket.emit('host:storage:topologies', state.topologies);
 		socket.emit('host:storage', state.storage);

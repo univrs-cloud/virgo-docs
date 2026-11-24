@@ -88,6 +88,48 @@ An adopted node has a green dot while it can be seen on your network, and a red 
 - **Take over virtual IP:** when that node holds the virtual IP, move it to this node.
 - **Remove node:** take the node out of the cluster. The virtual IP stays where it is.
 
+### External backup nodes
+
+A node at another location, reached through a VPN, can keep the backups of this node. It never joins the cluster and never takes over the virtual IP. Both nodes have to run the same version, and a node on the same network cannot be added this way: adopt it as a node instead.
+
+On this node, select **Adopt** on **External backup node** and enter the other node's IP address.
+
+![Asking a node at another location to keep the backups](../../../assets/management/dashboard-external.png)
+
+This node then waits for the other node to answer.
+
+![Waiting for the other node to answer](../../../assets/management/dashboard-external-waiting.png)
+
+On the other node, a message asks whether to keep this node's backups. Its administrator has 5 minutes to answer.
+
+![The request on the other node](../../../assets/management/dashboard-external-request.png)
+
+- **Accept:** the other node keeps this node's backups.
+- **Deny:** turn the request down.
+- **Block:** turn the request down and refuse every request from that address from now on. The address is listed under [Blocked addresses](/management/system/network/#blocked-addresses), where the block can be lifted.
+
+When the request is accepted, both nodes confirm it. On the other node:
+
+![The request accepted on the other node](../../../assets/management/dashboard-external-accepted.png)
+
+On this node:
+
+![The other node adopted as an external backup node](../../../assets/management/dashboard-external-adopted.png)
+
+When the request is turned down, or cannot go through, this node shows why.
+
+![The request declined by the other node](../../../assets/management/dashboard-external-declined.png)
+
+When the other node blocks the request, it confirms the block there:
+
+![The request blocked on the other node](../../../assets/management/dashboard-external-blocking.png)
+
+And this node shows that it was blocked:
+
+![This node blocked by the other node](../../../assets/management/dashboard-external-blocked.png)
+
+Once accepted, each node lists the other with an **external** badge. Its menu only has **Remove node**, which stops the backups between the two nodes.
+
 ## Apps and shortcuts
 
 Apps and [shortcuts](/management/resources/shortcuts/) are grouped by category. Select a card to open it.

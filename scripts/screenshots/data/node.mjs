@@ -31,6 +31,7 @@ const nodeState = (getTopologies, { domain = 'univrs', setupCompleted = false, p
 		system: withAbout(network.system(domain, !isStandby), apiVersion),
 		discovery: (isStandby ? network.holdingPeer(domain) : (peer ? network.discoveredPeers(domain, peer === 'adopted') : [])),
 		peers: (peer === 'adopted' ? network.adoptedPeers() : []),
+		externalPeers: (peer === 'adopted' ? network.externalPeers() : []),
 		firewall: network.firewall(hasBans ? now : null),
 		drives: [...(missingDrive ? drives.filter((drive) => { return drive.name !== missingDrive; }) : drives), ...spares],
 		topologies,

@@ -67,7 +67,7 @@ The rules cover the node itself. An app that publishes its own port is not liste
 
 ### Blocked addresses
 
-After repeated failed logins from the same address, the node blocks that address for a while. **Blocked addresses** lists the addresses blocked at the moment, with the service they were trying to log in to in brackets: `sshd` is the remote shell (SSH). The line under it counts every address blocked since the node last started and the failed attempts it is still watching.
+After repeated failed logins from the same address, the node blocks that address for a while. **Blocked addresses** lists the addresses blocked at the moment, with the service they were trying to log in to in brackets: `sshd` is the remote shell (SSH). Addresses blocked from asking to send backups to this node, through [External backup nodes](/management/dashboard/#external-backup-nodes), are listed under `virgo-pairing` and stay blocked until you lift the block. The line under it counts every address blocked since the node last started and the failed attempts it is still watching.
 
 Hover over the **i** next to an address to see when it was blocked and when the block expires. A block is lifted by itself when it expires.
 

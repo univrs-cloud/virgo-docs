@@ -1,6 +1,6 @@
 import { SETTLE_MS, sleep, newPage, closePage, controlClock, open, setValue, followLink, openMenu, openModal, closeModal } from '../capture.mjs';
 import * as apps from '../data/apps.mjs';
-import { DOMAINS, BANNED_ADDRESS, fqdn } from '../data/network.mjs';
+import { DOMAINS, BANNED_ADDRESS, fqdn, peerRequests, externalWaitingJob, externalAdoptedJob, externalDeclinedJob, externalBlockedJob, requestAcceptedJob, requestBlockedJob } from '../data/network.mjs';
 import { nodeState } from '../data/node.mjs';
 import { upsCharging, upsOnBattery, upsMissing, upsUnreachable, upsFailed } from '../data/status.mjs';
 import * as serviceData from '../data/services.mjs';
@@ -102,6 +102,9 @@ const UPS_ROW = '#resources-monitor .ups';
 const UPS_BADGE = `${UPS_ROW} u-badge`;
 const UPS_FAULT = `${UPS_ROW} > div:first-child > span + span`;
 const PEER_LIST = '#peer .node-list';
+const PEER_EXTERNAL = '#peer-external';
+const EXTERNAL_ADDRESS = '10.8.0.2';
+const TOAST = 'u-notifier >>> .toast';
 const STATUS_BAND = ['#resources-monitor .resources-toolbar', '#resources-monitor > .card'];
 const DATA_COLUMN = '#resources-monitor .storage-data';
 const DRIVES_BADGE = `${DATA_COLUMN} a[href="/storage"]`;
@@ -782,7 +785,28 @@ const pages = {
 		const adopting = await signedInPage(browser, backend, viewport, users.owner());
 		await open(adopting, backend.url, '/', '#peer [data-action="adopt"]');
 		await capture.region(adopting, [PEER_LIST], 'dashboard-adopt', TIGHT_PADDING);
+		await openModal(adopting, `#peer [data-bs-target="${PEER_EXTERNAL}"]`, PEER_EXTERNAL);
+		await setValue(adopting, `${PEER_EXTERNAL} .address`, EXTERNAL_ADDRESS);
+		await capture.region(adopting, [PEER_EXTERNAL], 'dashboard-external', PADDING);
 		await closePage(adopting);
+
+		const toasts = [
+			['dashboard-external-waiting', { jobs: [externalWaitingJob()] }],
+			['dashboard-external-request', { peerRequests: peerRequests() }],
+			['dashboard-external-accepted', { jobs: [requestAcceptedJob()] }],
+			['dashboard-external-adopted', { jobs: [externalAdoptedJob()] }],
+			['dashboard-external-declined', { jobs: [externalDeclinedJob()] }],
+			['dashboard-external-blocking', { jobs: [requestBlockedJob()] }],
+			['dashboard-external-blocked', { jobs: [externalBlockedJob()] }]
+		];
+		for (const [name, overrides] of toasts) {
+			backend.setState({ ...dashboardNode('available'), ...overrides });
+			const notified = await signedInPage(browser, backend, viewport, users.owner());
+			await open(notified, backend.url, '/', TOAST);
+			await notified.mouse.move(0, 0);
+			await capture.region(notified, [TOAST], name, TIGHT_PADDING);
+			await closePage(notified);
+		}
 
 		const failing = managedNode(backend);
 		backend.setState({

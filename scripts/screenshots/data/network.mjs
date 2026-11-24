@@ -10,6 +10,8 @@ const fqdn = (domain) => {
 
 const PEER = { name: 'porrima', address: '192.168.1.21' };
 const ADOPTABLE_PEER = { id: 'b6f1c2d4-porrima', ...PEER };
+const EXTERNAL_PEER = { id: '7e3a9d05c1b84f62', name: 'zaniah', address: '10.8.0.2', role: 'recipient' };
+const EXTERNAL_SOURCE_ADDRESS = '10.8.0.1';
 
 const system = (domain, isHolding = true) => {
 	return {
@@ -38,6 +40,42 @@ const holdingPeer = (domain) => {
 
 const adoptedPeers = () => {
 	return [ADOPTABLE_PEER];
+};
+
+const externalPeers = () => {
+	return [EXTERNAL_PEER];
+};
+
+const peerRequests = () => {
+	return [{ id: 'c58e1a47b9d2f063', name: HOSTNAME, address: EXTERNAL_SOURCE_ADDRESS }];
+};
+
+const externalAdoptJob = (progress, failedReason = null) => {
+	return { id: 'job-external-adopt', name: 'host:peer:external:adopt', opts: {}, data: { config: { address: EXTERNAL_PEER.address } }, progress, failedReason };
+};
+
+const externalWaitingJob = () => {
+	return externalAdoptJob({ state: 'active', message: `Waiting for ${EXTERNAL_PEER.address} to accept...`, progress: {} });
+};
+
+const externalAdoptedJob = () => {
+	return externalAdoptJob({ state: 'completed', message: `Adopted ${EXTERNAL_PEER.name} as an external backup node.`, progress: {} });
+};
+
+const externalDeclinedJob = () => {
+	return externalAdoptJob({ state: 'failed', message: '', progress: {} }, `The admin of ${EXTERNAL_PEER.name} declined the request.`);
+};
+
+const externalBlockedJob = () => {
+	return externalAdoptJob({ state: 'failed', message: '', progress: {} }, `The admin of ${EXTERNAL_PEER.name} blocked this node.`);
+};
+
+const requestBlockedJob = () => {
+	return { id: 'job-request-block', name: 'host:peer:request:block', opts: {}, data: { config: { requestId: peerRequests()[0].id } }, progress: { state: 'completed', message: `Blocked ${HOSTNAME} (${EXTERNAL_SOURCE_ADDRESS}).`, progress: {} } };
+};
+
+const requestAcceptedJob = () => {
+	return { id: 'job-request-accept', name: 'host:peer:request:accept', opts: {}, data: { config: { requestId: peerRequests()[0].id } }, progress: { state: 'completed', message: `Accepted ${HOSTNAME}. This node now keeps its backups.`, progress: {} } };
 };
 
 const discoveredPeers = (domain, isAdopted) => {
@@ -110,5 +148,13 @@ export {
 	firewall,
 	holdingPeer,
 	adoptedPeers,
+	externalPeers,
+	peerRequests,
+	externalWaitingJob,
+	externalAdoptedJob,
+	externalDeclinedJob,
+	externalBlockedJob,
+	requestAcceptedJob,
+	requestBlockedJob,
 	discoveredPeers
 };
