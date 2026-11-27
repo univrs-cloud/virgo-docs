@@ -622,8 +622,6 @@ const updatedJob = (title, name = EXAMPLE_APP) => {
 const nextcloudAccounts = (now) => {
 	const hour = 60 * 60 * 1000;
 	return {
-		isRunning: true,
-		isReadable: true,
 		defaultLimit: 50 * GIB,
 		users: [
 			{ id: 'olivia', displayName: 'Olivia Bennett', email: 'olivia@example.com', enabled: true, groups: ['admin', 'office'], isDefaultLimit: true, limit: 50 * GIB, used: 18.4 * GIB, lastSeen: now - 2 * hour },
@@ -643,7 +641,6 @@ const DKIM_RECORD = 'v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCA
 
 const mailserver = () => {
 	return {
-		isRunning: true,
 		defaultDomain: 'example.com',
 		defaultLimit: 32212 * 1024 * 1024,
 		domains: [

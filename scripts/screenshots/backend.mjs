@@ -212,15 +212,16 @@ const startBackend = async ({ uiDir, apiDir, appsDir }) => {
 		if (state.imageUpdates) {
 			socket.emit('app:updates', state.imageUpdates);
 		}
-		if (state.nextcloudAppUpdates) {
-			socket.emit('app:nextcloud:updates', state.nextcloudAppUpdates);
+		const nextcloud = { appUpdates: state.nextcloudAppUpdates, accounts: state.nextcloudAccounts };
+		if (state.nextcloudAppUpdates || state.nextcloudAccounts) {
+			socket.emit('app:nextcloud', nextcloud);
 		}
 		if (state.mailserver) {
 			socket.emit('app:mailserver', state.mailserver);
 		}
 		socket.on('app:nextcloud:accounts:fetch', () => {
 			if (state.nextcloudAccounts) {
-				socket.emit('app:nextcloud:accounts', state.nextcloudAccounts);
+				socket.emit('app:nextcloud', nextcloud);
 			}
 		});
 		socket.on('app:mailserver:fetch', () => {
