@@ -205,6 +205,67 @@ const openAppCenter = async (page) => {
 	await waitForImages(page, '#app-center #app-center-explore img');
 };
 
+const CUSTOM_APP_FORM = '#app-custom-create';
+const CUSTOM_APP_ICON = `https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/${apps.CUSTOM_ICON}.svg`;
+const EDITABLE_APP = 'gitea';
+
+const customAppNode = (backend, { names = apps.CORE_APP_NAMES, domain = 'univrs', isInstalled = true } = {}) => {
+	const node = appsNode(backend, { names, domain });
+	if (!isInstalled) {
+		return node;
+	}
+
+	const custom = apps.customApp({ domainName: DOMAINS[domain], appIndex: names.length });
+	return {
+		...node,
+		configured: [...node.configured, custom.configured],
+		containers: [...node.containers, ...custom.containers],
+		appsResourceMetrics: [...node.appsResourceMetrics, custom.metrics],
+		snapshots: { ...node.snapshots, ...apps.appSnapshots(apps.CUSTOM_APP) }
+	};
+};
+
+const checkBox = async (page, selector, isChecked) => {
+	await page.$eval(selector, (element, isChecked) => {
+		element.checked = isChecked;
+		element.dispatchEvent(new CustomEvent('checked-changed', { bubbles: true, composed: true }));
+	}, isChecked);
+	await sleep(SETTLE_MS);
+};
+
+const fillCustomService = async (page, index, service) => {
+	const scope = `${CUSTOM_APP_FORM} .service:nth-child(${index + 1})`;
+	await setValue(page, `${scope} .service-name`, service.name);
+	await setValue(page, `${scope} .service-image`, service.image);
+	await checkBox(page, `${scope} .service-internal`, service.network !== 'public');
+	await checkBox(page, `${scope} .service-public`, service.network !== 'internal');
+	if (service.network !== 'internal') {
+		await setValue(page, `${scope} .service-domain`, service.domain);
+		await setValue(page, `${scope} .service-port`, service.port);
+		await checkBox(page, `${scope} .service-private`, service.isPrivate);
+	}
+	for (const [volumeIndex, volume] of service.volumes.entries()) {
+		await clickInForm(page, `${scope} .add-volume`);
+		await setValue(page, `${scope} .volume:nth-child(${volumeIndex + 1}) .volume-source`, volume.source);
+		await setValue(page, `${scope} .volume:nth-child(${volumeIndex + 1}) .volume-target`, volume.target);
+	}
+	for (const [variableIndex, variable] of service.variables.entries()) {
+		await clickInForm(page, `${scope} .add-variable`);
+		await setValue(page, `${scope} .variable:nth-child(${variableIndex + 1}) .variable-name`, variable.name);
+		await setValue(page, `${scope} .variable:nth-child(${variableIndex + 1}) .variable-value`, variable.value);
+	}
+};
+
+const clickInForm = async (page, selector) => {
+	await page.$eval(selector, (element) => { element.click(); });
+	await sleep(SETTLE_MS);
+};
+
+const scrollCustomForm = async (page, position) => {
+	await page.$eval(`${CUSTOM_APP_FORM} .dialog-body`, (body, position) => { body.scrollTop = (position === 'bottom' ? body.scrollHeight : 0); }, position);
+	await sleep(SETTLE_MS);
+};
+
 const SHORTCUTS_PAGE = '#shortcuts .container-fluid:not(.d-none)';
 const ICON_POPOVER = '#shortcut-create .shortcut-icon-box .popover';
 const shortcutRow = (shortcut) => { return `#shortcuts tr[data-name="${shortcut.name}"]`; };
@@ -482,6 +543,46 @@ const pages = {
 		await sleep(SETTLE_MS);
 		await capture.viewport(updating, 'app-updated');
 		await closePage(updating);
+	},
+	'custom-apps': async ({ browser, backend, capture, viewport }) => {
+		const config = apps.customAppConfig(DOMAINS.univrs);
+		backend.setState(customAppNode(backend, { isInstalled: false }));
+		const page = await appsPage(browser, backend, viewport);
+		await openModal(page, '#apps a[href="#app-custom-create"]', CUSTOM_APP_FORM);
+		await setValue(page, `${CUSTOM_APP_FORM} .app-name`, config.name);
+		await page.$eval(`${CUSTOM_APP_FORM} .shortcut-icon-img`, (image, source) => { image.src = source; }, CUSTOM_APP_ICON);
+		await waitForImages(page, `${CUSTOM_APP_FORM} .shortcut-icon-img`);
+		await fillCustomService(page, 0, config.services[0]);
+		await clickInForm(page, `${CUSTOM_APP_FORM} .add-service`);
+		await fillCustomService(page, 1, config.services[1]);
+		await clickInForm(page, `${CUSTOM_APP_FORM} .service:nth-child(2) .toggle-service`);
+		await scrollCustomForm(page, 'top');
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [CUSTOM_APP_FORM], 'app-custom', PADDING);
+
+		await clickInForm(page, `${CUSTOM_APP_FORM} .service:nth-child(2) .toggle-service`);
+		await clickInForm(page, `${CUSTOM_APP_FORM} .service:nth-child(1) .toggle-service`);
+		await scrollCustomForm(page, 'bottom');
+		await page.mouse.move(0, 0);
+		await sleep(SETTLE_MS);
+		await capture.region(page, [CUSTOM_APP_FORM], 'app-custom-internal', PADDING);
+		await closePage(page);
+
+		backend.setState(customAppNode(backend));
+		const installed = await appsPage(browser, backend, viewport);
+		await openMenu(installed, `${appRow(apps.CUSTOM_APP)} [data-bs-toggle="menu"]`, '#apps .menu.show');
+		await capture.region(installed, ['#apps .search', '#apps table', '#apps .menu.show'], 'app-custom-menu', PADDING);
+		await closePage(installed);
+
+		backend.setState(appsNode(backend, { names: [...apps.CORE_APP_NAMES, EDITABLE_APP], domain: 'custom' }));
+		const editable = await appsPage(browser, backend, viewport);
+		await openMenu(editable, `${appRow(EDITABLE_APP)} [data-bs-toggle="menu"]`, '#apps .menu.show');
+		await editable.click('#apps .menu.show [data-action="edit"]');
+		await editable.waitForSelector('#app-install[open]:not(.hiding)', { visible: true });
+		await sleep(SETTLE_MS);
+		await capture.region(editable, ['#app-install'], 'app-edit', PADDING);
+		await closePage(editable);
 	},
 	snapshots: async ({ browser, backend, capture, viewport }) => {
 		backend.setState({ ...appsNode(backend, { names: [...apps.CORE_APP_NAMES, apps.EXAMPLE_APP] }), snapshotSearch: apps.snapshotSearch(), restoreFolders: apps.restoreFolders(), restoreInspection: apps.restoreInspection(), browseListings: apps.browseListings() });

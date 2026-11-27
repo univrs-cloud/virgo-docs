@@ -2,7 +2,7 @@
 title: MailServer
 description: Managing MailServer's domains, mail accounts, aliases and blocked IPs.
 sidebar:
-  order: 6
+  order: 7
 ---
 
 Open MailServer's details to manage the mail it handles.

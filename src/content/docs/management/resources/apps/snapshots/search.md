@@ -2,7 +2,7 @@
 title: Searching files
 description: Finding earlier and deleted versions of Nextcloud files across every restore point, and downloading them.
 sidebar:
-  order: 9
+  order: 10
 ---
 
 Search looks through every restore point at once, for earlier and deleted versions of the files people keep in Nextcloud: everyone's own files, what is in their trash, and the group folders.

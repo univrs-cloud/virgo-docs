@@ -6,7 +6,7 @@ sidebar:
   order: 4
 ---
 
-**Apps** lists the apps installed on the node. The core apps installed during [setup](/setup/apps/) are always there; every other app is installed from the **App center**.
+**Apps** lists the apps installed on the node. The core apps installed during [setup](/setup/apps/) are always there; every other app is installed from the **App center**, or as a [custom app](/management/resources/apps/custom/).
 
 ![The Apps page](../../../../../assets/management/apps.png)
 
@@ -46,12 +46,15 @@ Open an app's menu in the list, or use the buttons at the top of its details:
 ![An app's menu](../../../../../assets/management/apps-menu.png)
 
 - **Update:** when an update is available, bring the app up to date. See [Updating an app](#updating-an-app).
+- **Edit:** change the settings the app allows changing after it is installed. See [Editing an app](#editing-an-app).
 - **Start**, **Restart** and **Stop:** start, restart or stop all of the app's containers.
 - **Kill:** stop the app at once, without giving it time to shut down properly.
 - **Recreate:** rebuild the app's containers from its template in the App center, keeping its settings and data.
 - **Uninstall:** remove the app. Its data stays in the storage pool, and installing the app again picks it back up.
 
 The core apps cannot be stopped, killed or uninstalled, because the node needs them.
+
+An app can't be installed or started while another app uses a port it needs. Its **Install**, **Start**, **Restart** and **Recreate** are then disabled, and hovering them names the app to stop first.
 
 :::tip
 When an app misbehaves, **Recreate** it. Use **Kill** only when **Stop** does not work.
@@ -72,6 +75,14 @@ When the update finishes, the notification says so and the badge disappears. The
 Before updating, the node takes a snapshot of the app. If the new version does not work out, [roll back](/management/resources/apps/snapshots/rollback/) to it.
 
 ![Nextcloud updated](../../../../../assets/management/app-updated.png)
+
+### Editing an app
+
+Some App center apps have settings that are safe to change after they are installed, such as their domain or their HTTPS certificate. Those apps have **Edit** in their menu, which opens a form with just those settings. Password fields start empty: leave them empty to keep the current password. Select **Update** to save the changes and restart the app.
+
+![Editing Gitea](../../../../../assets/management/app-edit.png)
+
+[Custom apps](/management/resources/apps/custom/#managing-a-custom-app) can be edited in full.
 
 ## An app's details
 

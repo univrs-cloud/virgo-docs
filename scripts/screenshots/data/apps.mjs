@@ -96,7 +96,8 @@ const APP_USAGE = {
 	plausible: { cpu: 0.9, memory: 640, rx: 0.3, tx: 0.2, data: 2.4, snapshots: 0.6 },
 	gitea: { cpu: 0.4, memory: 210, rx: 0.2, tx: 0.4, data: 6.2, snapshots: 1.1 },
 	'gitea-runner': { cpu: 0.2, memory: 120, rx: 0.1, tx: 0.1, data: 1.5, snapshots: 0.3 },
-	mailserver: { cpu: 0.6, memory: 420, rx: 0.3, tx: 0.2, data: 4.8, snapshots: 0.9 }
+	mailserver: { cpu: 0.6, memory: 420, rx: 0.3, tx: 0.2, data: 4.8, snapshots: 0.9 },
+	wiki: { cpu: 0.5, memory: 310, rx: 0.4, tx: 0.9, data: 1.8, snapshots: 0.4 }
 };
 
 const SNAPSHOT_CLOCK = Date.UTC(2026, 8, 29, 17, 40);
@@ -287,6 +288,27 @@ const templateFor = (catalogueTemplates, name) => {
 	return { template, title: `${template.title} (${name.slice(template.name.length + 1)})` };
 };
 
+const editableEnv = (template, domain) => {
+	const fields = (template.env || []).filter((field) => { return field.name.toLowerCase() === 'domain' || (field.editable === true && field.type !== 'password'); });
+	if (!fields.some((field) => { return field.editable === true; })) {
+		return {};
+	}
+
+	return {
+		env: Object.fromEntries(fields.map((field) => {
+			if (field.name.toLowerCase() === 'domain') {
+				return [field.name, domain];
+			}
+
+			if (field.type === 'radio' || field.type === 'select') {
+				return [field.name, String((field.select.find((option) => { return option.default; }) ?? field.select[0]).value)];
+			}
+
+			return [field.name, String(field.default ?? '')];
+		}))
+	};
+};
+
 const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAMES, updatable = null }) => {
 	const catalogueTemplates = templates(appsDir);
 	const configured = [];
@@ -299,7 +321,8 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 		const host = (prefix ? `${prefix}${(Object.hasOwn(CORE_APPS, name) ? fqdn : domainName)}` : null);
 		const usage = (APP_USAGE[name] ?? APP_USAGE[template.name]);
 		const services = Object.entries(compose.services).filter(([, service]) => { return !isOneShot(service); });
-		configured.push({ id: appIndex + 1, type: 'app', name, title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}`, snapshotPolicy: { mode: 'enabled', retention: SNAPSHOT_RETENTION, rule: 'production' } });
+		const appDomain = ((Object.hasOwn(CORE_APPS, name) || String(template.scope).toLowerCase() === 'node') ? fqdn : domainName);
+		configured.push({ id: appIndex + 1, type: 'app', name, title, category: template.categories[0], icon: path.basename(template.logo), canEmbed: template.embed ?? null, canBeRemoved: !Object.hasOwn(CORE_APPS, name), dataset: `messier/apps/${name}`, snapshotPolicy: { mode: 'enabled', retention: SNAPSHOT_RETENTION, rule: 'production' }, ...(Object.hasOwn(CORE_APPS, name) ? {} : editableEnv(template, appDomain)) });
 		const routed = services.find(([, service]) => { return serviceHasRoute(service); })?.[0];
 		const containerMetrics = services.map(([serviceName, service], serviceIndex) => {
 			const id = `${name}-${serviceName}`;
@@ -347,6 +370,91 @@ const installed = ({ appsDir, parseYaml, fqdn, domainName, names = CORE_APP_NAME
 		appsResourceMetrics,
 		imageUpdates: (updated ? [{ containerId: updated.id, app: updatable, service: updated.labels.comDockerComposeService }] : []),
 		templates: catalogueTemplates
+	};
+};
+
+const CUSTOM_TITLE = 'wiki';
+const CUSTOM_APP = `custom-${CUSTOM_TITLE}`;
+const CUSTOM_ICON = 'bookstack';
+
+const customAppConfig = (domainName) => {
+	return {
+		name: CUSTOM_TITLE,
+		services: [
+			{
+				name: 'web',
+				image: 'lscr.io/linuxserver/bookstack:latest',
+				network: 'both',
+				domain: `${CUSTOM_TITLE}.${domainName}`,
+				port: '80',
+				isPrivate: false,
+				isRedirectingWww: false,
+				restart: 'unless-stopped',
+				ports: [],
+				volumes: [{ source: 'config', target: '/config', isReadOnly: false }],
+				variables: [
+					{ name: 'APP_URL', value: `https://${CUSTOM_TITLE}.${domainName}` },
+					{ name: 'DB_HOST', value: 'db' },
+					{ name: 'DB_DATABASE', value: 'bookstack' }
+				]
+			},
+			{
+				name: 'db',
+				image: 'lscr.io/linuxserver/mariadb:latest',
+				network: 'internal',
+				domain: '',
+				port: '',
+				isPrivate: false,
+				isRedirectingWww: false,
+				restart: 'unless-stopped',
+				ports: [],
+				volumes: [{ source: 'db', target: '/config', isReadOnly: false }],
+				variables: [{ name: 'MYSQL_DATABASE', value: 'bookstack' }]
+			}
+		]
+	};
+};
+
+const customApp = ({ domainName, appIndex }) => {
+	const config = customAppConfig(domainName);
+	const usage = APP_USAGE[CUSTOM_TITLE];
+	const containers = config.services.map((service, serviceIndex) => {
+		const router = `customWiki${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`;
+		return {
+			id: `${CUSTOM_APP}-${service.name}`,
+			names: [`/${CUSTOM_APP}-${service.name}-1`],
+			image: service.image,
+			state: 'running',
+			startedAt: new Date(settings.WEATHER_CLOCK - CONTAINER_UPTIME).toISOString(),
+			labels: {
+				comDockerComposeProject: CUSTOM_APP,
+				comDockerComposeService: service.name,
+				...(service.domain ? {
+					[routerLabel(router, 'Rule')]: `Host(\`${service.domain}\`)`,
+					[routerLabel(router, 'Entrypoints')]: 'https',
+					[routerLabel(router, 'Middlewares')]: 'secure-headers@file'
+				} : {})
+			},
+			mounts: service.volumes.map((volume) => { return { type: 'bind', source: `/messier/apps/${CUSTOM_APP}/${volume.source}`, destination: volume.target, rw: !volume.isReadOnly }; }),
+			hostConfig: { networkMode: 'bridge' },
+			networkSettings: { networks: networksOf({ networks: [...(service.network !== 'public' ? ['internal'] : []), ...(service.network !== 'internal' ? ['virgo'] : [])] }, appIndex, serviceIndex) },
+			ports: []
+		};
+	});
+	return {
+		configured: { id: appIndex + 1, type: 'app', name: CUSTOM_APP, title: CUSTOM_TITLE, category: 'Custom', icon: null, canEmbed: null, canBeRemoved: true, dataset: `messier/apps/${CUSTOM_APP}`, snapshotPolicy: { mode: 'enabled', retention: SNAPSHOT_RETENTION, rule: 'production' }, custom: { ...config, name: CUSTOM_APP } },
+		containers,
+		metrics: {
+			name: CUSTOM_APP,
+			cpu: { percent: usage.cpu },
+			memory: { usage: usage.memory * MIB, percent: usage.memory * MIB / TOTAL_MEMORY * 100 },
+			network: { rx: usage.rx * MIB, tx: usage.tx * MIB },
+			storage: { dataset: usage.data * GIB, snapshots: usage.snapshots * GIB },
+			containers: containers.map((container, index) => {
+				const share = (index === 0 ? 0.7 : 0.3);
+				return { id: container.id, cpu: { percent: usage.cpu * share }, memory: { usage: usage.memory * MIB * share, percent: usage.memory * MIB * share / TOTAL_MEMORY * 100 }, network: { rx: usage.rx * MIB * share, tx: usage.tx * MIB * share } };
+			})
+		}
 	};
 };
 
@@ -618,6 +726,10 @@ export {
 	runningApps,
 	EXAMPLE_APP,
 	installed,
+	CUSTOM_APP,
+	CUSTOM_ICON,
+	customAppConfig,
+	customApp,
 	WINDOW_APP,
 	windowPage,
 	appSnapshots,

@@ -2,7 +2,7 @@
 title: Nextcloud
 description: Updating the apps added inside Nextcloud and managing its accounts and groups.
 sidebar:
-  order: 5
+  order: 6
 ---
 
 Open Nextcloud's details to update the apps added inside it and to manage its accounts.
